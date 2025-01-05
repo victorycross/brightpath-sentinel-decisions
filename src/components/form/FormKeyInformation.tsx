@@ -40,6 +40,7 @@ export const FormKeyInformation = ({
                 setFormData({ ...formData, request: e.target.value })
               }
               placeholder="Describe the specific action/exception requested"
+              className="min-h-[80px] bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
             />
           </TableCell>
         </TableRow>
@@ -52,6 +53,7 @@ export const FormKeyInformation = ({
                 setFormData({ ...formData, reason: e.target.value })
               }
               placeholder="Explain the key reason for this request"
+              className="min-h-[80px] bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
             />
           </TableCell>
         </TableRow>
@@ -64,6 +66,7 @@ export const FormKeyInformation = ({
                 setFormData({ ...formData, impact: e.target.value })
               }
               placeholder="Describe the impact on policy/procedure"
+              className="min-h-[80px] bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
             />
           </TableCell>
         </TableRow>
@@ -76,6 +79,7 @@ export const FormKeyInformation = ({
                 setFormData({ ...formData, mitigatingFactors: e.target.value })
               }
               placeholder="Detail mitigations that reduce the inherent risk"
+              className="min-h-[80px] bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
             />
           </TableCell>
         </TableRow>
@@ -88,13 +92,13 @@ export const FormKeyInformation = ({
                 setFormData({ ...formData, residualRisk: value })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-md">
+                <SelectItem value="high" className="hover:bg-gray-100 cursor-pointer text-error">High</SelectItem>
+                <SelectItem value="medium" className="hover:bg-gray-100 cursor-pointer text-warning">Medium</SelectItem>
+                <SelectItem value="low" className="hover:bg-gray-100 cursor-pointer text-success">Low</SelectItem>
               </SelectContent>
             </Select>
           </TableCell>

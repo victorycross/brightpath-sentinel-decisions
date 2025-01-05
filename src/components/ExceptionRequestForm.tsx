@@ -126,40 +126,40 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="type">Request Type</Label>
+          <Label htmlFor="type" className="text-sm font-medium">Request Type</Label>
           <Select onValueChange={handleTypeChange}>
-            <SelectTrigger>
+            <SelectTrigger className="w-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
               <SelectValue placeholder="Select request type" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="cyber">Cyber or Technology Issues</SelectItem>
-              <SelectItem value="legal">Legal/Privacy Issues</SelectItem>
-              <SelectItem value="independence">Independence Issues</SelectItem>
-              <SelectItem value="qmr">Quality Management Review (QMR)</SelectItem>
-              <SelectItem value="clientAcceptance">Client Acceptance and Continuance</SelectItem>
-              <SelectItem value="engagementRisk">Engagement Risk</SelectItem>
-              <SelectItem value="auditFinding">Audit Finding Exception</SelectItem>
-              <SelectItem value="data">Data-Related Issues</SelectItem>
-              <SelectItem value="ai">AI and Emerging Technology Issues</SelectItem>
+            <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-md">
+              <SelectItem value="cyber" className="hover:bg-gray-100 cursor-pointer">Cyber or Technology Issues</SelectItem>
+              <SelectItem value="legal" className="hover:bg-gray-100 cursor-pointer">Legal/Privacy Issues</SelectItem>
+              <SelectItem value="independence" className="hover:bg-gray-100 cursor-pointer">Independence Issues</SelectItem>
+              <SelectItem value="qmr" className="hover:bg-gray-100 cursor-pointer">Quality Management Review (QMR)</SelectItem>
+              <SelectItem value="clientAcceptance" className="hover:bg-gray-100 cursor-pointer">Client Acceptance and Continuance</SelectItem>
+              <SelectItem value="engagementRisk" className="hover:bg-gray-100 cursor-pointer">Engagement Risk</SelectItem>
+              <SelectItem value="auditFinding" className="hover:bg-gray-100 cursor-pointer">Audit Finding Exception</SelectItem>
+              <SelectItem value="data" className="hover:bg-gray-100 cursor-pointer">Data-Related Issues</SelectItem>
+              <SelectItem value="ai" className="hover:bg-gray-100 cursor-pointer">AI and Emerging Technology Issues</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-4">
           <div>
-            <Label>Key Information</Label>
+            <Label className="text-sm font-medium">Key Information</Label>
             <FormKeyInformation formData={formData} setFormData={setFormData} />
           </div>
 
           {formData.approvers.length > 0 && (
             <div>
-              <Label>Required Approvers</Label>
+              <Label className="text-sm font-medium">Required Approvers</Label>
               <ApproversTable approvers={formData.approvers} />
             </div>
           )}
 
           <div className="space-y-2">
-            <Label>Prepared By</Label>
+            <Label className="text-sm font-medium">Prepared By</Label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Input
                 placeholder="Name"
@@ -170,6 +170,7 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
                     preparedBy: { ...formData.preparedBy, name: e.target.value },
                   })
                 }
+                className="bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
               />
               <Input
                 placeholder="Title"
@@ -180,6 +181,7 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
                     preparedBy: { ...formData.preparedBy, title: e.target.value },
                   })
                 }
+                className="bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
               />
               <Input
                 type="email"
@@ -191,16 +193,27 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
                     preparedBy: { ...formData.preparedBy, email: e.target.value },
                   })
                 }
+                className="bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
               />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end space-x-4">
-          <Button type="button" variant="outline" onClick={onClose}>
+        <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onClose}
+            className="hover:bg-gray-50"
+          >
             Cancel
           </Button>
-          <Button type="submit">Submit Request</Button>
+          <Button 
+            type="submit"
+            className="bg-primary hover:bg-primary/90"
+          >
+            Submit Request
+          </Button>
         </div>
       </form>
     </div>
