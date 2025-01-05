@@ -9,6 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      exception_request_audit_logs: {
+        Row: {
+          action: Database["public"]["Enums"]["audit_action"]
+          changes: Json | null
+          created_at: string
+          id: string
+          request_id: string
+          user_id: string
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["audit_action"]
+          changes?: Json | null
+          created_at?: string
+          id?: string
+          request_id: string
+          user_id: string
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["audit_action"]
+          changes?: Json | null
+          created_at?: string
+          id?: string
+          request_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exception_request_audit_logs_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "exception_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exception_request_audit_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exception_requests: {
         Row: {
           id: string
@@ -91,6 +133,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      audit_action: "created" | "updated" | "deleted" | "status_changed"
       request_status: "pending" | "in_process" | "approved" | "rejected"
       request_type:
         | "cyber"

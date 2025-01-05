@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ExceptionRequestCard } from "@/components/dashboard/ExceptionRequestCard";
+import { ExceptionRequestAuditLog } from "@/components/dashboard/ExceptionRequestAuditLog";
 import { LoadingState } from "@/components/dashboard/LoadingState";
+import { ExceptionRequestForm } from "@/components/ExceptionRequestForm";
 
 type ExceptionRequest = {
   id: string;
@@ -15,10 +17,22 @@ type ExceptionRequest = {
   } | null;
 };
 
+type AuditLog = {
+  id: string;
+  action: string;
+  created_at: string;
+  changes: any;
+  profiles: {
+    email: string;
+  } | null;
+};
+
 const Dashboard = () => {
   const [requests, setRequests] = useState<ExceptionRequest[]>([]);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingRequest, setEditingRequest] = useState<ExceptionRequest | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -58,12 +72,54 @@ const Dashboard = () => {
     fetchRequests();
   }, [toast]);
 
-  const handleEdit = (id: string) => {
-    console.log("Editing request:", id);
-    toast({
-      title: "Edit Mode",
-      description: "You can now edit the request details.",
-    });
+  const fetchAuditLogs = async (requestId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('exception_request_audit_logs')
+        .select(`
+          id,
+          action,
+          created_at,
+          changes,
+          profiles (
+            email
+          )
+        `)
+        .eq('request_id', requestId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setAuditLogs(data || []);
+    } catch (err) {
+      console.error('Error fetching audit logs:', err);
+      toast({
+        title: "Error",
+        description: "Failed to load audit logs",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEdit = async (id: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('exception_requests')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+
+      setEditingRequest(data);
+      await fetchAuditLogs(id);
+    } catch (err) {
+      console.error('Error fetching request details:', err);
+      toast({
+        title: "Error",
+        description: "Failed to load request details",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -90,6 +146,11 @@ const Dashboard = () => {
     }
   };
 
+  const handleCloseEdit = () => {
+    setEditingRequest(null);
+    setAuditLogs([]);
+  };
+
   if (isLoading) {
     return <LoadingState />;
   }
@@ -98,6 +159,19 @@ const Dashboard = () => {
     return (
       <div className="text-center text-red-500 p-4">
         {error}
+      </div>
+    );
+  }
+
+  if (editingRequest) {
+    return (
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <ExceptionRequestForm
+          initialData={editingRequest}
+          onClose={handleCloseEdit}
+          isEditing={true}
+        />
+        <ExceptionRequestAuditLog logs={auditLogs} />
       </div>
     );
   }
