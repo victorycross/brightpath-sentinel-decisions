@@ -15,6 +15,14 @@ type ExceptionRequest = {
   profiles: {
     email: string;
   } | null;
+  // Additional fields needed for editing
+  impact?: string;
+  mitigating_factors?: string;
+  reason?: string;
+  request?: string;
+  residual_risk?: string;
+  submitted_by?: string;
+  updated_at?: string;
 };
 
 type AuditLog = {
@@ -27,7 +35,8 @@ type AuditLog = {
   } | null;
 };
 
-const Dashboard = () => {
+// Create a separate component for the dashboard content to reduce complexity
+const DashboardContent = () => {
   const [requests, setRequests] = useState<ExceptionRequest[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -104,13 +113,29 @@ const Dashboard = () => {
     try {
       const { data, error } = await supabase
         .from('exception_requests')
-        .select('*')
+        .select(`
+          id,
+          title,
+          type,
+          status,
+          request,
+          reason,
+          impact,
+          mitigating_factors,
+          residual_risk,
+          submitted_at,
+          submitted_by,
+          updated_at,
+          profiles (
+            email
+          )
+        `)
         .eq('id', id)
         .single();
 
       if (error) throw error;
 
-      setEditingRequest(data);
+      setEditingRequest(data as ExceptionRequest);
       await fetchAuditLogs(id);
     } catch (err) {
       console.error('Error fetching request details:', err);
@@ -203,6 +228,15 @@ const Dashboard = () => {
           ))}
         </div>
       )}
+    </div>
+  );
+};
+
+// Main Dashboard component is now just a wrapper
+const Dashboard = () => {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <DashboardContent />
     </div>
   );
 };
