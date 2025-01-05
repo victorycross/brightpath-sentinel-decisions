@@ -44,43 +44,43 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
   const handleTypeChange = (value: string) => {
     const approversByType: Record<string, Approver[]> = {
       cyber: [
-        { title: "Chief Information Security Officer", name: "Sarah Chen" },
-        { title: "Chief Information Officer", name: "John Smith" },
-        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+        { title: "Chief Information Security Officer", name: "CISO Name" },
+        { title: "Chief Information Officer", name: "CIO Name" },
+        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
       ],
       legal: [
-        { title: "Chief Privacy Officer", name: "Emma Thompson" },
-        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+        { title: "Chief Privacy Officer", name: "CPO Name" },
+        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
       ],
       independence: [
-        { title: "Partner Responsible for Independence", name: "David Wilson" },
-        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+        { title: "Partner Responsible for Independence", name: "Independence Partner Name" },
+        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
       ],
       qmr: [
-        { title: "Assurance Partner", name: "Rachel Martinez" },
-        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+        { title: "Assurance Partner", name: "Assurance Partner Name" },
+        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
       ],
       clientAcceptance: [
-        { title: "Client Acceptance Risk Partner", name: "James Anderson" },
-        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+        { title: "Client Acceptance Risk Partner", name: "Risk Partner Name" },
+        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
       ],
       engagementRisk: [
-        { title: "Engagement Risk Partner", name: "Linda Kumar" },
-        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+        { title: "Engagement Risk Partner", name: "Risk Partner Name" },
+        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
       ],
       auditFinding: [
-        { title: "Internal Audit Leader", name: "Robert Chang" },
-        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+        { title: "Internal Audit Leader", name: "Audit Leader Name" },
+        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
       ],
       data: [
-        { title: "Chief Privacy Officer", name: "Emma Thompson" },
-        { title: "Chief Data and Analytics Officer", name: "Alex Rodriguez" },
-        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+        { title: "Chief Privacy Officer", name: "CPO Name" },
+        { title: "Chief Data and Analytics Officer", name: "CDAO Name" },
+        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
       ],
       ai: [
-        { title: "Partner Innovation", name: "Maria Sanchez" },
-        { title: "Chief Information Officer", name: "John Smith" },
-        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+        { title: "Partner Innovation", name: "Innovation Partner Name" },
+        { title: "Chief Information Officer", name: "CIO Name" },
+        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
       ],
     };
 
