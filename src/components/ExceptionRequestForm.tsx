@@ -26,21 +26,21 @@ export const ExceptionRequestForm = ({
   isEditing = false 
 }: ExceptionRequestFormProps) => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState(initialData || {
-    type: "",
-    title: "",
-    request: "",
-    reason: "",
-    impact: "",
-    mitigatingFactors: "",
-    residualRisk: "medium",
-    approvers: [] as Approver[],
-    preparedBy: {
+  const [formData, setFormData] = useState({
+    type: initialData?.type || "",
+    title: initialData?.title || "",
+    request: initialData?.request || "",
+    reason: initialData?.reason || "",
+    impact: initialData?.impact || "",
+    mitigatingFactors: initialData?.mitigating_factors || "",
+    residualRisk: initialData?.residual_risk || "medium",
+    approvers: initialData?.approvers || [] as Approver[],
+    preparedBy: initialData?.preparedBy || {
       name: "",
       title: "",
       email: "",
     },
-    incidentReference: "", // New field for cyber/tech issues
+    incidentReference: initialData?.incidentReference || "",
   });
 
   const handleTypeChange = (value: string) => {
@@ -90,7 +90,6 @@ export const ExceptionRequestForm = ({
       ...formData,
       type: value,
       approvers: approversByType[value] || [],
-      // Clear incident reference if not cyber type
       incidentReference: value !== 'cyber' ? '' : formData.incidentReference,
     });
   };
