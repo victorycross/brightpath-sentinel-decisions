@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -7,36 +8,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-// Mock data for demonstration
-const mockRequests = [
-  {
-    id: 1,
-    title: "Cloud Service Provider Exception",
-    type: "technology",
-    status: "in_process",
-    submittedAt: "2024-02-20",
-    submittedBy: "John Doe",
-  },
-  {
-    id: 2,
-    title: "Third-party Vendor Assessment",
-    type: "legal",
-    status: "approved",
-    submittedAt: "2024-02-19",
-    submittedBy: "Jane Smith",
-  },
-  {
-    id: 3,
-    title: "Network Security Exception",
-    type: "technology",
-    status: "in_process",
-    submittedAt: "2024-02-18",
-    submittedBy: "Mike Johnson",
-  }
-];
+type ExceptionRequest = {
+  id: string;
+  title: string;
+  type: string;
+  status: string;
+  submitted_at: string;
+  profiles: {
+    email: string;
+  } | null;
+};
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -59,31 +44,95 @@ const getStatusDisplay = (status: string) => {
 };
 
 const Dashboard = () => {
+  const [requests, setRequests] = useState<ExceptionRequest[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleEdit = (id: number) => {
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('exception_requests')
+          .select(`
+            id,
+            title,
+            type,
+            status,
+            submitted_at,
+            profiles (
+              email
+            )
+          `)
+          .in('status', ['in_process', 'approved'])
+          .order('submitted_at', { ascending: false });
+
+        if (error) throw error;
+
+        setRequests(data || []);
+      } catch (err) {
+        console.error('Error fetching requests:', err);
+        setError('Failed to load requests');
+        toast({
+          title: "Error",
+          description: "Failed to load exception requests",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRequests();
+  }, [toast]);
+
+  const handleEdit = (id: string) => {
     console.log("Editing request:", id);
-    console.log(`[${new Date().toISOString()}] Request ${id} opened for editing`);
     toast({
       title: "Edit Mode",
       description: "You can now edit the request details.",
     });
   };
 
-  const handleDelete = (id: number) => {
-    console.log("Deleting request:", id);
-    console.log(`[${new Date().toISOString()}] Request ${id} deleted`);
-    toast({
-      title: "Request Deleted",
-      description: "The exception request has been deleted.",
-      variant: "destructive",
-    });
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('exception_requests')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setRequests(requests.filter(request => request.id !== id));
+      toast({
+        title: "Request Deleted",
+        description: "The exception request has been deleted.",
+      });
+    } catch (err) {
+      console.error('Error deleting request:', err);
+      toast({
+        title: "Error",
+        description: "Failed to delete the request",
+        variant: "destructive",
+      });
+    }
   };
 
-  // Filter requests to show only in_process and approved
-  const filteredRequests = mockRequests.filter(
-    request => ["in_process", "approved"].includes(request.status)
-  );
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-500 p-4">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -96,52 +145,59 @@ const Dashboard = () => {
         </p>
       </div>
 
-      <div className="space-y-4">
-        {filteredRequests.map((request) => (
-          <Card key={request.id} className="hover:shadow-md transition-shadow">
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-xl">{request.title}</CardTitle>
-                  <CardDescription>
-                    Submitted by {request.submittedBy} on {request.submittedAt}
-                  </CardDescription>
+      {requests.length === 0 ? (
+        <div className="text-center text-gray-500 p-8">
+          No exception requests found
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {requests.map((request) => (
+            <Card key={request.id} className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-xl">{request.title}</CardTitle>
+                    <CardDescription>
+                      Submitted by {request.profiles?.email} on{" "}
+                      {new Date(request.submitted_at).toLocaleDateString()}
+                    </CardDescription>
+                  </div>
+                  <Badge className={getStatusColor(request.status)}>
+                    {getStatusDisplay(request.status)}
+                  </Badge>
                 </div>
-                <Badge className={getStatusColor(request.status)}>
-                  {getStatusDisplay(request.status)}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <Badge variant="outline" className="capitalize">
-                  {request.type}
-                </Badge>
-                <div className="space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEdit(request.id)}
-                    className="gap-2"
-                  >
-                    <Edit2 className="h-4 w-4" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(request.id)}
-                    className="gap-2"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Delete
-                  </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <Badge variant="outline" className="capitalize">
+                    {request.type}
+                  </Badge>
+                  <div className="space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(request.id)}
+                      className="gap-2"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(request.id)}
+                      className="gap-2"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

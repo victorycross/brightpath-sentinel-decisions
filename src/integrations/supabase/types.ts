@@ -9,6 +9,59 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      exception_requests: {
+        Row: {
+          id: string
+          impact: string
+          mitigating_factors: string
+          reason: string
+          request: string
+          residual_risk: string
+          status: Database["public"]["Enums"]["request_status"]
+          submitted_at: string
+          submitted_by: string
+          title: string
+          type: Database["public"]["Enums"]["request_type"]
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          impact: string
+          mitigating_factors: string
+          reason: string
+          request: string
+          residual_risk: string
+          status?: Database["public"]["Enums"]["request_status"]
+          submitted_at?: string
+          submitted_by: string
+          title: string
+          type: Database["public"]["Enums"]["request_type"]
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          impact?: string
+          mitigating_factors?: string
+          reason?: string
+          request?: string
+          residual_risk?: string
+          status?: Database["public"]["Enums"]["request_status"]
+          submitted_at?: string
+          submitted_by?: string
+          title?: string
+          type?: Database["public"]["Enums"]["request_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exception_requests_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -38,7 +91,17 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      request_status: "pending" | "in_process" | "approved" | "rejected"
+      request_type:
+        | "cyber"
+        | "legal"
+        | "independence"
+        | "qmr"
+        | "clientAcceptance"
+        | "engagementRisk"
+        | "auditFinding"
+        | "data"
+        | "ai"
     }
     CompositeTypes: {
       [_ in never]: never
