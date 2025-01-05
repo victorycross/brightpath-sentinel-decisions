@@ -38,7 +38,7 @@ const Index = () => {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       if (session) {
         toast({
@@ -57,6 +57,22 @@ const Index = () => {
       window.history.replaceState({}, document.title);
     }
   }, [location]);
+
+  const handleAuthError = (error: any) => {
+    if (error.error?.message === "User already registered") {
+      toast({
+        title: "Account exists",
+        description: "This email is already registered. Please sign in instead.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: error.error?.message || "An error occurred during authentication.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (!session) {
     return (
@@ -79,6 +95,7 @@ const Index = () => {
               }}
               providers={[]}
               theme="light"
+              onError={handleAuthError}
             />
           </CardContent>
         </Card>
