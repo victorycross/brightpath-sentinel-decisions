@@ -1,10 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import { Save, Trash2 } from "lucide-react";
 
 interface FormActionsProps {
   isEditing: boolean;
-  onSave: () => void;
+  onSave: (e: React.FormEvent) => void;
   onDelete: () => void;
   onCancel: () => void;
 }
@@ -24,7 +23,7 @@ export const FormActions = ({ isEditing, onSave, onDelete, onCancel }: FormActio
           </Button>
           <Button 
             type="submit"
-            onClick={onSave}
+            onClick={(e) => onSave(e)}
             className="bg-primary hover:bg-primary/90 gap-2"
           >
             <Save className="h-4 w-4" />
