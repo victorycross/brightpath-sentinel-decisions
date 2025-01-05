@@ -13,9 +13,12 @@ import { useToast } from "@/hooks/use-toast";
 import { X } from "lucide-react";
 import { FormKeyInformation } from "./form/FormKeyInformation";
 import { ApproversTable } from "./form/ApproversTable";
+import { FormActions } from "./form/FormActions";
 
 interface ExceptionRequestFormProps {
   onClose: () => void;
+  initialData?: any; // Add proper typing based on your data structure
+  isEditing?: boolean;
 }
 
 interface Approver {
@@ -23,9 +26,13 @@ interface Approver {
   name: string;
 }
 
-export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => {
+export const ExceptionRequestForm = ({ 
+  onClose, 
+  initialData, 
+  isEditing = false 
+}: ExceptionRequestFormProps) => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(initialData || {
     type: "",
     title: "",
     request: "",
@@ -103,11 +110,27 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
       return;
     }
 
-    console.log("Form submitted:", formData);
+    // Log the action
+    console.log(`[${new Date().toISOString()}] ${isEditing ? 'Updated' : 'Submitted'} request:`, formData);
     
     toast({
-      title: "Request Submitted",
-      description: "Your exception request has been submitted successfully.",
+      title: isEditing ? "Changes Saved" : "Request Submitted",
+      description: isEditing 
+        ? "Your changes have been saved successfully."
+        : "Your exception request has been submitted successfully.",
+    });
+    
+    onClose();
+  };
+
+  const handleDelete = () => {
+    // Log the delete action
+    console.log(`[${new Date().toISOString()}] Deleted request:`, formData);
+    
+    toast({
+      title: "Request Deleted",
+      description: "The exception request has been deleted successfully.",
+      variant: "destructive",
     });
     
     onClose();
@@ -117,7 +140,7 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
     <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">
-          Memo: Decision and Rationale for Exception Request
+          {isEditing ? "Edit Exception Request" : "Memo: Decision and Rationale for Exception Request"}
         </h2>
         <Button variant="ghost" size="icon" onClick={onClose}>
           <X className="h-4 w-4" />
@@ -127,7 +150,11 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="type" className="text-sm font-medium">Request Type</Label>
-          <Select onValueChange={handleTypeChange}>
+          <Select 
+            onValueChange={handleTypeChange} 
+            defaultValue={formData.type}
+            disabled={isEditing}
+          >
             <SelectTrigger className="w-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
               <SelectValue placeholder="Select request type" />
             </SelectTrigger>
@@ -199,22 +226,12 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
           </div>
         </div>
 
-        <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
-          <Button 
-            type="button" 
-            variant="outline" 
-            onClick={onClose}
-            className="hover:bg-gray-50"
-          >
-            Cancel
-          </Button>
-          <Button 
-            type="submit"
-            className="bg-primary hover:bg-primary/90"
-          >
-            Submit Request
-          </Button>
-        </div>
+        <FormActions
+          isEditing={isEditing}
+          onSave={handleSubmit}
+          onDelete={handleDelete}
+          onCancel={onClose}
+        />
       </form>
     </div>
   );

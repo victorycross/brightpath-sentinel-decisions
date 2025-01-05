@@ -6,6 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Edit2, Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock data for demonstration
 const mockRequests = [
@@ -41,6 +44,29 @@ const getStatusColor = (status: string) => {
 };
 
 export const RequestList = () => {
+  const { toast } = useToast();
+
+  const handleEdit = (id: number) => {
+    console.log("Editing request:", id);
+    // Log the edit action
+    console.log(`[${new Date().toISOString()}] Request ${id} opened for editing`);
+    toast({
+      title: "Edit Mode",
+      description: "You can now edit the request details.",
+    });
+  };
+
+  const handleDelete = (id: number) => {
+    console.log("Deleting request:", id);
+    // Log the delete action
+    console.log(`[${new Date().toISOString()}] Request ${id} deleted`);
+    toast({
+      title: "Request Deleted",
+      description: "The exception request has been deleted.",
+      variant: "destructive",
+    });
+  };
+
   return (
     <div className="space-y-4">
       {mockRequests.map((request) => (
@@ -59,10 +85,30 @@ export const RequestList = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-between">
               <Badge variant="outline" className="capitalize">
                 {request.type}
               </Badge>
+              <div className="space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleEdit(request.id)}
+                  className="gap-2"
+                >
+                  <Edit2 className="h-4 w-4" />
+                  Edit
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleDelete(request.id)}
+                  className="gap-2"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
