@@ -9,17 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { X } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { FormKeyInformation } from "./form/FormKeyInformation";
+import { ApproversTable } from "./form/ApproversTable";
 
 interface ExceptionRequestFormProps {
   onClose: () => void;
@@ -50,16 +43,43 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
 
   const handleTypeChange = (value: string) => {
     const approversByType: Record<string, Approver[]> = {
-      technology: [
+      cyber: [
+        { title: "Chief Information Security Officer", name: "Sarah Chen" },
         { title: "Chief Information Officer", name: "John Smith" },
         { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
       ],
       legal: [
-        { title: "Chief Legal Counsel", name: "Kai Brown" },
+        { title: "Chief Privacy Officer", name: "Emma Thompson" },
         { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
       ],
       independence: [
-        { title: "Business Enablement Leader", name: "Josée Ste-Onge" },
+        { title: "Partner Responsible for Independence", name: "David Wilson" },
+        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+      ],
+      qmr: [
+        { title: "Assurance Partner", name: "Rachel Martinez" },
+        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+      ],
+      clientAcceptance: [
+        { title: "Client Acceptance Risk Partner", name: "James Anderson" },
+        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+      ],
+      engagementRisk: [
+        { title: "Engagement Risk Partner", name: "Linda Kumar" },
+        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+      ],
+      auditFinding: [
+        { title: "Internal Audit Leader", name: "Robert Chang" },
+        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+      ],
+      data: [
+        { title: "Chief Privacy Officer", name: "Emma Thompson" },
+        { title: "Chief Data and Analytics Officer", name: "Alex Rodriguez" },
+        { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
+      ],
+      ai: [
+        { title: "Partner Innovation", name: "Maria Sanchez" },
+        { title: "Chief Information Officer", name: "John Smith" },
         { title: "Chief Risk & Resilience Officer", name: "Michael Paterson" },
       ],
     };
@@ -112,9 +132,15 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
               <SelectValue placeholder="Select request type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="technology">Technology</SelectItem>
-              <SelectItem value="legal">Legal</SelectItem>
-              <SelectItem value="independence">Independence</SelectItem>
+              <SelectItem value="cyber">Cyber or Technology Issues</SelectItem>
+              <SelectItem value="legal">Legal/Privacy Issues</SelectItem>
+              <SelectItem value="independence">Independence Issues</SelectItem>
+              <SelectItem value="qmr">Quality Management Review (QMR)</SelectItem>
+              <SelectItem value="clientAcceptance">Client Acceptance and Continuance</SelectItem>
+              <SelectItem value="engagementRisk">Engagement Risk</SelectItem>
+              <SelectItem value="auditFinding">Audit Finding Exception</SelectItem>
+              <SelectItem value="data">Data-Related Issues</SelectItem>
+              <SelectItem value="ai">AI and Emerging Technology Issues</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -122,103 +148,13 @@ export const ExceptionRequestForm = ({ onClose }: ExceptionRequestFormProps) => 
         <div className="space-y-4">
           <div>
             <Label>Key Information</Label>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium w-1/4">Request</TableCell>
-                  <TableCell>
-                    <Textarea
-                      value={formData.request}
-                      onChange={(e) =>
-                        setFormData({ ...formData, request: e.target.value })
-                      }
-                      placeholder="Describe the specific action/exception requested"
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Reason</TableCell>
-                  <TableCell>
-                    <Textarea
-                      value={formData.reason}
-                      onChange={(e) =>
-                        setFormData({ ...formData, reason: e.target.value })
-                      }
-                      placeholder="Explain the key reason for this request"
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Impact</TableCell>
-                  <TableCell>
-                    <Textarea
-                      value={formData.impact}
-                      onChange={(e) =>
-                        setFormData({ ...formData, impact: e.target.value })
-                      }
-                      placeholder="Describe the impact on policy/procedure"
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Mitigating Factors</TableCell>
-                  <TableCell>
-                    <Textarea
-                      value={formData.mitigatingFactors}
-                      onChange={(e) =>
-                        setFormData({ ...formData, mitigatingFactors: e.target.value })
-                      }
-                      placeholder="Detail mitigations that reduce the inherent risk"
-                    />
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">Residual Risk</TableCell>
-                  <TableCell>
-                    <Select
-                      value={formData.residualRisk}
-                      onValueChange={(value) =>
-                        setFormData({ ...formData, residualRisk: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="high">High</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="low">Low</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+            <FormKeyInformation formData={formData} setFormData={setFormData} />
           </div>
 
           {formData.approvers.length > 0 && (
             <div>
               <Label>Required Approvers</Label>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Signature</TableHead>
-                    <TableHead>Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {formData.approvers.map((approver, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{approver.title}</TableCell>
-                      <TableCell>{approver.name}</TableCell>
-                      <TableCell>Pending</TableCell>
-                      <TableCell>-</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <ApproversTable approvers={formData.approvers} />
             </div>
           )}
 
