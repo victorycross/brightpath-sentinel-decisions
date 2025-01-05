@@ -58,22 +58,6 @@ const Index = () => {
     }
   }, [location]);
 
-  const handleAuthError = (error: any) => {
-    if (error.error?.message === "User already registered") {
-      toast({
-        title: "Account exists",
-        description: "This email is already registered. Please sign in instead.",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Error",
-        description: error.error?.message || "An error occurred during authentication.",
-        variant: "destructive",
-      });
-    }
-  };
-
   if (!session) {
     return (
       <div className="max-w-md mx-auto mt-8 p-6">
@@ -95,7 +79,23 @@ const Index = () => {
               }}
               providers={[]}
               theme="light"
-              onError={handleAuthError}
+              localization={{
+                variables: {
+                  sign_up: {
+                    email_input_placeholder: "Your email address",
+                    password_input_placeholder: "Your password",
+                    email_label: "Email address",
+                    password_label: "Password",
+                    button_label: "Sign up",
+                    loading_button_label: "Signing up ...",
+                    social_provider_text: "Sign in with {{provider}}",
+                    link_text: "Don't have an account? Sign up",
+                    confirmation_text: "Check your email for the confirmation link"
+                  }
+                }
+              }}
+              showLinks={true}
+              view="sign_in"
             />
           </CardContent>
         </Card>
