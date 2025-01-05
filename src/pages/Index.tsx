@@ -3,8 +3,12 @@ import { Button } from "@/components/ui/button";
 import { ExceptionRequestForm } from "@/components/ExceptionRequestForm";
 import { RequestList } from "@/components/RequestList";
 import { PlusCircle, ClipboardCheck, Shield, Clock } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const ProcessStep = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => (
   <Card className="flex-1">
@@ -22,7 +26,30 @@ const ProcessStep = ({ icon: Icon, title, description }: { icon: any, title: str
 
 const Index = () => {
   const [showForm, setShowForm] = useState(false);
+  const [session, setSession] = useState<any>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        toast({
+          title: "Welcome!",
+          description: "You have successfully signed in.",
+        });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [toast]);
 
   useEffect(() => {
     if (location.state?.showForm) {
@@ -30,6 +57,34 @@ const Index = () => {
       window.history.replaceState({}, document.title);
     }
   }, [location]);
+
+  if (!session) {
+    return (
+      <div className="max-w-md mx-auto mt-8 p-6">
+        <h1 className="text-2xl font-bold text-center mb-6">Welcome to Exception Hub</h1>
+        <Card>
+          <CardContent className="pt-6">
+            <Auth
+              supabaseClient={supabase}
+              appearance={{
+                theme: ThemeSupa,
+                variables: {
+                  default: {
+                    colors: {
+                      brand: 'rgb(var(--primary))',
+                      brandAccent: 'rgb(var(--primary))',
+                    },
+                  },
+                },
+              }}
+              providers={[]}
+              theme="light"
+            />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -64,7 +119,19 @@ const Index = () => {
         </div>
       )}
 
-      <div className="mb-8 text-right">
+      <div className="mb-8 flex justify-between items-center">
+        <Button
+          variant="outline"
+          onClick={async () => {
+            await supabase.auth.signOut();
+            toast({
+              title: "Signed out",
+              description: "You have been successfully signed out.",
+            });
+          }}
+        >
+          Sign Out
+        </Button>
         <Button
           onClick={() => setShowForm(!showForm)}
           className="bg-primary hover:bg-primary/90"
