@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Guidance from "./pages/Guidance";
+import Dashboard from "./pages/Dashboard";
 import { Toaster } from "@/components/ui/toaster";
 import {
   NavigationMenu,
@@ -23,15 +24,19 @@ const NavigationBar = () => {
         <NavigationMenuList className="gap-6">
           <NavigationMenuItem>
             <Link to="/">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              <NavigationMenuLink 
+                className={`${navigationMenuTriggerStyle()} ${location.pathname === "/" ? "bg-accent" : ""}`}
+              >
                 <Home className="mr-2 h-4 w-4" />
                 Home
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link to="/">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            <Link to="/dashboard">
+              <NavigationMenuLink 
+                className={`${navigationMenuTriggerStyle()} ${location.pathname === "/dashboard" ? "bg-accent" : ""}`}
+              >
                 <Grid className="mr-2 h-4 w-4" />
                 Dashboard
               </NavigationMenuLink>
@@ -47,7 +52,9 @@ const NavigationBar = () => {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <Link to="/guidance">
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              <NavigationMenuLink 
+                className={`${navigationMenuTriggerStyle()} ${location.pathname === "/guidance" ? "bg-accent" : ""}`}
+              >
                 <BookOpen className="mr-2 h-4 w-4" />
                 Guidance
               </NavigationMenuLink>
@@ -66,6 +73,7 @@ function App() {
         <NavigationBar />
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/guidance" element={<Guidance />} />
         </Routes>
         <Toaster />
