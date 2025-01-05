@@ -1,23 +1,17 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { X } from "lucide-react";
 import { FormKeyInformation } from "./form/FormKeyInformation";
 import { ApproversTable } from "./form/ApproversTable";
 import { FormActions } from "./form/FormActions";
+import { RequestTypeSelect } from "./form/RequestTypeSelect";
+import { PreparedBySection } from "./form/PreparedBySection";
 
 interface ExceptionRequestFormProps {
   onClose: () => void;
-  initialData?: any; // Add proper typing based on your data structure
+  initialData?: any;
   isEditing?: boolean;
 }
 
@@ -46,6 +40,7 @@ export const ExceptionRequestForm = ({
       title: "",
       email: "",
     },
+    incidentReference: "", // New field for cyber/tech issues
   });
 
   const handleTypeChange = (value: string) => {
@@ -95,6 +90,8 @@ export const ExceptionRequestForm = ({
       ...formData,
       type: value,
       approvers: approversByType[value] || [],
+      // Clear incident reference if not cyber type
+      incidentReference: value !== 'cyber' ? '' : formData.incidentReference,
     });
   };
 
@@ -110,7 +107,6 @@ export const ExceptionRequestForm = ({
       return;
     }
 
-    // Log the action
     console.log(`[${new Date().toISOString()}] ${isEditing ? 'Updated' : 'Submitted'} request:`, formData);
     
     toast({
@@ -124,7 +120,6 @@ export const ExceptionRequestForm = ({
   };
 
   const handleDelete = () => {
-    // Log the delete action
     console.log(`[${new Date().toISOString()}] Deleted request:`, formData);
     
     toast({
@@ -148,82 +143,38 @@ export const ExceptionRequestForm = ({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="type" className="text-sm font-medium">Request Type</Label>
-          <Select 
-            onValueChange={handleTypeChange} 
-            defaultValue={formData.type}
-            disabled={isEditing}
-          >
-            <SelectTrigger className="w-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
-              <SelectValue placeholder="Select request type" />
-            </SelectTrigger>
-            <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-md">
-              <SelectItem value="cyber" className="hover:bg-gray-100 cursor-pointer">Cyber or Technology Issues</SelectItem>
-              <SelectItem value="legal" className="hover:bg-gray-100 cursor-pointer">Legal/Privacy Issues</SelectItem>
-              <SelectItem value="independence" className="hover:bg-gray-100 cursor-pointer">Independence Issues</SelectItem>
-              <SelectItem value="qmr" className="hover:bg-gray-100 cursor-pointer">Quality Management Review (QMR)</SelectItem>
-              <SelectItem value="clientAcceptance" className="hover:bg-gray-100 cursor-pointer">Client Acceptance and Continuance</SelectItem>
-              <SelectItem value="engagementRisk" className="hover:bg-gray-100 cursor-pointer">Engagement Risk</SelectItem>
-              <SelectItem value="auditFinding" className="hover:bg-gray-100 cursor-pointer">Audit Finding Exception</SelectItem>
-              <SelectItem value="data" className="hover:bg-gray-100 cursor-pointer">Data-Related Issues</SelectItem>
-              <SelectItem value="ai" className="hover:bg-gray-100 cursor-pointer">AI and Emerging Technology Issues</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <RequestTypeSelect 
+          value={formData.type}
+          onChange={handleTypeChange}
+          disabled={isEditing}
+        />
+
+        {formData.type === 'cyber' && (
+          <div className="space-y-2">
+            <Input
+              placeholder="Global Incident Reference (optional)"
+              value={formData.incidentReference}
+              onChange={(e) =>
+                setFormData({ ...formData, incidentReference: e.target.value })
+              }
+              className="bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
+            />
+          </div>
+        )}
 
         <div className="space-y-4">
-          <div>
-            <Label className="text-sm font-medium">Key Information</Label>
-            <FormKeyInformation formData={formData} setFormData={setFormData} />
-          </div>
+          <FormKeyInformation formData={formData} setFormData={setFormData} />
 
           {formData.approvers.length > 0 && (
             <div>
-              <Label className="text-sm font-medium">Required Approvers</Label>
               <ApproversTable approvers={formData.approvers} />
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Prepared By</Label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Input
-                placeholder="Name"
-                value={formData.preparedBy.name}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    preparedBy: { ...formData.preparedBy, name: e.target.value },
-                  })
-                }
-                className="bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
-              />
-              <Input
-                placeholder="Title"
-                value={formData.preparedBy.title}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    preparedBy: { ...formData.preparedBy, title: e.target.value },
-                  })
-                }
-                className="bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
-              />
-              <Input
-                type="email"
-                placeholder="Email"
-                value={formData.preparedBy.email}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    preparedBy: { ...formData.preparedBy, email: e.target.value },
-                  })
-                }
-                className="bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
-              />
-            </div>
-          </div>
+          <PreparedBySection
+            data={formData.preparedBy}
+            onChange={(preparedBy) => setFormData({ ...formData, preparedBy })}
+          />
         </div>
 
         <FormActions
