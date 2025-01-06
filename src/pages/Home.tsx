@@ -11,6 +11,24 @@ export const Home = () => {
         >
           Manage User Roles (Admin Only)
         </Link>
+        <Link 
+          to="/dashboard" 
+          className="text-blue-600 hover:text-blue-800 underline block"
+        >
+          Go to Dashboard
+        </Link>
+        <Link 
+          to="/risk-dashboard" 
+          className="text-blue-600 hover:text-blue-800 underline block"
+        >
+          View Risk Dashboard
+        </Link>
+        <Link 
+          to="/approver-dashboard" 
+          className="text-blue-600 hover:text-blue-800 underline block"
+        >
+          Approver Dashboard
+        </Link>
       </div>
     </div>
   );
