@@ -1,11 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Database } from "@/integrations/supabase/types";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { FormContainer } from "../form/FormContainer";
 import { Badge } from "@/components/ui/badge";
-import { RequestDetailsTable } from "./RequestDetailsTable";
-import { RequestActionButtons } from "./RequestActionButtons";
-import { useRequestApproval } from "@/hooks/useRequestApproval";
+import { Edit2, Trash2, Check, X } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
+import { useToast } from "@/hooks/use-toast";
 
 type RequestType = Database["public"]["Enums"]["request_type"];
 type ApproverRole = Database["public"]["Enums"]["approver_role"];
@@ -37,6 +43,9 @@ export const ExceptionRequestView = ({
   onEdit, 
   onDelete 
 }: ExceptionRequestViewProps) => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
   const { data: userRoles = [] } = useQuery({
     queryKey: ['userApproverRoles'],
     queryFn: async () => {
@@ -50,7 +59,65 @@ export const ExceptionRequestView = ({
 
   const isApprover = userRoles.includes(`${data.type}_approver` as ApproverRole);
   const canApprove = isApprover && ['pending', 'assigned'].includes(data.status);
-  const { handleApprove, handleReject } = useRequestApproval(data.id, onClose);
+
+  const handleApprove = async () => {
+    try {
+      const { error } = await supabase
+        .from('exception_requests')
+        .update({ status: 'approved' })
+        .eq('id', data.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Request Approved",
+        description: "The exception request has been approved successfully.",
+      });
+
+      // Invalidate relevant queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['pendingRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['requests'] });
+      
+      onClose();
+    } catch (error) {
+      console.error('Error approving request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to approve the request. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      const { error } = await supabase
+        .from('exception_requests')
+        .update({ status: 'rejected' })
+        .eq('id', data.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Request Rejected",
+        description: "The exception request has been rejected.",
+        variant: "destructive",
+      });
+
+      // Invalidate relevant queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['pendingRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['requests'] });
+      
+      onClose();
+    } catch (error) {
+      console.error('Error rejecting request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to reject the request. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <FormContainer
@@ -77,22 +144,79 @@ export const ExceptionRequestView = ({
           Submitted by {data.profiles?.email} on {new Date(data.submitted_at).toLocaleDateString()}
         </div>
 
-        <RequestDetailsTable
-          request={data.request || ''}
-          reason={data.reason || ''}
-          impact={data.impact || ''}
-          mitigatingFactors={data.mitigating_factors || ''}
-          residualRisk={data.residual_risk || ''}
-        />
+        <Table>
+          <TableBody>
+            <TableRow>
+              <TableCell className="font-medium w-1/4">Request</TableCell>
+              <TableCell>{data.request || 'N/A'}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">Reason</TableCell>
+              <TableCell>{data.reason || 'N/A'}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">Impact</TableCell>
+              <TableCell>{data.impact || 'N/A'}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">Mitigating Factors</TableCell>
+              <TableCell>{data.mitigating_factors || 'N/A'}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">Residual Risk</TableCell>
+              <TableCell className="capitalize">{data.residual_risk || 'N/A'}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
 
-        <RequestActionButtons
-          canApprove={canApprove}
-          onClose={onClose}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          onApprove={handleApprove}
-          onReject={handleReject}
-        />
+        <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="hover:bg-gray-50"
+          >
+            Close
+          </Button>
+          {canApprove && (
+            <>
+              <Button
+                variant="outline"
+                onClick={handleReject}
+                className="gap-2 bg-destructive/10 hover:bg-destructive/20 text-destructive"
+              >
+                <X className="h-4 w-4" />
+                Reject
+              </Button>
+              <Button
+                onClick={handleApprove}
+                className="gap-2 bg-success hover:bg-success/90 text-success-foreground"
+              >
+                <Check className="h-4 w-4" />
+                Approve
+              </Button>
+            </>
+          )}
+          {!canApprove && (
+            <>
+              <Button
+                variant="outline"
+                onClick={onEdit}
+                className="gap-2"
+              >
+                <Edit2 className="h-4 w-4" />
+                Edit
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={onDelete}
+                className="gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </Button>
+            </>
+          )}
+        </div>
       </div>
     </FormContainer>
   );

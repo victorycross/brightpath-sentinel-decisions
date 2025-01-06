@@ -7,17 +7,31 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { UserRoleSelect } from "./UserRoleSelect";
-import { ApproverRole, UserRole } from "@/types/approver";
+
+type ApproverRole = 
+  | "cyber_approver"
+  | "legal_approver"
+  | "independence_approver"
+  | "qmr_approver"
+  | "clientAcceptance_approver"
+  | "engagementRisk_approver"
+  | "auditFinding_approver"
+  | "data_approver"
+  | "ai_approver";
+
+type UserRole = {
+  id: string;
+  email: string | null;
+  roles: ApproverRole[];
+};
 
 interface UserRolesTableProps {
   users: UserRole[];
   onRoleChange: (userId: string, role: ApproverRole) => void;
-  onToggleStatus: (userId: string, currentStatus: boolean) => void;
 }
 
-export const UserRolesTable = ({ users, onRoleChange, onToggleStatus }: UserRolesTableProps) => {
+export const UserRolesTable = ({ users, onRoleChange }: UserRolesTableProps) => {
   return (
     <Table>
       <TableHeader>
@@ -25,7 +39,6 @@ export const UserRolesTable = ({ users, onRoleChange, onToggleStatus }: UserRole
           <TableHead>User Email</TableHead>
           <TableHead>Current Roles</TableHead>
           <TableHead>Add Role</TableHead>
-          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -45,14 +58,6 @@ export const UserRolesTable = ({ users, onRoleChange, onToggleStatus }: UserRole
               <UserRoleSelect 
                 onRoleChange={(role) => onRoleChange(user.id, role)} 
               />
-            </TableCell>
-            <TableCell>
-              <Button
-                variant="outline"
-                onClick={() => onToggleStatus(user.id, user.isDisabled)}
-              >
-                {user.isDisabled ? "Enable" : "Disable"}
-              </Button>
             </TableCell>
           </TableRow>
         ))}

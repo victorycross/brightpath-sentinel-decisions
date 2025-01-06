@@ -13,5 +13,4 @@ export type UserRole = {
   id: string;
   email: string | null;
   roles: ApproverRole[];
-  isDisabled: boolean;
 };

@@ -22,7 +22,7 @@ export const RequestTypeSelect = ({ value, onChange, disabled }: RequestTypeSele
         defaultValue={value}
         disabled={disabled}
       >
-        <SelectTrigger className="w-full bg-white border border-gray-200">
+        <SelectTrigger className="w-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
           <SelectValue placeholder="Select request type" />
         </SelectTrigger>
         <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-md">

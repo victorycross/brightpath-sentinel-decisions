@@ -24,19 +24,19 @@ interface UserRoleSelectProps {
 export const UserRoleSelect = ({ onRoleChange }: UserRoleSelectProps) => {
   return (
     <Select onValueChange={(value: ApproverRole) => onRoleChange(value)}>
-      <SelectTrigger className="w-[200px] bg-white border border-gray-200">
+      <SelectTrigger className="w-[200px]">
         <SelectValue placeholder="Select a role" />
       </SelectTrigger>
-      <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-md">
-        <SelectItem value="cyber_approver" className="hover:bg-gray-100 cursor-pointer">Cyber Approver</SelectItem>
-        <SelectItem value="legal_approver" className="hover:bg-gray-100 cursor-pointer">Legal Approver</SelectItem>
-        <SelectItem value="independence_approver" className="hover:bg-gray-100 cursor-pointer">Independence Approver</SelectItem>
-        <SelectItem value="qmr_approver" className="hover:bg-gray-100 cursor-pointer">QMR Approver</SelectItem>
-        <SelectItem value="clientAcceptance_approver" className="hover:bg-gray-100 cursor-pointer">Client Acceptance Approver</SelectItem>
-        <SelectItem value="engagementRisk_approver" className="hover:bg-gray-100 cursor-pointer">Engagement Risk Approver</SelectItem>
-        <SelectItem value="auditFinding_approver" className="hover:bg-gray-100 cursor-pointer">Audit Finding Approver</SelectItem>
-        <SelectItem value="data_approver" className="hover:bg-gray-100 cursor-pointer">Data Approver</SelectItem>
-        <SelectItem value="ai_approver" className="hover:bg-gray-100 cursor-pointer">AI Approver</SelectItem>
+      <SelectContent>
+        <SelectItem value="cyber_approver">Cyber Approver</SelectItem>
+        <SelectItem value="legal_approver">Legal Approver</SelectItem>
+        <SelectItem value="independence_approver">Independence Approver</SelectItem>
+        <SelectItem value="qmr_approver">QMR Approver</SelectItem>
+        <SelectItem value="clientAcceptance_approver">Client Acceptance Approver</SelectItem>
+        <SelectItem value="engagementRisk_approver">Engagement Risk Approver</SelectItem>
+        <SelectItem value="auditFinding_approver">Audit Finding Approver</SelectItem>
+        <SelectItem value="data_approver">Data Approver</SelectItem>
+        <SelectItem value="ai_approver">AI Approver</SelectItem>
       </SelectContent>
     </Select>
   );
