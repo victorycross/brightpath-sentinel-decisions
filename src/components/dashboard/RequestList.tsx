@@ -6,6 +6,7 @@ import { ExceptionRequestAuditLog } from "./ExceptionRequestAuditLog";
 import { useRequestOperations } from "@/hooks/useRequestOperations";
 import { LoadingState } from "./LoadingState";
 import { EmptyState } from "./EmptyState";
+import { ExceptionRequestForm } from "../ExceptionRequestForm";
 
 interface RequestListProps {
   requests: any[];
@@ -15,18 +16,23 @@ interface RequestListProps {
 
 export const RequestList = ({ requests, loading, showAuditLog = false }: RequestListProps) => {
   const [viewingRequest, setViewingRequest] = useState<any>(null);
+  const [editingRequest, setEditingRequest] = useState<any>(null);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const { handleDelete, fetchRequestDetails } = useRequestOperations();
 
-  const handleEdit = (id: string) => {
-    console.log("Edit request:", id);
-    // Implement edit functionality
+  const handleEdit = async (id: string) => {
+    const details = await fetchRequestDetails(id);
+    if (details) {
+      setEditingRequest(details);
+      setViewingRequest(null);
+    }
   };
 
   const handleView = async (id: string) => {
     const details = await fetchRequestDetails(id);
     if (details) {
       setViewingRequest(details);
+      setEditingRequest(null);
       
       if (showAuditLog) {
         try {
@@ -57,8 +63,22 @@ export const RequestList = ({ requests, loading, showAuditLog = false }: Request
     setAuditLogs([]);
   };
 
+  const handleCloseEdit = () => {
+    setEditingRequest(null);
+  };
+
   if (loading) return <LoadingState />;
   if (!requests.length) return <EmptyState />;
+
+  if (editingRequest) {
+    return (
+      <ExceptionRequestForm
+        initialData={editingRequest}
+        isEditing={true}
+        onClose={handleCloseEdit}
+      />
+    );
+  }
 
   if (viewingRequest) {
     return (
