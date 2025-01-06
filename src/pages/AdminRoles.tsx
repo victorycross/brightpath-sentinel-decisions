@@ -18,36 +18,31 @@ export const AdminRoles = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
+      console.log("Fetching users...");
 
-      // First, fetch all profiles
+      // First fetch all profiles
       const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
-        .select("*");
+        .select("id, email, is_disabled");
 
       if (profilesError) {
         console.error("Error fetching profiles:", profilesError);
-        toast({
-          title: "Error",
-          description: "Failed to fetch users",
-          variant: "destructive",
-        });
-        return;
+        throw profilesError;
       }
 
-      // Then fetch all roles in a separate query
+      console.log("Profiles fetched:", profiles);
+
+      // Then fetch all roles
       const { data: roles, error: rolesError } = await supabase
         .from("user_approver_roles")
-        .select("*");
+        .select("user_id, role");
 
       if (rolesError) {
         console.error("Error fetching roles:", rolesError);
-        toast({
-          title: "Error",
-          description: "Failed to fetch user roles",
-          variant: "destructive",
-        });
-        return;
+        throw rolesError;
       }
+
+      console.log("Roles fetched:", roles);
 
       // Map profiles to UserRole format
       const userRoles = profiles?.map((profile) => ({
@@ -59,12 +54,13 @@ export const AdminRoles = () => {
         isDisabled: profile.is_disabled || false,
       })) || [];
 
+      console.log("Mapped user roles:", userRoles);
       setUsers(userRoles);
     } catch (error) {
       console.error("Error in fetchUsers:", error);
       toast({
         title: "Error",
-        description: "An unexpected error occurred while fetching users",
+        description: "Failed to fetch users. Please try again.",
         variant: "destructive",
       });
     } finally {
