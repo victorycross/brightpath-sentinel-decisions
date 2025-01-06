@@ -96,30 +96,40 @@ export const AdminRoles = () => {
       return;
     }
 
-    // First, create the auth user
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-      email: newUserEmail,
-      email_confirm: true,
-      password: crypto.randomUUID().substring(0, 8), // Generate a random temporary password
-    });
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionData.session?.access_token}`,
+          },
+          body: JSON.stringify({ email: newUserEmail }),
+        }
+      );
 
-    if (authError) {
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create user');
+      }
+
+      toast({
+        title: "Success",
+        description: "User added successfully. A temporary password has been set.",
+      });
+
+      setNewUserEmail("");
+      fetchUsers();
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to create user: " + authError.message,
+        description: error.message,
         variant: "destructive",
       });
-      return;
     }
-
-    // The profile will be created automatically by the database trigger
-    toast({
-      title: "Success",
-      description: "User added successfully. A temporary password has been set.",
-    });
-
-    setNewUserEmail("");
-    fetchUsers();
   };
 
   const handleToggleUserStatus = async (userId: string, currentStatus: boolean) => {
