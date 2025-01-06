@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -27,6 +27,18 @@ export const ExceptionRequestForm = ({
   isEditing = false 
 }: ExceptionRequestFormProps) => {
   const { toast } = useToast();
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+      }
+    };
+    getCurrentUser();
+  }, []);
+
   const [formData, setFormData] = useState({
     type: initialData?.type || "",
     title: initialData?.title || "",
@@ -107,6 +119,15 @@ export const ExceptionRequestForm = ({
       return;
     }
 
+    if (!userId) {
+      toast({
+        title: "Authentication Error",
+        description: "You must be logged in to submit a request",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       if (isEditing) {
         const { error } = await supabase
@@ -120,7 +141,8 @@ export const ExceptionRequestForm = ({
             mitigating_factors: formData.mitigatingFactors,
             residual_risk: formData.residualRisk,
           })
-          .eq('id', initialData.id);
+          .eq('id', initialData.id)
+          .eq('submitted_by', userId); // Ensure user can only edit their own requests
 
         if (error) throw error;
       } else {
@@ -134,6 +156,7 @@ export const ExceptionRequestForm = ({
             impact: formData.impact,
             mitigating_factors: formData.mitigatingFactors,
             residual_risk: formData.residualRisk,
+            submitted_by: userId,
           });
 
         if (error) throw error;
@@ -160,11 +183,21 @@ export const ExceptionRequestForm = ({
   };
 
   const handleDelete = async () => {
+    if (!userId) {
+      toast({
+        title: "Authentication Error",
+        description: "You must be logged in to delete a request",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('exception_requests')
         .delete()
-        .eq('id', initialData.id);
+        .eq('id', initialData.id)
+        .eq('submitted_by', userId); // Ensure user can only delete their own requests
 
       if (error) throw error;
 
