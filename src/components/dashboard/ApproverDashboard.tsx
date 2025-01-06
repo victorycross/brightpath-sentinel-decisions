@@ -17,7 +17,7 @@ export const ApproverDashboard = () => {
     },
   });
 
-  const { data: pendingRequests = [], isLoading } = useQuery({
+  const { data: pendingRequests = [], isLoading: pendingLoading } = useQuery({
     queryKey: ['pendingRequests', approverRoles],
     queryFn: async () => {
       if (!approverRoles.length) return [];
@@ -51,6 +51,40 @@ export const ApproverDashboard = () => {
     enabled: approverRoles.length > 0,
   });
 
+  const { data: approvedRequests = [], isLoading: approvedLoading } = useQuery({
+    queryKey: ['approvedRequests', approverRoles],
+    queryFn: async () => {
+      if (!approverRoles.length) return [];
+
+      const types = approverRoles.map(role => role.replace('_approver', ''));
+      
+      const { data, error } = await supabase
+        .from('exception_requests')
+        .select(`
+          id,
+          title,
+          type,
+          status,
+          request,
+          reason,
+          impact,
+          mitigating_factors,
+          residual_risk,
+          submitted_at,
+          profiles (
+            email
+          )
+        `)
+        .in('type', types)
+        .eq('status', 'approved')
+        .order('submitted_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: approverRoles.length > 0,
+  });
+
   if (!approverRoles.length) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -72,15 +106,15 @@ export const ApproverDashboard = () => {
         <TabsContent value="pending">
           <RequestList
             requests={pendingRequests}
-            loading={isLoading}
+            loading={pendingLoading}
             showAuditLog={true}
           />
         </TabsContent>
         
         <TabsContent value="approved">
           <RequestList
-            requests={[]}
-            loading={false}
+            requests={approvedRequests}
+            loading={approvedLoading}
             showAuditLog={true}
           />
         </TabsContent>
