@@ -7,32 +7,20 @@ import Dashboard from "@/pages/Dashboard";
 import Index from "@/pages/Index";
 import RiskDashboard from "@/pages/RiskDashboard";
 import ApproverDashboard from "@/pages/ApproverDashboard";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/navigation/AppSidebar";
 
 const App = () => {
   return (
     <Router>
-      <SidebarProvider>
-        <div className="flex min-h-screen w-full">
-          <AppSidebar />
-          <main className="flex-1">
-            <div className="container">
-              <SidebarTrigger className="mb-4" />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/admin/roles" element={<AdminRoles />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/risk-dashboard" element={<RiskDashboard />} />
-                <Route path="/approver-dashboard" element={<ApproverDashboard />} />
-              </Routes>
-            </div>
-          </main>
-        </div>
-      </SidebarProvider>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/admin/roles" element={<AdminRoles />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/risk-dashboard" element={<RiskDashboard />} />
+        <Route path="/approver-dashboard" element={<ApproverDashboard />} />
+      </Routes>
     </Router>
   );
 };
