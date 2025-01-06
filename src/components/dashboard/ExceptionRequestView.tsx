@@ -4,13 +4,12 @@ import {
   TableCell,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { FormContainer } from "../form/FormContainer";
 import { Badge } from "@/components/ui/badge";
-import { Edit2, Trash2, Check, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
+import { RequestViewActions } from "./RequestViewActions";
 
 type RequestType = Database["public"]["Enums"]["request_type"];
 type ApproverRole = Database["public"]["Enums"]["approver_role"];
@@ -130,54 +129,14 @@ export const ExceptionRequestView = ({
           </TableBody>
         </Table>
 
-        <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="hover:bg-gray-50"
-          >
-            Close
-          </Button>
-          {canApprove && (
-            <>
-              <Button
-                variant="outline"
-                onClick={handleReject}
-                className="gap-2 bg-destructive/10 hover:bg-destructive/20 text-destructive"
-              >
-                <X className="h-4 w-4" />
-                Reject
-              </Button>
-              <Button
-                onClick={handleApprove}
-                className="gap-2 bg-success hover:bg-success/90"
-              >
-                <Check className="h-4 w-4" />
-                Approve
-              </Button>
-            </>
-          )}
-          {!canApprove && (
-            <>
-              <Button
-                variant="outline"
-                onClick={onEdit}
-                className="gap-2"
-              >
-                <Edit2 className="h-4 w-4" />
-                Edit
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={onDelete}
-                className="gap-2"
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete
-              </Button>
-            </>
-          )}
-        </div>
+        <RequestViewActions
+          canApprove={canApprove}
+          onClose={onClose}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
       </div>
     </FormContainer>
   );

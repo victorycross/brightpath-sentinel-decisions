@@ -35,25 +35,21 @@ export const RequestList = ({ requests, loading, showAuditLog = false }: Request
       setEditingRequest(null);
       
       if (showAuditLog) {
-        try {
-          const { data } = await supabase
-            .from('exception_request_audit_logs')
-            .select(`
-              id,
-              action,
-              created_at,
-              changes,
-              profiles (
-                email
-              )
-            `)
-            .eq('request_id', id)
-            .order('created_at', { ascending: false });
+        const { data } = await supabase
+          .from('exception_request_audit_logs')
+          .select(`
+            id,
+            action,
+            created_at,
+            changes,
+            profiles (
+              email
+            )
+          `)
+          .eq('request_id', id)
+          .order('created_at', { ascending: false });
 
-          setAuditLogs(data || []);
-        } catch (err) {
-          console.error('Error fetching audit logs:', err);
-        }
+        setAuditLogs(data || []);
       }
     }
   };
