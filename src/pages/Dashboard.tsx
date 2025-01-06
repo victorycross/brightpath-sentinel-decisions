@@ -5,6 +5,7 @@ import { LoadingState } from "@/components/dashboard/LoadingState";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RequestManager } from "@/components/dashboard/RequestManager";
 import { EmptyState } from "@/components/dashboard/EmptyState";
+import { DashboardActivityLog } from "@/components/dashboard/DashboardActivityLog";
 
 type ExceptionRequest = {
   id: string;
@@ -79,7 +80,10 @@ const Dashboard = () => {
         {requests.length === 0 ? (
           <EmptyState />
         ) : (
-          <RequestManager requests={requests} setRequests={setRequests} />
+          <>
+            <RequestManager requests={requests} setRequests={setRequests} />
+            <DashboardActivityLog />
+          </>
         )}
       </div>
     </div>
