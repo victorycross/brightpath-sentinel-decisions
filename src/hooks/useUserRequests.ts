@@ -7,6 +7,11 @@ export type ExceptionRequest = {
   title: string;
   type: string;
   status: string;
+  request?: string;
+  reason?: string;
+  impact?: string;
+  mitigating_factors?: string;
+  residual_risk?: string;
   submitted_at: string;
   profiles: {
     email: string;
@@ -31,6 +36,11 @@ export const useUserRequests = () => {
             title,
             type,
             status,
+            request,
+            reason,
+            impact,
+            mitigating_factors,
+            residual_risk,
             submitted_at,
             profiles (
               email
