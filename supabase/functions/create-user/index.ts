@@ -52,6 +52,20 @@ serve(async (req) => {
       )
     }
 
+    // Check if user already exists
+    const { data: existingUser } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('email', email)
+      .single()
+
+    if (existingUser) {
+      return new Response(
+        JSON.stringify({ error: 'A user with this email already exists' }),
+        { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Create the user with a random password
     const password = crypto.randomUUID().substring(0, 8)
     const { data: newUser, error: createError } = await supabase.auth.admin.createUser({

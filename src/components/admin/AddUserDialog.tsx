@@ -2,7 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -10,6 +10,7 @@ export const AddUserDialog = ({ onUserAdded }: { onUserAdded: () => void }) => {
   const [newUserEmail, setNewUserEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [open, setOpen] = useState(false);
   const { toast } = useToast();
 
   const handleAddUser = async () => {
@@ -23,7 +24,6 @@ export const AddUserDialog = ({ onUserAdded }: { onUserAdded: () => void }) => {
     }
 
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
       const response = await supabase.functions.invoke('create-user', {
         body: { 
           email: newUserEmail,
@@ -32,8 +32,23 @@ export const AddUserDialog = ({ onUserAdded }: { onUserAdded: () => void }) => {
         },
       });
 
-      if (!response.data) {
-        throw new Error(response.error?.message || 'Failed to create user');
+      if (response.error) {
+        // Check if it's a duplicate user error
+        const errorMessage = response.error.message;
+        if (errorMessage.includes('already exists')) {
+          toast({
+            title: "Error",
+            description: "A user with this email already exists",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        }
+        return;
       }
 
       toast({
@@ -44,8 +59,9 @@ export const AddUserDialog = ({ onUserAdded }: { onUserAdded: () => void }) => {
       setNewUserEmail("");
       setFirstName("");
       setLastName("");
+      setOpen(false);
       onUserAdded();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
@@ -55,13 +71,16 @@ export const AddUserDialog = ({ onUserAdded }: { onUserAdded: () => void }) => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>Add New User</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New User</DialogTitle>
+          <DialogDescription>
+            Add a new user to the system. They will receive an email with their login credentials.
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
