@@ -1,4 +1,4 @@
-import { Home, ListTodo, ShieldCheck, BarChart3, Users } from "lucide-react"
+import { Home, ListTodo, ShieldCheck, BarChart3 } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -31,11 +31,6 @@ const menuItems = [
     title: "Risk Dashboard",
     url: "/risk-dashboard",
     icon: BarChart3,
-  },
-  {
-    title: "Admin",
-    url: "/admin/roles",
-    icon: Users,
   },
 ]
 
