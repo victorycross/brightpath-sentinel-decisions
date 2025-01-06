@@ -2,18 +2,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import { UserRolesTable } from "@/components/admin/UserRolesTable";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ApproverRole, UserRole } from "@/types/approver";
+import { UserRole, ApproverRole } from "@/types/approver";
+import { AddUserDialog } from "@/components/admin/AddUserDialog";
+import { UserManagementTabs } from "@/components/admin/UserManagementTabs";
 
 export const AdminRoles = () => {
   const [users, setUsers] = useState<UserRole[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newUserEmail, setNewUserEmail] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -86,52 +81,6 @@ export const AdminRoles = () => {
     fetchUsers();
   };
 
-  const handleAddUser = async () => {
-    if (!newUserEmail) {
-      toast({
-        title: "Error",
-        description: "Please enter an email address",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const response = await fetch(
-        `${supabase.supabaseUrl}/functions/v1/create-user`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionData.session?.access_token}`,
-          },
-          body: JSON.stringify({ email: newUserEmail }),
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to create user');
-      }
-
-      toast({
-        title: "Success",
-        description: "User added successfully. A temporary password has been set.",
-      });
-
-      setNewUserEmail("");
-      fetchUsers();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleToggleUserStatus = async (userId: string, currentStatus: boolean) => {
     const { error } = await supabase
       .from("profiles")
@@ -167,50 +116,13 @@ export const AdminRoles = () => {
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">User Management</h1>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>Add New User</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New User</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={newUserEmail}
-                  onChange={(e) => setNewUserEmail(e.target.value)}
-                  placeholder="user@example.com"
-                />
-              </div>
-              <Button onClick={handleAddUser}>Add User</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <AddUserDialog onUserAdded={fetchUsers} />
       </div>
-      <Tabs defaultValue="active" className="w-full">
-        <TabsList>
-          <TabsTrigger value="active">Active Users</TabsTrigger>
-          <TabsTrigger value="disabled">Disabled Users</TabsTrigger>
-        </TabsList>
-        <TabsContent value="active">
-          <UserRolesTable
-            users={users.filter(user => !user.isDisabled)}
-            onRoleChange={handleRoleChange}
-            onToggleStatus={handleToggleUserStatus}
-          />
-        </TabsContent>
-        <TabsContent value="disabled">
-          <UserRolesTable
-            users={users.filter(user => user.isDisabled)}
-            onRoleChange={handleRoleChange}
-            onToggleStatus={handleToggleUserStatus}
-          />
-        </TabsContent>
-      </Tabs>
+      <UserManagementTabs
+        users={users}
+        onRoleChange={handleRoleChange}
+        onToggleStatus={handleToggleUserStatus}
+      />
     </div>
   );
 };
