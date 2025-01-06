@@ -99,7 +99,7 @@ export const AdminRoles = () => {
     try {
       const { data: sessionData } = await supabase.auth.getSession();
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`,
+        `${supabase.supabaseUrl}/functions/v1/create-user`,
         {
           method: 'POST',
           headers: {
