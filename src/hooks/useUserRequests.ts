@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -19,52 +19,43 @@ export type ExceptionRequest = {
 };
 
 export const useUserRequests = () => {
-  const [requests, setRequests] = useState<ExceptionRequest[]>([]);
-  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const fetchUserRequests = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+  const { data: requests = [], isLoading: loading } = useQuery({
+    queryKey: ['userRequests'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('exception_requests')
+        .select(`
+          id,
+          title,
+          type,
+          status,
+          request,
+          reason,
+          impact,
+          mitigating_factors,
+          residual_risk,
+          submitted_at,
+          profiles (
+            email
+          )
+        `)
+        .eq('submitted_by', (await supabase.auth.getUser()).data.user?.id)
+        .order('submitted_at', { ascending: false });
 
-        const { data, error } = await supabase
-          .from('exception_requests')
-          .select(`
-            id,
-            title,
-            type,
-            status,
-            request,
-            reason,
-            impact,
-            mitigating_factors,
-            residual_risk,
-            submitted_at,
-            profiles (
-              email
-            )
-          `)
-          .eq('submitted_by', user.id)
-          .order('submitted_at', { ascending: false });
-
-        if (error) throw error;
-        setRequests(data || []);
-      } catch (err) {
-        console.error('Error fetching user requests:', err);
+      if (error) {
         toast({
           title: "Error",
-          description: "Failed to load your requests",
+          description: "Failed to fetch requests",
           variant: "destructive",
         });
-      } finally {
-        setLoading(false);
+        throw error;
       }
-    };
 
-    fetchUserRequests();
-  }, [toast]);
+      return data || [];
+    },
+  });
 
   const handleDelete = async (id: string) => {
     try {
@@ -75,24 +66,19 @@ export const useUserRequests = () => {
 
       if (error) throw error;
 
-      setRequests(requests.filter(request => request.id !== id));
       toast({
-        title: "Request Deleted",
-        description: "Your exception request has been deleted.",
+        title: "Success",
+        description: "Request deleted successfully",
       });
     } catch (err) {
       console.error('Error deleting request:', err);
       toast({
         title: "Error",
-        description: "Failed to delete the request",
+        description: "Failed to delete request",
         variant: "destructive",
       });
     }
   };
 
-  return {
-    requests,
-    loading,
-    handleDelete,
-  };
+  return { requests, loading, handleDelete };
 };
