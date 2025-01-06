@@ -22,47 +22,9 @@ type ExceptionRequest = {
 };
 
 const Dashboard = () => {
-  const [requests, setRequests] = useState<ExceptionRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('exception_requests')
-          .select(`
-            id,
-            title,
-            type,
-            status,
-            submitted_at,
-            profiles (
-              email
-            )
-          `)
-          .in('status', ['in_process', 'approved'])
-          .order('submitted_at', { ascending: false });
-
-        if (error) throw error;
-
-        setRequests(data || []);
-      } catch (err) {
-        console.error('Error fetching requests:', err);
-        setError('Failed to load requests');
-        toast({
-          title: "Error",
-          description: "Failed to load exception requests",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRequests();
-  }, [toast]);
 
   if (isLoading) {
     return <LoadingState />;
@@ -92,14 +54,7 @@ const Dashboard = () => {
             <TabsTrigger value="my">My Requests</TabsTrigger>
           </TabsList>
           <TabsContent value="all">
-            {requests.length === 0 ? (
-              <EmptyState />
-            ) : (
-              <>
-                <RequestManager requests={requests} setRequests={setRequests} />
-                <DashboardActivityLog />
-              </>
-            )}
+            <RequestManager />
           </TabsContent>
           <TabsContent value="my">
             <MyRequestsList />

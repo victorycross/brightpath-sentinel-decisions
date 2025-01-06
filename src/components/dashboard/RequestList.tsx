@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { ExceptionRequestCard } from "./ExceptionRequestCard";
 import { ExceptionRequestView } from "./ExceptionRequestView";
 import { ExceptionRequestAuditLog } from "./ExceptionRequestAuditLog";
