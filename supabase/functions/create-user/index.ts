@@ -42,8 +42,8 @@ serve(async (req) => {
       )
     }
 
-    // Get the email from the request body
-    const { email } = await req.json()
+    // Get the user details from the request body
+    const { email, firstName, lastName } = await req.json()
     
     if (!email) {
       return new Response(
@@ -65,6 +65,21 @@ serve(async (req) => {
         JSON.stringify({ error: createError.message }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
+    }
+
+    // Update the profile with first and last name
+    if (newUser.user) {
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ 
+          first_name: firstName,
+          last_name: lastName
+        })
+        .eq('id', newUser.user.id)
+
+      if (updateError) {
+        console.error('Error updating profile:', updateError)
+      }
     }
 
     return new Response(

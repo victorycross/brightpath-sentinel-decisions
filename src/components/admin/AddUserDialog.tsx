@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 
 export const AddUserDialog = ({ onUserAdded }: { onUserAdded: () => void }) => {
   const [newUserEmail, setNewUserEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const { toast } = useToast();
 
   const handleAddUser = async () => {
@@ -22,22 +24,16 @@ export const AddUserDialog = ({ onUserAdded }: { onUserAdded: () => void }) => {
 
     try {
       const { data: sessionData } = await supabase.auth.getSession();
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL || "https://alvmdamrwbfkvihgoazt.supabase.co"}/functions/v1/create-user`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionData.session?.access_token}`,
-          },
-          body: JSON.stringify({ email: newUserEmail }),
-        }
-      );
+      const response = await supabase.functions.invoke('create-user', {
+        body: { 
+          email: newUserEmail,
+          firstName,
+          lastName
+        },
+      });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to create user');
+      if (!response.data) {
+        throw new Error(response.error?.message || 'Failed to create user');
       }
 
       toast({
@@ -46,6 +42,8 @@ export const AddUserDialog = ({ onUserAdded }: { onUserAdded: () => void }) => {
       });
 
       setNewUserEmail("");
+      setFirstName("");
+      setLastName("");
       onUserAdded();
     } catch (error) {
       toast({
@@ -66,6 +64,24 @@ export const AddUserDialog = ({ onUserAdded }: { onUserAdded: () => void }) => {
           <DialogTitle>Add New User</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <Label htmlFor="firstName">First Name</Label>
+            <Input
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="John"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Doe"
+            />
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
