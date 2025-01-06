@@ -125,6 +125,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_approver_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["approver_role"]
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["approver_role"]
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["approver_role"]
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_approver_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -133,8 +162,23 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      approver_role:
+        | "cyber_approver"
+        | "legal_approver"
+        | "independence_approver"
+        | "qmr_approver"
+        | "clientAcceptance_approver"
+        | "engagementRisk_approver"
+        | "auditFinding_approver"
+        | "data_approver"
+        | "ai_approver"
       audit_action: "created" | "updated" | "deleted" | "status_changed"
-      request_status: "pending" | "in_process" | "approved" | "rejected"
+      request_status:
+        | "pending"
+        | "assigned"
+        | "in_process"
+        | "approved"
+        | "rejected"
       request_type:
         | "cyber"
         | "legal"
