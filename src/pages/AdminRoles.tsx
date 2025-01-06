@@ -20,7 +20,7 @@ export const AdminRoles = () => {
       setLoading(true);
       console.log("Fetching users...");
 
-      // First fetch all profiles
+      // Fetch profiles first
       const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
         .select("id, email, is_disabled");
@@ -30,9 +30,13 @@ export const AdminRoles = () => {
         throw profilesError;
       }
 
+      if (!profiles) {
+        throw new Error("No profiles data received");
+      }
+
       console.log("Profiles fetched:", profiles);
 
-      // Then fetch all roles
+      // Then fetch roles
       const { data: roles, error: rolesError } = await supabase
         .from("user_approver_roles")
         .select("user_id, role");
@@ -42,17 +46,21 @@ export const AdminRoles = () => {
         throw rolesError;
       }
 
+      if (!roles) {
+        throw new Error("No roles data received");
+      }
+
       console.log("Roles fetched:", roles);
 
       // Map profiles to UserRole format
-      const userRoles = profiles?.map((profile) => ({
+      const userRoles = profiles.map((profile) => ({
         id: profile.id,
         email: profile.email || "",
         roles: roles
-          ?.filter((role) => role.user_id === profile.id)
+          .filter((role) => role.user_id === profile.id)
           .map((role) => role.role as ApproverRole) || [],
         isDisabled: profile.is_disabled || false,
-      })) || [];
+      }));
 
       console.log("Mapped user roles:", userRoles);
       setUsers(userRoles);
