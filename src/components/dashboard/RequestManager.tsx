@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ExceptionRequestCard } from "./ExceptionRequestCard";
 import { ExceptionRequestForm } from "@/components/ExceptionRequestForm";
+import { ExceptionRequestView } from "./ExceptionRequestView";
 import { ExceptionRequestAuditLog } from "./ExceptionRequestAuditLog";
 
 type ExceptionRequest = {
@@ -40,6 +41,7 @@ interface RequestManagerProps {
 
 export const RequestManager = ({ requests, setRequests }: RequestManagerProps) => {
   const [editingRequest, setEditingRequest] = useState<ExceptionRequest | null>(null);
+  const [viewingRequest, setViewingRequest] = useState<ExceptionRequest | null>(null);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const { toast } = useToast();
 
@@ -71,7 +73,7 @@ export const RequestManager = ({ requests, setRequests }: RequestManagerProps) =
     }
   };
 
-  const handleEdit = async (id: string) => {
+  const handleView = async (id: string) => {
     try {
       const { data, error } = await supabase
         .from('exception_requests')
@@ -97,7 +99,7 @@ export const RequestManager = ({ requests, setRequests }: RequestManagerProps) =
 
       if (error) throw error;
 
-      setEditingRequest(data);
+      setViewingRequest(data);
       await fetchAuditLogs(id);
     } catch (err) {
       console.error('Error fetching request details:', err);
@@ -106,6 +108,14 @@ export const RequestManager = ({ requests, setRequests }: RequestManagerProps) =
         description: "Failed to load request details",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleEdit = (id: string) => {
+    const request = viewingRequest || requests.find(r => r.id === id);
+    if (request) {
+      setEditingRequest(request);
+      setViewingRequest(null);
     }
   };
 
@@ -119,6 +129,7 @@ export const RequestManager = ({ requests, setRequests }: RequestManagerProps) =
       if (error) throw error;
 
       setRequests(requests.filter(request => request.id !== id));
+      setViewingRequest(null);
       toast({
         title: "Request Deleted",
         description: "The exception request has been deleted.",
@@ -138,6 +149,11 @@ export const RequestManager = ({ requests, setRequests }: RequestManagerProps) =
     setAuditLogs([]);
   };
 
+  const handleCloseView = () => {
+    setViewingRequest(null);
+    setAuditLogs([]);
+  };
+
   if (editingRequest) {
     return (
       <div>
@@ -145,6 +161,20 @@ export const RequestManager = ({ requests, setRequests }: RequestManagerProps) =
           initialData={editingRequest}
           onClose={handleCloseEdit}
           isEditing={true}
+        />
+        <ExceptionRequestAuditLog logs={auditLogs} />
+      </div>
+    );
+  }
+
+  if (viewingRequest) {
+    return (
+      <div>
+        <ExceptionRequestView
+          data={viewingRequest}
+          onClose={handleCloseView}
+          onEdit={() => handleEdit(viewingRequest.id)}
+          onDelete={() => handleDelete(viewingRequest.id)}
         />
         <ExceptionRequestAuditLog logs={auditLogs} />
       </div>
@@ -159,6 +189,7 @@ export const RequestManager = ({ requests, setRequests }: RequestManagerProps) =
           request={request}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onView={handleView}
         />
       ))}
     </div>

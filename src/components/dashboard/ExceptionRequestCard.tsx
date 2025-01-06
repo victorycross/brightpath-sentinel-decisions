@@ -24,6 +24,7 @@ interface ExceptionRequestCardProps {
   request: ExceptionRequest;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  onView: (id: string) => void;
 }
 
 const getStatusColor = (status: string) => {
@@ -50,9 +51,13 @@ export const ExceptionRequestCard = ({
   request,
   onEdit,
   onDelete,
+  onView,
 }: ExceptionRequestCardProps) => {
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card 
+      className="hover:shadow-md transition-shadow cursor-pointer"
+      onClick={() => onView(request.id)}
+    >
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
@@ -72,7 +77,7 @@ export const ExceptionRequestCard = ({
           <Badge variant="outline" className="capitalize">
             {request.type}
           </Badge>
-          <div className="space-x-2">
+          <div className="space-x-2" onClick={(e) => e.stopPropagation()}>
             <Button
               variant="outline"
               size="sm"
