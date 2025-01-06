@@ -108,19 +108,31 @@ export type Database = {
         Row: {
           created_at: string
           email: string | null
+          first_name: string | null
           id: string
+          is_admin: boolean | null
+          is_disabled: boolean | null
+          last_name: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           email?: string | null
+          first_name?: string | null
           id: string
+          is_admin?: boolean | null
+          is_disabled?: boolean | null
+          last_name?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           email?: string | null
+          first_name?: string | null
           id?: string
+          is_admin?: boolean | null
+          is_disabled?: boolean | null
+          last_name?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -159,7 +171,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: {
+          user_uid: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       approver_role:

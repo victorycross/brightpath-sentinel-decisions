@@ -1,37 +1,24 @@
-import { useToast } from "@/hooks/use-toast";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { RequestManager } from "@/components/dashboard/RequestManager";
-import { DashboardActivityLog } from "@/components/dashboard/DashboardActivityLog";
-import { MyRequestsList } from "@/components/dashboard/MyRequestsList";
-import { ApproverDashboard } from "@/components/dashboard/ApproverDashboard";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
+import { RequestManager } from "@/components/dashboard/RequestManager"
+import { DashboardActivityLog } from "@/components/dashboard/DashboardActivityLog"
+import { SidebarProvider } from "@/components/ui/sidebar"
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar"
 
 const Dashboard = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <DashboardHeader />
-        
-        <Tabs defaultValue="all" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="all">All Requests</TabsTrigger>
-            <TabsTrigger value="my">My Requests</TabsTrigger>
-            <TabsTrigger value="approver">Approver View</TabsTrigger>
-          </TabsList>
-          <TabsContent value="all">
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <DashboardSidebar />
+        <main className="flex-1 p-8 bg-gray-50">
+          <DashboardHeader />
+          <div className="mt-8">
             <RequestManager />
             <DashboardActivityLog />
-          </TabsContent>
-          <TabsContent value="my">
-            <MyRequestsList />
-          </TabsContent>
-          <TabsContent value="approver">
-            <ApproverDashboard />
-          </TabsContent>
-        </Tabs>
+          </div>
+        </main>
       </div>
-    </div>
-  );
-};
+    </SidebarProvider>
+  )
+}
 
-export default Dashboard;
+export default Dashboard
