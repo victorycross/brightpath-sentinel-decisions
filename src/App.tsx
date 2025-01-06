@@ -3,6 +3,7 @@ import Index from "./pages/Index";
 import Guidance from "./pages/Guidance";
 import Dashboard from "./pages/Dashboard";
 import RiskDashboard from "./pages/RiskDashboard";
+import ApproverDashboard from "./pages/ApproverDashboard";
 import { Toaster } from "@/components/ui/toaster";
 import {
   NavigationMenu,
