@@ -9,46 +9,40 @@ import {
 import { Button } from "@/components/ui/button";
 import { Edit2, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-// Mock data for demonstration
-const mockRequests = [
-  {
-    id: 1,
-    title: "Cloud Service Provider Exception",
-    type: "technology",
-    status: "pending",
-    submittedAt: "2024-02-20",
-    submittedBy: "John Doe",
-  },
-  {
-    id: 2,
-    title: "Third-party Vendor Assessment",
-    type: "legal",
-    status: "approved",
-    submittedAt: "2024-02-19",
-    submittedBy: "Jane Smith",
-  },
-];
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case "approved":
-      return "bg-success text-success-foreground";
-    case "rejected":
-      return "bg-error text-error-foreground";
-    case "pending":
-      return "bg-warning text-warning-foreground";
-    default:
-      return "bg-secondary text-secondary-foreground";
-  }
-};
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const RequestList = () => {
   const { toast } = useToast();
 
-  const handleEdit = (id: number) => {
+  const { data: requests = [], isLoading } = useQuery({
+    queryKey: ['requests'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('exception_requests')
+        .select(`
+          id,
+          title,
+          type,
+          status,
+          submitted_at,
+          profiles (
+            email
+          )
+        `)
+        .order('submitted_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching requests:', error);
+        throw error;
+      }
+
+      return data || [];
+    },
+  });
+
+  const handleEdit = async (id: number) => {
     console.log("Editing request:", id);
-    // Log the edit action
     console.log(`[${new Date().toISOString()}] Request ${id} opened for editing`);
     toast({
       title: "Edit Mode",
@@ -56,27 +50,58 @@ export const RequestList = () => {
     });
   };
 
-  const handleDelete = (id: number) => {
-    console.log("Deleting request:", id);
-    // Log the delete action
-    console.log(`[${new Date().toISOString()}] Request ${id} deleted`);
-    toast({
-      title: "Request Deleted",
-      description: "The exception request has been deleted.",
-      variant: "destructive",
-    });
+  const handleDelete = async (id: number) => {
+    try {
+      const { error } = await supabase
+        .from('exception_requests')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      console.log(`[${new Date().toISOString()}] Request ${id} deleted`);
+      toast({
+        title: "Request Deleted",
+        description: "The exception request has been deleted.",
+        variant: "destructive",
+      });
+    } catch (error) {
+      console.error('Error deleting request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the request.",
+        variant: "destructive",
+      });
+    }
   };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "approved":
+        return "bg-success text-success-foreground";
+      case "rejected":
+        return "bg-error text-error-foreground";
+      case "pending":
+        return "bg-warning text-warning-foreground";
+      default:
+        return "bg-secondary text-secondary-foreground";
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="space-y-4">
-      {mockRequests.map((request) => (
+      {requests.map((request) => (
         <Card key={request.id} className="hover:shadow-md transition-shadow">
           <CardHeader>
             <div className="flex justify-between items-start">
               <div>
                 <CardTitle className="text-xl">{request.title}</CardTitle>
                 <CardDescription>
-                  Submitted by {request.submittedBy} on {request.submittedAt}
+                  Submitted by {request.profiles?.email} on {new Date(request.submitted_at).toLocaleDateString()}
                 </CardDescription>
               </div>
               <Badge className={getStatusColor(request.status)}>
