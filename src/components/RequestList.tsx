@@ -41,7 +41,7 @@ export const RequestList = () => {
     },
   });
 
-  const handleEdit = async (id: number) => {
+  const handleEdit = async (id: string) => {
     console.log("Editing request:", id);
     console.log(`[${new Date().toISOString()}] Request ${id} opened for editing`);
     toast({
@@ -50,7 +50,7 @@ export const RequestList = () => {
     });
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
       const { error } = await supabase
         .from('exception_requests')
