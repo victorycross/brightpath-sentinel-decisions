@@ -20,10 +20,21 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
+type ApproverRole = 
+  | "cyber_approver"
+  | "legal_approver"
+  | "independence_approver"
+  | "qmr_approver"
+  | "clientAcceptance_approver"
+  | "engagementRisk_approver"
+  | "auditFinding_approver"
+  | "data_approver"
+  | "ai_approver";
+
 type UserRole = {
   id: string;
   email: string | null;
-  roles: string[];
+  roles: ApproverRole[];
 };
 
 export const AdminRoles = () => {
@@ -69,17 +80,17 @@ export const AdminRoles = () => {
       roles:
         roles
           ?.filter((role) => role.user_id === profile.id)
-          .map((role) => role.role) || [],
+          .map((role) => role.role as ApproverRole) || [],
     })) || [];
 
     setUsers(userRoles);
     setLoading(false);
   };
 
-  const handleRoleChange = async (userId: string, role: string) => {
+  const handleRoleChange = async (userId: string, role: ApproverRole) => {
     const { error } = await supabase
       .from("user_approver_roles")
-      .insert([{ user_id: userId, role: role }]);
+      .insert({ user_id: userId, role: role });
 
     if (error) {
       toast({
@@ -131,7 +142,7 @@ export const AdminRoles = () => {
                 </TableCell>
                 <TableCell>
                   <Select
-                    onValueChange={(value) => handleRoleChange(user.id, value)}
+                    onValueChange={(value: ApproverRole) => handleRoleChange(user.id, value)}
                   >
                     <SelectTrigger className="w-[200px]">
                       <SelectValue placeholder="Select a role" />
