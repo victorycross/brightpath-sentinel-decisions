@@ -1,34 +1,14 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-
-interface Approver {
-  title: string;
-  name: string;
-}
-
-interface FormData {
-  type: string;
-  title: string;
-  request: string;
-  reason: string;
-  impact: string;
-  mitigatingFactors: string;
-  residualRisk: string;
-  approvers: Approver[];
-  preparedBy: {
-    name: string;
-    title: string;
-    email: string;
-  };
-  incidentReference: string;
-}
+import { FormData, RequestType } from "@/types/exceptionForm";
+import { getApproversByType } from "@/utils/approverMapping";
 
 export const useExceptionForm = (initialData?: any, isEditing = false) => {
   const { toast } = useToast();
   const [userId, setUserId] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
-    type: initialData?.type || "",
+    type: (initialData?.type as RequestType) || "cyber",
     title: initialData?.title || "",
     request: initialData?.request || "",
     reason: initialData?.reason || "",
@@ -63,7 +43,7 @@ export const useExceptionForm = (initialData?: any, isEditing = false) => {
         description: "Please fill in all required fields",
         variant: "destructive",
       });
-      return;
+      return false;
     }
 
     if (!userId) {
@@ -72,22 +52,25 @@ export const useExceptionForm = (initialData?: any, isEditing = false) => {
         description: "You must be logged in to submit a request",
         variant: "destructive",
       });
-      return;
+      return false;
     }
 
     try {
+      const requestData = {
+        title: formData.title,
+        type: formData.type,
+        request: formData.request,
+        reason: formData.reason,
+        impact: formData.impact,
+        mitigating_factors: formData.mitigatingFactors,
+        residual_risk: formData.residualRisk,
+        submitted_by: userId,
+      };
+
       if (isEditing) {
         const { error } = await supabase
           .from('exception_requests')
-          .update({
-            title: formData.title,
-            type: formData.type,
-            request: formData.request,
-            reason: formData.reason,
-            impact: formData.impact,
-            mitigating_factors: formData.mitigatingFactors,
-            residual_risk: formData.residualRisk,
-          })
+          .update(requestData)
           .eq('id', initialData.id)
           .eq('submitted_by', userId);
 
@@ -95,16 +78,7 @@ export const useExceptionForm = (initialData?: any, isEditing = false) => {
       } else {
         const { error } = await supabase
           .from('exception_requests')
-          .insert({
-            title: formData.title,
-            type: formData.type,
-            request: formData.request,
-            reason: formData.reason,
-            impact: formData.impact,
-            mitigating_factors: formData.mitigatingFactors,
-            residual_risk: formData.residualRisk,
-            submitted_by: userId,
-          });
+          .insert(requestData);
 
         if (error) throw error;
       }
@@ -168,53 +142,11 @@ export const useExceptionForm = (initialData?: any, isEditing = false) => {
     }
   };
 
-  const handleTypeChange = (value: string) => {
-    const approversByType: Record<string, Approver[]> = {
-      cyber: [
-        { title: "Chief Information Security Officer", name: "CISO Name" },
-        { title: "Chief Information Officer", name: "CIO Name" },
-        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
-      ],
-      legal: [
-        { title: "Chief Privacy Officer", name: "CPO Name" },
-        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
-      ],
-      independence: [
-        { title: "Partner Responsible for Independence", name: "Independence Partner Name" },
-        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
-      ],
-      qmr: [
-        { title: "Assurance Partner", name: "Assurance Partner Name" },
-        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
-      ],
-      clientAcceptance: [
-        { title: "Client Acceptance Risk Partner", name: "Risk Partner Name" },
-        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
-      ],
-      engagementRisk: [
-        { title: "Engagement Risk Partner", name: "Risk Partner Name" },
-        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
-      ],
-      auditFinding: [
-        { title: "Internal Audit Leader", name: "Audit Leader Name" },
-        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
-      ],
-      data: [
-        { title: "Chief Privacy Officer", name: "CPO Name" },
-        { title: "Chief Data and Analytics Officer", name: "CDAO Name" },
-        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
-      ],
-      ai: [
-        { title: "Partner Innovation", name: "Innovation Partner Name" },
-        { title: "Chief Information Officer", name: "CIO Name" },
-        { title: "Chief Risk & Resilience Officer", name: "CRRO Name" },
-      ],
-    };
-
+  const handleTypeChange = (value: RequestType) => {
     setFormData({
       ...formData,
       type: value,
-      approvers: approversByType[value] || [],
+      approvers: getApproversByType(value),
       incidentReference: value !== 'cyber' ? '' : formData.incidentReference,
     });
   };
