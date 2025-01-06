@@ -52,6 +52,17 @@ export const ExceptionRequestForm = ({
           disabled={isEditing}
         />
 
+        <div className="space-y-2">
+          <Input
+            placeholder="Request Title"
+            value={formData.title}
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
+            className="bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
         {formData.type === 'cyber' && (
           <div className="space-y-2">
             <Input
