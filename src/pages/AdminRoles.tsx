@@ -34,7 +34,7 @@ export const AdminRoles = () => {
         return;
       }
 
-      // Then fetch all roles
+      // Then fetch all roles in a separate query
       const { data: roles, error: rolesError } = await supabase
         .from("user_approver_roles")
         .select("*");
