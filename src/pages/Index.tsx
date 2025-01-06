@@ -4,8 +4,8 @@ import { ExceptionRequestForm } from "@/components/ExceptionRequestForm";
 import { RequestList } from "@/components/RequestList";
 import { MyRequestsList } from "@/components/dashboard/MyRequestsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { PlusCircle, Shield } from "lucide-react";
+import { useLocation, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { AuthForm } from "@/components/auth/AuthForm";
@@ -14,12 +14,16 @@ import { ProcessSteps } from "@/components/home/ProcessSteps";
 const Index = () => {
   const [showForm, setShowForm] = useState(false);
   const [session, setSession] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session) {
+        checkAdminStatus(session.user.id);
+      }
     });
 
     const {
@@ -27,6 +31,7 @@ const Index = () => {
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       if (session) {
+        checkAdminStatus(session.user.id);
         toast({
           title: "Welcome!",
           description: "You have successfully signed in.",
@@ -36,6 +41,15 @@ const Index = () => {
 
     return () => subscription.unsubscribe();
   }, [toast]);
+
+  const checkAdminStatus = async (userId: string) => {
+    const { data: roles } = await supabase
+      .from("user_approver_roles")
+      .select("role")
+      .eq("user_id", userId);
+
+    setIsAdmin(roles?.some((role) => role.role === "cyber_approver") || false);
+  };
 
   useEffect(() => {
     if (location.state?.showForm) {
@@ -62,18 +76,32 @@ const Index = () => {
       {!showForm && <ProcessSteps />}
 
       <div className="mb-8 flex justify-between items-center">
-        <Button
-          variant="outline"
-          onClick={async () => {
-            await supabase.auth.signOut();
-            toast({
-              title: "Signed out",
-              description: "You have been successfully signed out.",
-            });
-          }}
-        >
-          Sign Out
-        </Button>
+        <div className="flex gap-4">
+          <Button
+            variant="outline"
+            onClick={async () => {
+              await supabase.auth.signOut();
+              toast({
+                title: "Signed out",
+                description: "You have been successfully signed out.",
+              });
+            }}
+          >
+            Sign Out
+          </Button>
+          {isAdmin && (
+            <Button
+              variant="outline"
+              asChild
+              className="flex items-center gap-2"
+            >
+              <Link to="/admin/roles">
+                <Shield className="h-4 w-4" />
+                Manage User Roles
+              </Link>
+            </Button>
+          )}
+        </div>
         <Button
           onClick={() => setShowForm(!showForm)}
           className="bg-primary hover:bg-primary/90"
