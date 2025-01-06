@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Guidance from "./pages/Guidance";
 import Dashboard from "./pages/Dashboard";
+import RiskDashboard from "./pages/RiskDashboard";
 import { Toaster } from "@/components/ui/toaster";
 import {
   NavigationMenu,
