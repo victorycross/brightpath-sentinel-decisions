@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ExceptionRequestForm } from "@/components/ExceptionRequestForm";
 import { RequestList } from "@/components/RequestList";
+import { MyRequestsList } from "@/components/dashboard/MyRequestsList";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlusCircle } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -86,7 +88,18 @@ const Index = () => {
           <ExceptionRequestForm onClose={() => setShowForm(false)} />
         </div>
       ) : (
-        <RequestList />
+        <Tabs defaultValue="all" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="all">All Requests</TabsTrigger>
+            <TabsTrigger value="my">My Requests</TabsTrigger>
+          </TabsList>
+          <TabsContent value="all">
+            <RequestList />
+          </TabsContent>
+          <TabsContent value="my">
+            <MyRequestsList />
+          </TabsContent>
+        </Tabs>
       )}
     </div>
   );
