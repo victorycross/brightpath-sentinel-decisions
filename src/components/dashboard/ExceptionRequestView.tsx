@@ -14,11 +14,11 @@ interface ExceptionRequestViewProps {
     title: string;
     type: string;
     status: string;
-    request: string;
-    reason: string;
-    impact: string;
-    mitigating_factors: string;
-    residual_risk: string;
+    request?: string;
+    reason?: string;
+    impact?: string;
+    mitigating_factors?: string;
+    residual_risk?: string;
     submitted_at: string;
     profiles: {
       email: string;
@@ -62,23 +62,23 @@ export const ExceptionRequestView = ({
           <TableBody>
             <TableRow>
               <TableCell className="font-medium w-1/4">Request</TableCell>
-              <TableCell>{data.request}</TableCell>
+              <TableCell>{data.request || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Reason</TableCell>
-              <TableCell>{data.reason}</TableCell>
+              <TableCell>{data.reason || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Impact</TableCell>
-              <TableCell>{data.impact}</TableCell>
+              <TableCell>{data.impact || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Mitigating Factors</TableCell>
-              <TableCell>{data.mitigating_factors}</TableCell>
+              <TableCell>{data.mitigating_factors || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Residual Risk</TableCell>
-              <TableCell className="capitalize">{data.residual_risk}</TableCell>
+              <TableCell className="capitalize">{data.residual_risk || 'N/A'}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

@@ -11,17 +11,17 @@ type ExceptionRequest = {
   title: string;
   type: string;
   status: string;
+  request?: string;
+  reason?: string;
+  impact?: string;
+  mitigating_factors?: string;
+  residual_risk?: string;
   submitted_at: string;
+  submitted_by?: string;
+  updated_at?: string;
   profiles: {
     email: string;
   } | null;
-  impact?: string;
-  mitigating_factors?: string;
-  reason?: string;
-  request?: string;
-  residual_risk?: string;
-  submitted_by?: string;
-  updated_at?: string;
 };
 
 type AuditLog = {
