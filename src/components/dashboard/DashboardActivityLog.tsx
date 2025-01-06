@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ActivityLogTable } from "./ActivityLogTable";
 import { useToast } from "@/hooks/use-toast";
+import { LoadingState } from "./LoadingState";
 
 export const DashboardActivityLog = () => {
   const { toast } = useToast();
@@ -36,14 +37,16 @@ export const DashboardActivityLog = () => {
         throw err;
       }
     },
+    retry: 1,
   });
 
-  if (isLoading) {
-    return <div>Loading activity logs...</div>;
-  }
-
+  if (isLoading) return <LoadingState />;
   if (error) {
-    return <div>Error loading activity logs</div>;
+    return (
+      <div className="text-center text-red-500 p-4">
+        Error loading activity logs. Please try again later.
+      </div>
+    );
   }
 
   return (
