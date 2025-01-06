@@ -8,6 +8,7 @@ import { ApproversTable } from "./form/ApproversTable";
 import { FormActions } from "./form/FormActions";
 import { RequestTypeSelect } from "./form/RequestTypeSelect";
 import { PreparedBySection } from "./form/PreparedBySection";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ExceptionRequestFormProps {
   onClose: () => void;
@@ -94,7 +95,7 @@ export const ExceptionRequestForm = ({
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.type || !formData.request || !formData.reason) {
@@ -106,28 +107,83 @@ export const ExceptionRequestForm = ({
       return;
     }
 
-    console.log(`[${new Date().toISOString()}] ${isEditing ? 'Updated' : 'Submitted'} request:`, formData);
-    
-    toast({
-      title: isEditing ? "Changes Saved" : "Request Submitted",
-      description: isEditing 
-        ? "Your changes have been saved successfully."
-        : "Your exception request has been submitted successfully.",
-    });
-    
-    onClose();
+    try {
+      if (isEditing) {
+        const { error } = await supabase
+          .from('exception_requests')
+          .update({
+            title: formData.title,
+            type: formData.type,
+            request: formData.request,
+            reason: formData.reason,
+            impact: formData.impact,
+            mitigating_factors: formData.mitigatingFactors,
+            residual_risk: formData.residualRisk,
+          })
+          .eq('id', initialData.id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('exception_requests')
+          .insert({
+            title: formData.title,
+            type: formData.type,
+            request: formData.request,
+            reason: formData.reason,
+            impact: formData.impact,
+            mitigating_factors: formData.mitigatingFactors,
+            residual_risk: formData.residualRisk,
+          });
+
+        if (error) throw error;
+      }
+
+      console.log(`[${new Date().toISOString()}] ${isEditing ? 'Updated' : 'Submitted'} request:`, formData);
+      
+      toast({
+        title: isEditing ? "Changes Saved" : "Request Submitted",
+        description: isEditing 
+          ? "Your changes have been saved successfully."
+          : "Your exception request has been submitted successfully.",
+      });
+      
+      onClose();
+    } catch (error) {
+      console.error('Error saving request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save the request. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleDelete = () => {
-    console.log(`[${new Date().toISOString()}] Deleted request:`, formData);
-    
-    toast({
-      title: "Request Deleted",
-      description: "The exception request has been deleted successfully.",
-      variant: "destructive",
-    });
-    
-    onClose();
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from('exception_requests')
+        .delete()
+        .eq('id', initialData.id);
+
+      if (error) throw error;
+
+      console.log(`[${new Date().toISOString()}] Deleted request:`, formData);
+      
+      toast({
+        title: "Request Deleted",
+        description: "The exception request has been deleted successfully.",
+      });
+      
+      onClose();
+    } catch (error) {
+      console.error('Error deleting request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the request. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
