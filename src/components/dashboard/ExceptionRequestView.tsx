@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { FormContainer } from "../form/FormContainer";
 import { Badge } from "@/components/ui/badge";
 import { Edit2, Trash2, Check, X } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
+import { useToast } from "@/hooks/use-toast";
 
 type RequestType = Database["public"]["Enums"]["request_type"];
 type ApproverRole = Database["public"]["Enums"]["approver_role"];
@@ -42,6 +43,9 @@ export const ExceptionRequestView = ({
   onEdit, 
   onDelete 
 }: ExceptionRequestViewProps) => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
   const { data: userRoles = [] } = useQuery({
     queryKey: ['userApproverRoles'],
     queryFn: async () => {
@@ -57,26 +61,61 @@ export const ExceptionRequestView = ({
   const canApprove = isApprover && ['pending', 'assigned'].includes(data.status);
 
   const handleApprove = async () => {
-    const { error } = await supabase
-      .from('exception_requests')
-      .update({ status: 'approved' })
-      .eq('id', data.id);
+    try {
+      const { error } = await supabase
+        .from('exception_requests')
+        .update({ status: 'approved' })
+        .eq('id', data.id);
 
-    if (error) {
+      if (error) throw error;
+
+      toast({
+        title: "Request Approved",
+        description: "The exception request has been approved successfully.",
+      });
+
+      // Invalidate relevant queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['pendingRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['requests'] });
+      
+      onClose();
+    } catch (error) {
       console.error('Error approving request:', error);
-      return;
+      toast({
+        title: "Error",
+        description: "Failed to approve the request. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleReject = async () => {
-    const { error } = await supabase
-      .from('exception_requests')
-      .update({ status: 'rejected' })
-      .eq('id', data.id);
+    try {
+      const { error } = await supabase
+        .from('exception_requests')
+        .update({ status: 'rejected' })
+        .eq('id', data.id);
 
-    if (error) {
+      if (error) throw error;
+
+      toast({
+        title: "Request Rejected",
+        description: "The exception request has been rejected.",
+        variant: "destructive",
+      });
+
+      // Invalidate relevant queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['pendingRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['requests'] });
+      
+      onClose();
+    } catch (error) {
       console.error('Error rejecting request:', error);
-      return;
+      toast({
+        title: "Error",
+        description: "Failed to reject the request. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -150,7 +189,7 @@ export const ExceptionRequestView = ({
               </Button>
               <Button
                 onClick={handleApprove}
-                className="gap-2 bg-success hover:bg-success/90"
+                className="gap-2 bg-success hover:bg-success/90 text-success-foreground"
               >
                 <Check className="h-4 w-4" />
                 Approve
