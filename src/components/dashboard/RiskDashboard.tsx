@@ -21,7 +21,7 @@ const COLORS = {
   high: "#EF4444",
 }
 
-const RiskDashboard = () => {
+export const RiskDashboard = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ["exception-stats"],
     queryFn: async () => {
@@ -88,9 +88,7 @@ const RiskDashboard = () => {
               <XAxis dataKey="name" />
               <YAxis />
               <Bar dataKey="value" fill="#6366F1" />
-              <ChartTooltip>
-                <ChartTooltipContent />
-              </ChartTooltip>
+              <ChartTooltip content={<ChartTooltipContent />} />
             </BarChart>
           </ChartContainer>
         </CardContent>
@@ -119,9 +117,7 @@ const RiskDashboard = () => {
                   />
                 ))}
               </Pie>
-              <ChartTooltip>
-                <ChartTooltipContent />
-              </ChartTooltip>
+              <ChartTooltip content={<ChartTooltipContent />} />
               <ChartLegend>
                 <ChartLegendContent />
               </ChartLegend>
@@ -153,9 +149,7 @@ const RiskDashboard = () => {
                   />
                 ))}
               </Pie>
-              <ChartTooltip>
-                <ChartTooltipContent />
-              </ChartTooltip>
+              <ChartTooltip content={<ChartTooltipContent />} />
               <ChartLegend>
                 <ChartLegendContent />
               </ChartLegend>
@@ -166,5 +160,3 @@ const RiskDashboard = () => {
     </div>
   )
 }
-
-export default RiskDashboard
