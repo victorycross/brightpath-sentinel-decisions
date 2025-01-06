@@ -10,11 +10,16 @@ import { Badge } from "@/components/ui/badge";
 import { Edit2, Trash2, Check, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
+
+type RequestType = Database["public"]["Enums"]["request_type"];
+type ApproverRole = Database["public"]["Enums"]["approver_role"];
 
 interface ExceptionRequestViewProps {
   data: {
+    id: string;
     title: string;
-    type: string;
+    type: RequestType;
     status: string;
     request?: string;
     reason?: string;
@@ -44,11 +49,11 @@ export const ExceptionRequestView = ({
         .from('user_approver_roles')
         .select('role')
         .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
-      return roles?.map(r => r.role) || [];
+      return (roles?.map(r => r.role) || []) as ApproverRole[];
     },
   });
 
-  const isApprover = userRoles.includes(`${data.type}_approver`);
+  const isApprover = userRoles.includes(`${data.type}_approver` as ApproverRole);
   const canApprove = isApprover && ['pending', 'assigned'].includes(data.status);
 
   const handleApprove = async () => {
