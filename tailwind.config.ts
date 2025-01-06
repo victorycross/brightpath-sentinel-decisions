@@ -25,23 +25,23 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#1e40af",
+          DEFAULT: "#D04A02", // PwC primary orange
           foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "#4b5563",
+          DEFAULT: "#EB8C00", // PwC secondary orange
           foreground: "#ffffff",
         },
         success: {
-          DEFAULT: "#059669",
+          DEFAULT: "#3DD5B0", // PwC teal
           foreground: "#ffffff",
         },
         warning: {
-          DEFAULT: "#d97706",
+          DEFAULT: "#EB8C00", // Using PwC secondary orange for warnings
           foreground: "#ffffff",
         },
         error: {
-          DEFAULT: "#dc2626",
+          DEFAULT: "#D04A02", // Using PwC primary orange for errors
           foreground: "#ffffff",
         },
         muted: {
@@ -49,9 +49,13 @@ export default {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#3DD5B0", // PwC teal as accent
+          foreground: "#000000",
         },
+      },
+      fontFamily: {
+        charter: ["ITC Charter Regular", "serif"],
+        helvetica: ["Helvetica Neue", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
