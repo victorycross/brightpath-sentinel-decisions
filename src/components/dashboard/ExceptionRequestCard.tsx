@@ -61,7 +61,9 @@ export const ExceptionRequestCard = ({
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-xl mb-2">{request.title}</CardTitle>
+            <CardTitle className="text-xl mb-2">
+              {request.title || "Untitled Request"}
+            </CardTitle>
             <CardDescription>
               Submitted by {request.profiles?.email} on{" "}
               {new Date(request.submitted_at).toLocaleDateString()}
