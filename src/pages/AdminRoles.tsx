@@ -96,23 +96,26 @@ export const AdminRoles = () => {
       return;
     }
 
-    const { data, error } = await supabase
-      .from("profiles")
-      .insert({ email: newUserEmail })
-      .select();
+    // First, create the auth user
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      email: newUserEmail,
+      email_confirm: true,
+      password: crypto.randomUUID().substring(0, 8), // Generate a random temporary password
+    });
 
-    if (error) {
+    if (authError) {
       toast({
         title: "Error",
-        description: "Failed to add user",
+        description: "Failed to create user: " + authError.message,
         variant: "destructive",
       });
       return;
     }
 
+    // The profile will be created automatically by the database trigger
     toast({
       title: "Success",
-      description: "User added successfully",
+      description: "User added successfully. A temporary password has been set.",
     });
 
     setNewUserEmail("");
