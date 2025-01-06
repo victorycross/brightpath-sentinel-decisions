@@ -13,7 +13,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Grid, PlusCircle, BookOpen } from "lucide-react";
+import { Home, Grid, PlusCircle, BookOpen, BarChart } from "lucide-react";
 
 const NavigationBar = () => {
   const location = useLocation();
@@ -39,6 +39,16 @@ const NavigationBar = () => {
               >
                 <Grid className="mr-2 h-4 w-4" />
                 Dashboard
+              </NavigationMenuLink>
+            </Link>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <Link to="/risk-dashboard">
+              <NavigationMenuLink 
+                className={`${navigationMenuTriggerStyle()} ${location.pathname === "/risk-dashboard" ? "bg-accent" : ""}`}
+              >
+                <BarChart className="mr-2 h-4 w-4" />
+                Risk Dashboard
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
@@ -74,6 +84,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/risk-dashboard" element={<RiskDashboard />} />
           <Route path="/guidance" element={<Guidance />} />
         </Routes>
         <Toaster />
