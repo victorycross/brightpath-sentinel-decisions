@@ -2,6 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { RequestList } from "./RequestList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Database } from "@/integrations/supabase/types";
+
+type RequestType = Database["public"]["Enums"]["request_type"];
+type ApproverRole = Database["public"]["Enums"]["approver_role"];
+
+const convertApproverRoleToRequestType = (role: ApproverRole): RequestType => {
+  return role.replace('_approver', '') as RequestType;
+};
 
 export const ApproverDashboard = () => {
   const { data: approverRoles = [] } = useQuery({
@@ -13,7 +21,7 @@ export const ApproverDashboard = () => {
         .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
 
       if (error) throw error;
-      return data.map(r => r.role);
+      return data.map(r => r.role as ApproverRole);
     },
   });
 
@@ -22,7 +30,7 @@ export const ApproverDashboard = () => {
     queryFn: async () => {
       if (!approverRoles.length) return [];
 
-      const types = approverRoles.map(role => role.replace('_approver', ''));
+      const types = approverRoles.map(convertApproverRoleToRequestType);
       
       const { data, error } = await supabase
         .from('exception_requests')
