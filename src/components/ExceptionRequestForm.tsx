@@ -6,10 +6,27 @@ import { RequestTypeSelect } from "./form/RequestTypeSelect";
 import { PreparedBySection } from "./form/PreparedBySection";
 import { Input } from "@/components/ui/input";
 import { useExceptionForm } from "@/hooks/useExceptionForm";
+import { Database } from "@/integrations/supabase/types";
+
+type RequestType = Database["public"]["Enums"]["request_type"];
+type RequestStatus = Database["public"]["Enums"]["request_status"];
 
 interface ExceptionRequestFormProps {
   onClose: () => void;
-  initialData?: any;
+  initialData?: {
+    id: string;
+    title: string;
+    type: RequestType;
+    status: RequestStatus;
+    request: string;
+    reason: string;
+    impact: string;
+    mitigating_factors: string;
+    residual_risk: string;
+    submitted_at: string;
+    submitted_by: string;
+    incidentReference?: string;
+  };
   isEditing?: boolean;
 }
 
@@ -27,6 +44,7 @@ export const ExceptionRequestForm = ({
   } = useExceptionForm(initialData, isEditing);
 
   const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     const success = await handleSubmit(e);
     if (success) {
       onClose();
@@ -48,7 +66,7 @@ export const ExceptionRequestForm = ({
       <form onSubmit={onSubmit} className="space-y-6">
         <RequestTypeSelect 
           value={formData.type}
-          onChange={handleTypeChange}
+          onChange={(value) => handleTypeChange(value as RequestType)}
           disabled={isEditing}
         />
 

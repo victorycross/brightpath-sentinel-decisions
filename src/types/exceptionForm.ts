@@ -24,7 +24,7 @@ export interface FormData {
   residualRisk: string;
   approvers: Approver[];
   preparedBy: PreparedBy;
-  incidentReference: string;
+  incidentReference?: string;
 }
 
 export interface ExceptionFormProps {
