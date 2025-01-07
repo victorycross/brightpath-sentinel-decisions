@@ -1,29 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-
-export type ExceptionRequest = {
-  id: string;
-  title: string;
-  type: string;
-  status: string;
-  request?: string;
-  reason?: string;
-  impact?: string;
-  mitigating_factors?: string;
-  residual_risk?: string;
-  submitted_at: string;
-  profiles: {
-    email: string;
-  } | null;
-};
+import { ExceptionRequest } from "@/types/request";
+import { useEffect, useState } from "react";
 
 export const useUserRequests = () => {
   const { toast } = useToast();
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserId(user?.id || null);
+    };
+    
+    getUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUserId(session?.user.id || null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const { data: requests = [], isLoading: loading } = useQuery({
-    queryKey: ['userRequests'],
+    queryKey: ['userRequests', userId],
     queryFn: async () => {
+      if (!userId) return [];
+
       const { data, error } = await supabase
         .from('exception_requests')
         .select(`
@@ -41,7 +45,7 @@ export const useUserRequests = () => {
             email
           )
         `)
-        .eq('submitted_by', (await supabase.auth.getUser()).data.user?.id)
+        .eq('submitted_by', userId)
         .order('submitted_at', { ascending: false });
 
       if (error) {
@@ -55,6 +59,7 @@ export const useUserRequests = () => {
 
       return data || [];
     },
+    enabled: !!userId, // Only run query when we have a userId
   });
 
   const handleDelete = async (id: string) => {
