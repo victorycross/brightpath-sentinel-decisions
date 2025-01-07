@@ -5,6 +5,7 @@ import RiskDashboard from "@/pages/RiskDashboard"
 import ApproverDashboard from "@/pages/ApproverDashboard"
 import { MyRequestsList } from "@/components/dashboard/MyRequestsList"
 import { MainNav } from "@/components/navigation/MainNav"
+import { ExceptionRequestForm } from "@/components/ExceptionRequestForm"
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         <main className="flex-1 p-8">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/new-request" element={<ExceptionRequestForm />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/my-requests" element={<MyRequestsList />} />
             <Route path="/risk-dashboard" element={<RiskDashboard />} />

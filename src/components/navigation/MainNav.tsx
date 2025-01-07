@@ -14,6 +14,10 @@ const items = [
     href: "/",
   },
   {
+    title: "New Request",
+    href: "/new-request",
+  },
+  {
     title: "My Requests",
     href: "/dashboard/my-requests",
   },
