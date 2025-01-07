@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { RequestList } from "./RequestList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Database } from "@/integrations/supabase/types";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type RequestType = Database["public"]["Enums"]["request_type"];
 type ApproverRole = Database["public"]["Enums"]["approver_role"];
@@ -12,17 +14,36 @@ const convertApproverRoleToRequestType = (role: ApproverRole): RequestType => {
 };
 
 export const ApproverDashboard = () => {
+  const [userId, setUserId] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate('/auth');
+        return;
+      }
+      setUserId(user.id);
+    };
+    
+    checkUser();
+  }, [navigate]);
+
   const { data: approverRoles = [] } = useQuery({
-    queryKey: ['approverRoles'],
+    queryKey: ['approverRoles', userId],
     queryFn: async () => {
+      if (!userId) return [];
+
       const { data, error } = await supabase
         .from('user_approver_roles')
         .select('role')
-        .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
+        .eq('user_id', userId);
 
       if (error) throw error;
       return data.map(r => r.role as ApproverRole);
     },
+    enabled: !!userId,
   });
 
   const { data: pendingRequests = [], isLoading } = useQuery({
@@ -58,6 +79,10 @@ export const ApproverDashboard = () => {
     },
     enabled: approverRoles.length > 0,
   });
+
+  if (!userId) {
+    return null;
+  }
 
   if (!approverRoles.length) {
     return (
