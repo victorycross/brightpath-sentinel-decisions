@@ -7,6 +7,7 @@ import { FormHeader } from "./form/exception-request/FormHeader";
 import { TitleSection } from "./form/exception-request/TitleSection";
 import { useExceptionForm } from "@/hooks/useExceptionForm";
 import { Database } from "@/integrations/supabase/types";
+import { Input } from "@/components/ui/input";
 
 type RequestType = Database["public"]["Enums"]["request_type"];
 type RequestStatus = Database["public"]["Enums"]["request_status"];
