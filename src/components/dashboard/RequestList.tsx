@@ -7,6 +7,7 @@ import { useRequestOperations } from "@/hooks/useRequestOperations";
 import { LoadingState } from "./LoadingState";
 import { EmptyState } from "./EmptyState";
 import { ExceptionRequestForm } from "../ExceptionRequestForm";
+import { useToast } from "@/hooks/use-toast";
 
 interface RequestListProps {
   requests: any[];
@@ -19,12 +20,17 @@ export const RequestList = ({ requests, loading, showAuditLog = false }: Request
   const [editingRequest, setEditingRequest] = useState<any>(null);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const { handleDelete, fetchRequestDetails } = useRequestOperations();
+  const { toast } = useToast();
 
   const handleEdit = async (id: string) => {
     const details = await fetchRequestDetails(id);
     if (details) {
       setEditingRequest(details);
       setViewingRequest(null);
+      toast({
+        title: "Edit Mode",
+        description: "You can now edit the request details.",
+      });
     }
   };
 
@@ -85,7 +91,13 @@ export const RequestList = ({ requests, loading, showAuditLog = false }: Request
           onEdit={() => handleEdit(viewingRequest.id)}
           onDelete={async () => {
             const success = await handleDelete(viewingRequest.id);
-            if (success) handleCloseView();
+            if (success) {
+              handleCloseView();
+              toast({
+                title: "Success",
+                description: "Request deleted successfully",
+              });
+            }
           }}
         />
         {showAuditLog && <ExceptionRequestAuditLog logs={auditLogs} />}
