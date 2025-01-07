@@ -14,20 +14,16 @@ const items = [
     href: "/",
   },
   {
-    title: "Dashboard",
-    href: "/dashboard",
+    title: "My Requests",
+    href: "/dashboard/my-requests",
   },
   {
     title: "Risk Dashboard",
     href: "/risk-dashboard",
   },
   {
-    title: "About",
-    href: "/about",
-  },
-  {
-    title: "Contact",
-    href: "/contact",
+    title: "Approver Dashboard",
+    href: "/approver-dashboard",
   },
 ]
 
