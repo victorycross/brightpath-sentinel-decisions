@@ -1,12 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { RequestList } from "./RequestList";
+import { useEffect, useState } from "react";
 
-export const RequestManager = () => {
+interface RequestManagerProps {
+  personalOnly?: boolean;
+}
+
+export const RequestManager = ({ personalOnly = false }: RequestManagerProps) => {
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserId(user?.id || null);
+    };
+    
+    getUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUserId(session?.user.id || null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const { data: requests = [], isLoading } = useQuery({
-    queryKey: ['requests'],
+    queryKey: ['requests', personalOnly, userId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('exception_requests')
         .select(`
           id,
@@ -25,9 +47,16 @@ export const RequestManager = () => {
         `)
         .order('submitted_at', { ascending: false });
 
+      if (personalOnly && userId) {
+        query = query.eq('submitted_by', userId);
+      }
+
+      const { data, error } = await query;
+
       if (error) throw error;
       return data || [];
     },
+    enabled: !personalOnly || !!userId,
   });
 
   return (

@@ -18,12 +18,8 @@ const items = [
     href: "/new-request",
   },
   {
-    title: "My Requests",
-    href: "/dashboard/my-requests",
-  },
-  {
-    title: "Risk Dashboard",
-    href: "/risk-dashboard",
+    title: "Exceptions Dashboard",
+    href: "/exceptions",
   },
   {
     title: "Approver Dashboard",
