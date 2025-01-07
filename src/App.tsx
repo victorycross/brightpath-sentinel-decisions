@@ -6,19 +6,25 @@ import Dashboard from "@/pages/Dashboard"
 import RiskDashboard from "@/pages/RiskDashboard"
 import ApproverDashboard from "@/pages/ApproverDashboard"
 import { MyRequestsList } from "@/components/dashboard/MyRequestsList"
+import { MainNav } from "@/components/navigation/MainNav"
 
 const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/my-requests" element={<MyRequestsList />} />
-        <Route path="/risk-dashboard" element={<RiskDashboard />} />
-        <Route path="/approver-dashboard" element={<ApproverDashboard />} />
-      </Routes>
+      <div className="min-h-screen flex flex-col">
+        <MainNav />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/my-requests" element={<MyRequestsList />} />
+            <Route path="/risk-dashboard" element={<RiskDashboard />} />
+            <Route path="/approver-dashboard" element={<ApproverDashboard />} />
+          </Routes>
+        </main>
+      </div>
     </Router>
   )
 }
