@@ -8,12 +8,13 @@ import { TitleSection } from "./form/exception-request/TitleSection";
 import { useExceptionForm } from "@/hooks/useExceptionForm";
 import { Database } from "@/integrations/supabase/types";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 type RequestType = Database["public"]["Enums"]["request_type"];
 type RequestStatus = Database["public"]["Enums"]["request_status"];
 
 interface ExceptionRequestFormProps {
-  onClose: () => void;
+  onClose?: () => void;
   initialData?: {
     id: string;
     title: string;
@@ -36,6 +37,7 @@ export const ExceptionRequestForm = ({
   initialData, 
   isEditing = false 
 }: ExceptionRequestFormProps) => {
+  const navigate = useNavigate();
   const {
     formData,
     setFormData,
@@ -44,18 +46,26 @@ export const ExceptionRequestForm = ({
     handleTypeChange,
   } = useExceptionForm(initialData, isEditing);
 
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await handleSubmit(e);
     if (success) {
-      onClose();
+      handleClose();
     }
   };
 
   const onDelete = async () => {
     const success = await handleDelete();
     if (success) {
-      onClose();
+      handleClose();
     }
   };
 
@@ -63,7 +73,7 @@ export const ExceptionRequestForm = ({
     <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
       <FormHeader
         title={isEditing ? "Edit Exception Request" : "Memo: Decision and Rationale for Exception Request"}
-        onClose={onClose}
+        onClose={handleClose}
       />
       
       <form onSubmit={onSubmit} className="space-y-6">
@@ -110,7 +120,7 @@ export const ExceptionRequestForm = ({
           isEditing={isEditing}
           onSave={onSubmit}
           onDelete={onDelete}
-          onCancel={onClose}
+          onCancel={handleClose}
         />
       </form>
     </div>
