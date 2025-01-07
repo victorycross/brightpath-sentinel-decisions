@@ -1,10 +1,10 @@
-import { FormContainer } from "./form/FormContainer";
 import { FormKeyInformation } from "./form/FormKeyInformation";
 import { ApproversTable } from "./form/ApproversTable";
 import { FormActions } from "./form/FormActions";
 import { RequestTypeSelect } from "./form/RequestTypeSelect";
 import { PreparedBySection } from "./form/PreparedBySection";
-import { Input } from "@/components/ui/input";
+import { FormHeader } from "./form/exception-request/FormHeader";
+import { TitleSection } from "./form/exception-request/TitleSection";
 import { useExceptionForm } from "@/hooks/useExceptionForm";
 import { Database } from "@/integrations/supabase/types";
 
@@ -59,10 +59,12 @@ export const ExceptionRequestForm = ({
   };
 
   return (
-    <FormContainer
-      title={isEditing ? "Edit Exception Request" : "Memo: Decision and Rationale for Exception Request"}
-      onClose={onClose}
-    >
+    <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
+      <FormHeader
+        title={isEditing ? "Edit Exception Request" : "Memo: Decision and Rationale for Exception Request"}
+        onClose={onClose}
+      />
+      
       <form onSubmit={onSubmit} className="space-y-6">
         <RequestTypeSelect 
           value={formData.type}
@@ -70,16 +72,10 @@ export const ExceptionRequestForm = ({
           disabled={isEditing}
         />
 
-        <div className="space-y-2">
-          <Input
-            placeholder="Request Title"
-            value={formData.title}
-            onChange={(e) =>
-              setFormData({ ...formData, title: e.target.value })
-            }
-            className="bg-white border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
-          />
-        </div>
+        <TitleSection
+          value={formData.title}
+          onChange={(value) => setFormData({ ...formData, title: value })}
+        />
 
         {formData.type === 'cyber' && (
           <div className="space-y-2">
@@ -116,6 +112,6 @@ export const ExceptionRequestForm = ({
           onCancel={onClose}
         />
       </form>
-    </FormContainer>
+    </div>
   );
 };
