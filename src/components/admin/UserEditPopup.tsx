@@ -98,6 +98,7 @@ export const UserEditPopup = ({
     data_approver: "Data Protection",
     ai_approver: "AI & Innovation",
     cro_approver: "Chief Risk Officer",
+    admin_approver: "Admin",
   };
 
   return (

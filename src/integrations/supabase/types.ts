@@ -197,6 +197,7 @@ export type Database = {
         | "data_approver"
         | "ai_approver"
         | "cro_approver"
+        | "admin_approver"
       audit_action: "created" | "updated" | "deleted" | "status_changed"
       request_status:
         | "pending"

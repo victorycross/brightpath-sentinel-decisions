@@ -6,19 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Shield } from "lucide-react";
-
-type ApproverRole = 
-  | "cyber_approver"
-  | "legal_approver"
-  | "independence_approver"
-  | "qmr_approver"
-  | "clientAcceptance_approver"
-  | "engagementRisk_approver"
-  | "auditFinding_approver"
-  | "data_approver"
-  | "ai_approver"
-  | "cro_approver"
-  | "admin_approver";
+import { ApproverRole } from "@/types/approver";
 
 interface UserRoleSelectProps {
   onRoleChange: (role: ApproverRole) => void;
