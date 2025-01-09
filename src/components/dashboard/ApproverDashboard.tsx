@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { ApproverRoleCheck } from "./approver/ApproverRoleCheck";
 import { ApproverTabs } from "./approver/ApproverTabs";
 import { useApproverRoles } from "./approver/useApproverRoles";
-import { usePendingRequests } from "./approver/usePendingRequests";
 
 export const ApproverDashboard = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -24,7 +23,6 @@ export const ApproverDashboard = () => {
   }, [navigate]);
 
   const { data: approverRoles = [], isLoading: rolesLoading } = useApproverRoles(userId);
-  const { data: pendingRequests = [], isLoading: requestsLoading } = usePendingRequests(approverRoles);
 
   return (
     <div className="space-y-6">
@@ -35,10 +33,7 @@ export const ApproverDashboard = () => {
         approverRoles={approverRoles}
         isLoading={rolesLoading}
       >
-        <ApproverTabs 
-          pendingRequests={pendingRequests}
-          requestsLoading={requestsLoading}
-        />
+        <ApproverTabs approverRoles={approverRoles} />
       </ApproverRoleCheck>
     </div>
   );
