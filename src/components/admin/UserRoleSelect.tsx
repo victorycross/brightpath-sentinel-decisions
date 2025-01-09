@@ -37,18 +37,18 @@ const roleLabels: Record<ApproverRole, string> = {
 export const UserRoleSelect = ({ onRoleChange }: UserRoleSelectProps) => {
   return (
     <Select onValueChange={(value: ApproverRole) => onRoleChange(value)}>
-      <SelectTrigger className="w-[240px] bg-white dark:bg-gray-950">
+      <SelectTrigger className="w-[240px] bg-white dark:bg-gray-800">
         <div className="flex items-center gap-2">
           <Shield className="h-4 w-4 text-muted-foreground" />
           <SelectValue placeholder="Select a role" />
         </div>
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-white dark:bg-gray-800">
         {(Object.entries(roleLabels) as [ApproverRole, string][]).map(([value, label]) => (
           <SelectItem 
             key={value} 
             value={value}
-            className="cursor-pointer"
+            className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             {label}
           </SelectItem>
