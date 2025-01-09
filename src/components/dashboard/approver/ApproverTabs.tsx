@@ -11,7 +11,8 @@ interface ApproverTabsProps {
   approverRoles: ApproverRole[];
 }
 
-const convertApproverRoleToRequestType = (role: ApproverRole): RequestType => {
+const convertApproverRoleToRequestType = (role: ApproverRole): RequestType | null => {
+  if (role === 'cro_approver') return null;
   return role.replace('_approver', '') as RequestType;
 };
 
@@ -21,9 +22,12 @@ export const ApproverTabs = ({ approverRoles }: ApproverTabsProps) => {
     queryFn: async () => {
       if (!approverRoles.length) return [];
 
-      const types = approverRoles.map(convertApproverRoleToRequestType);
+      const types = approverRoles
+        .map(convertApproverRoleToRequestType)
+        .filter((type): type is RequestType => type !== null);
       
-      const { data, error } = await supabase
+      // If user is only a CRO approver, they can see all requests
+      const query = supabase
         .from('exception_requests')
         .select(`
           id,
@@ -40,9 +44,15 @@ export const ApproverTabs = ({ approverRoles }: ApproverTabsProps) => {
             email
           )
         `)
-        .in('type', types)
         .in('status', ['pending', 'assigned'])
         .order('submitted_at', { ascending: false });
+
+      // Only filter by type if there are non-CRO roles
+      if (types.length > 0) {
+        query.in('type', types);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching pending requests:', error);
@@ -58,9 +68,11 @@ export const ApproverTabs = ({ approverRoles }: ApproverTabsProps) => {
     queryFn: async () => {
       if (!approverRoles.length) return [];
 
-      const types = approverRoles.map(convertApproverRoleToRequestType);
+      const types = approverRoles
+        .map(convertApproverRoleToRequestType)
+        .filter((type): type is RequestType => type !== null);
       
-      const { data, error } = await supabase
+      const query = supabase
         .from('exception_requests')
         .select(`
           id,
@@ -77,9 +89,15 @@ export const ApproverTabs = ({ approverRoles }: ApproverTabsProps) => {
             email
           )
         `)
-        .in('type', types)
         .eq('status', 'approved')
         .order('submitted_at', { ascending: false });
+
+      // Only filter by type if there are non-CRO roles
+      if (types.length > 0) {
+        query.in('type', types);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching approved requests:', error);
