@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { UserRoleSelect } from "./UserRoleSelect";
 import { ApproverRole, UserRole } from "@/types/approver";
-import { Trash2, Edit2, Shield } from "lucide-react";
+import { Trash2, Edit2, Shield, Loader2 } from "lucide-react";
 import { UserEditDialog } from "./UserEditDialog";
 import { useState } from "react";
 
@@ -45,25 +45,38 @@ export const UserRolesTable = ({
 }: UserRolesTableProps) => {
   const [editingUser, setEditingUser] = useState<UserRole | null>(null);
 
+  if (!users || users.length === 0) {
+    return (
+      <div className="rounded-md border bg-white dark:bg-gray-900 p-8 text-center">
+        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary/70" />
+        <p className="text-muted-foreground">Loading users...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-md border bg-white dark:bg-gray-900">
       <Table>
         <TableHeader>
           <TableRow className="bg-primary/5 dark:bg-primary/10">
-            <TableHead className="w-[200px] font-semibold">User Email</TableHead>
-            <TableHead className="w-[200px] font-semibold">Name</TableHead>
-            <TableHead className="font-semibold">Current Roles</TableHead>
-            <TableHead className="w-[100px] text-center font-semibold">Status</TableHead>
-            <TableHead className="w-[260px] font-semibold">Add Role</TableHead>
-            <TableHead className="w-[80px] text-center font-semibold">Actions</TableHead>
+            <TableHead className="w-[250px] font-semibold text-primary/90">User Email</TableHead>
+            <TableHead className="w-[200px] font-semibold text-primary/90">Name</TableHead>
+            <TableHead className="font-semibold text-primary/90">Current Roles</TableHead>
+            <TableHead className="w-[100px] text-center font-semibold text-primary/90">Status</TableHead>
+            <TableHead className="w-[260px] font-semibold text-primary/90">Add Role</TableHead>
+            <TableHead className="w-[80px] text-center font-semibold text-primary/90">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.map((user) => (
-            <TableRow key={user.id} className="group">
+            <TableRow key={user.id} className="group hover:bg-muted/50">
               <TableCell className="font-medium">{user.email}</TableCell>
               <TableCell>
-                {user.first_name} {user.last_name}
+                {user.first_name || user.last_name ? (
+                  `${user.first_name || ''} ${user.last_name || ''}`
+                ) : (
+                  <span className="text-muted-foreground italic">No name set</span>
+                )}
               </TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-2">
@@ -71,17 +84,17 @@ export const UserRolesTable = ({
                     <div key={role} className="flex items-center gap-1">
                       <Badge 
                         variant="secondary"
-                        className="text-xs py-1.5 px-3 bg-primary/10 text-primary hover:bg-primary/20 transition-colors group-hover:bg-primary/15"
+                        className="text-xs py-1.5 px-3 bg-primary/10 text-primary hover:bg-primary/20 transition-colors group/badge"
                       >
                         <Shield className="w-3 h-3 mr-1 opacity-70" />
                         {roleLabels[role]}
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-5 w-5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="h-5 w-5 ml-1 opacity-0 group-hover/badge:opacity-100 transition-opacity"
                           onClick={() => onRoleRemove(user.id, role)}
                         >
-                          <Trash2 className="h-3 w-3 text-primary hover:text-primary-foreground" />
+                          <Trash2 className="h-3 w-3 text-primary hover:text-destructive transition-colors" />
                         </Button>
                       </Badge>
                     </div>
@@ -107,7 +120,7 @@ export const UserRolesTable = ({
                   onClick={() => setEditingUser(user)}
                   className="hover:bg-primary/10"
                 >
-                  <Edit2 className="h-4 w-4" />
+                  <Edit2 className="h-4 w-4 text-primary/70" />
                 </Button>
               </TableCell>
             </TableRow>
