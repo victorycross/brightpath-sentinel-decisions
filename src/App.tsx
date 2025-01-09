@@ -1,32 +1,26 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import { Home } from "@/pages/Home"
-import Dashboard from "@/pages/Dashboard"
-import RiskDashboard from "@/pages/RiskDashboard"
-import ApproverDashboard from "@/pages/ApproverDashboard"
-import { MainNav } from "@/components/navigation/MainNav"
-import { ExceptionRequestForm } from "@/components/ExceptionRequestForm"
-import { AuthForm } from "@/components/auth/AuthForm"
-import { AdminRoles } from "@/pages/AdminRoles"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Home } from "@/pages/Home";
+import { About } from "@/pages/About";
+import { Contact } from "@/pages/Contact";
+import { Dashboard } from "@/pages/Dashboard";
+import { Guidance } from "@/pages/Guidance";
+import { AuthForm } from "@/components/auth/AuthForm";
+import { AdminRoles } from "@/pages/AdminRoles";
+import { ResetPassword } from "@/pages/ResetPassword";
 
-const App = () => {
+export default function App() {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col">
-        <MainNav />
-        <main className="flex-1 p-8">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/new-request" element={<ExceptionRequestForm />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/exceptions" element={<RiskDashboard />} />
-            <Route path="/approver-dashboard" element={<ApproverDashboard />} />
-            <Route path="/auth" element={<AuthForm />} />
-            <Route path="/admin/roles" element={<AdminRoles />} />
-          </Routes>
-        </main>
-      </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/guidance" element={<Guidance />} />
+        <Route path="/auth" element={<AuthForm />} />
+        <Route path="/admin/roles" element={<AdminRoles />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+      </Routes>
     </Router>
-  )
+  );
 }
-
-export default App
