@@ -37,13 +37,18 @@ export const ApproverDashboard = () => {
     queryFn: async () => {
       if (!userId) return [];
 
+      // Modified query to avoid recursion
       const { data, error } = await supabase
         .from('user_approver_roles')
         .select('role')
-        .eq('user_id', userId);
+        .eq('user_id', userId)
+        .returns<{ role: ApproverRole }[]>();
 
-      if (error) throw error;
-      return data.map(r => r.role as ApproverRole);
+      if (error) {
+        console.error('Error fetching approver roles:', error);
+        throw error;
+      }
+      return data.map(r => r.role);
     },
     enabled: !!userId,
   });
@@ -76,7 +81,10 @@ export const ApproverDashboard = () => {
         .in('status', ['pending', 'assigned'])
         .order('submitted_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching pending requests:', error);
+        throw error;
+      }
       return data || [];
     },
     enabled: approverRoles.length > 0,
