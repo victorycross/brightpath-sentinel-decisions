@@ -16,7 +16,8 @@ type ApproverRole =
   | "engagementRisk_approver"
   | "auditFinding_approver"
   | "data_approver"
-  | "ai_approver";
+  | "ai_approver"
+  | "cro_approver";
 
 interface UserRoleSelectProps {
   onRoleChange: (role: ApproverRole) => void;
@@ -32,6 +33,7 @@ const roleLabels: Record<ApproverRole, string> = {
   auditFinding_approver: "Audit Finding",
   data_approver: "Data Protection",
   ai_approver: "AI & Innovation",
+  cro_approver: "Chief Risk Officer",
 };
 
 export const UserRoleSelect = ({ onRoleChange }: UserRoleSelectProps) => {

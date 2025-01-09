@@ -171,6 +171,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_approver_access: {
+        Args: {
+          request_type: string
+          request_residual_risk: string
+        }
+        Returns: boolean
+      }
       is_admin: {
         Args: {
           user_uid: string
@@ -189,6 +196,7 @@ export type Database = {
         | "auditFinding_approver"
         | "data_approver"
         | "ai_approver"
+        | "cro_approver"
       audit_action: "created" | "updated" | "deleted" | "status_changed"
       request_status:
         | "pending"
