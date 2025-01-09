@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { ApproverDashboard as ApproverDashboardComponent } from "@/components/dashboard/ApproverDashboard"
 
-const ApproverDashboard = () => {
+export const ApproverDashboard = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -35,5 +35,3 @@ const ApproverDashboard = () => {
     </div>
   )
 }
-
-export default ApproverDashboard

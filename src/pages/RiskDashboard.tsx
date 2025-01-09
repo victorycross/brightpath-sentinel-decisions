@@ -4,7 +4,7 @@ import { RiskDashboard as RiskMetrics } from "@/components/dashboard/RiskDashboa
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const RiskDashboard = () => {
+export const RiskDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <h1 className="text-2xl font-bold mb-8">Exception Dashboard</h1>
@@ -46,5 +46,3 @@ const RiskDashboard = () => {
     </div>
   );
 };
-
-export default RiskDashboard;
