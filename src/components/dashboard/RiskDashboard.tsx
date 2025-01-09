@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { ExceptionTypeChart } from "./charts/ExceptionTypeChart"
 import { StatusDistributionChart } from "./charts/StatusDistributionChart"
 import { RiskLevelChart } from "./charts/RiskLevelChart"
+import { RejectedExceptionsChart } from "./charts/RejectedExceptionsChart"
 
 export const RiskDashboard = () => {
   const { data: stats, isLoading } = useQuery({
@@ -19,10 +20,16 @@ export const RiskDashboard = () => {
       const byType: Record<string, number> = {}
       const byStatus: Record<string, number> = {}
       const byRisk: Record<string, number> = {}
+      const rejectedByType: Record<string, number> = {}
 
       data?.forEach((item) => {
         byType[item.type] = (byType[item.type] || 0) + 1
         byStatus[item.status] = (byStatus[item.status] || 0) + 1
+        
+        // Track rejected exceptions by type
+        if (item.status === 'rejected') {
+          rejectedByType[item.type] = (rejectedByType[item.type] || 0) + 1
+        }
         
         // Categorize residual risk into low/medium/high based on text analysis
         const riskText = item.residual_risk.toLowerCase()
@@ -38,7 +45,8 @@ export const RiskDashboard = () => {
       return {
         byType: Object.entries(byType).map(([name, value]) => ({ name, value })),
         byStatus: Object.entries(byStatus).map(([name, value]) => ({ name, value })),
-        byRisk: Object.entries(byRisk).map(([name, value]) => ({ name, value }))
+        byRisk: Object.entries(byRisk).map(([name, value]) => ({ name, value })),
+        rejectedByType: Object.entries(rejectedByType).map(([name, value]) => ({ name, value }))
       }
     }
   })
@@ -46,7 +54,7 @@ export const RiskDashboard = () => {
   if (isLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {[...Array(3)].map((_, i) => (
+        {[...Array(4)].map((_, i) => (
           <Skeleton key={i} className="h-[300px] w-full" />
         ))}
       </div>
@@ -54,10 +62,11 @@ export const RiskDashboard = () => {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
       <ExceptionTypeChart data={stats?.byType || []} />
       <StatusDistributionChart data={stats?.byStatus || []} />
       <RiskLevelChart data={stats?.byRisk || []} />
+      <RejectedExceptionsChart data={stats?.rejectedByType || []} />
     </div>
   )
 }
