@@ -6,19 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Edit2, Trash2 } from "lucide-react";
-
-type ExceptionRequest = {
-  id: string;
-  title: string;
-  type: string;
-  status: string;
-  submitted_at: string;
-  profiles: {
-    email: string;
-  } | null;
-};
+import { ExceptionRequest } from "@/types/request";
+import { RequestActions } from "./request/RequestActions";
+import { CheckCircle, Circle, XCircle } from "lucide-react";
+import { Tooltip } from "@/components/ui/tooltip";
 
 interface ExceptionRequestCardProps {
   request: ExceptionRequest;
@@ -31,47 +22,73 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case "approved":
       return "bg-success text-success-foreground";
-    case "in_process":
+    case "rejected":
+      return "bg-error text-error-foreground";
+    case "pending":
       return "bg-warning text-warning-foreground";
     default:
       return "bg-secondary text-secondary-foreground";
   }
 };
 
-const getStatusDisplay = (status: string) => {
-  switch (status) {
-    case "in_process":
-      return "In Process";
-    default:
-      return status.charAt(0).toUpperCase() + status.slice(1);
+const CROApprovalIndicator = ({ residualRisk, status }: { residualRisk?: string, status: string }) => {
+  if (!residualRisk || !['medium', 'high'].includes(residualRisk.toLowerCase())) {
+    return null;
   }
+
+  let icon;
+  let tooltipText;
+  let iconColor;
+
+  switch (status) {
+    case 'approved':
+      icon = <CheckCircle className="h-5 w-5 text-success" />;
+      tooltipText = "CRO Approved";
+      break;
+    case 'rejected':
+      icon = <XCircle className="h-5 w-5 text-destructive" />;
+      tooltipText = "CRO Rejected";
+      break;
+    default:
+      icon = <Circle className="h-5 w-5 text-blue-500" />;
+      tooltipText = "Pending CRO Review";
+  }
+
+  return (
+    <Tooltip>
+      <Tooltip.Trigger>
+        <div className="flex items-center gap-1">
+          {icon}
+          <span className="text-xs text-muted-foreground">CRO</span>
+        </div>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        <p>{tooltipText}</p>
+      </Tooltip.Content>
+    </Tooltip>
+  );
 };
 
-export const ExceptionRequestCard = ({
-  request,
-  onEdit,
-  onDelete,
-  onView,
-}: ExceptionRequestCardProps) => {
+export const ExceptionRequestCard = ({ request, onEdit, onDelete, onView }: ExceptionRequestCardProps) => {
   return (
-    <Card 
-      className="hover:shadow-md transition-shadow cursor-pointer"
-      onClick={() => onView(request.id)}
-    >
+    <Card key={request.id} className="hover:shadow-md transition-shadow">
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-xl mb-2">
-              {request.title || "Untitled Request"}
-            </CardTitle>
+            <CardTitle className="text-xl">{request.title}</CardTitle>
             <CardDescription>
-              Submitted by {request.profiles?.email} on{" "}
-              {new Date(request.submitted_at).toLocaleDateString()}
+              Submitted by {request.profiles?.email} on {new Date(request.submitted_at).toLocaleDateString()}
             </CardDescription>
           </div>
-          <Badge className={getStatusColor(request.status)}>
-            {getStatusDisplay(request.status)}
-          </Badge>
+          <div className="flex items-center gap-3">
+            <CROApprovalIndicator 
+              residualRisk={request.residual_risk} 
+              status={request.status} 
+            />
+            <Badge className={getStatusColor(request.status)}>
+              {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+            </Badge>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -79,26 +96,10 @@ export const ExceptionRequestCard = ({
           <Badge variant="outline" className="capitalize">
             {request.type}
           </Badge>
-          <div className="space-x-2" onClick={(e) => e.stopPropagation()}>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onEdit(request.id)}
-              className="gap-2"
-            >
-              <Edit2 className="h-4 w-4" />
-              Edit
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => onDelete(request.id)}
-              className="gap-2"
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete
-            </Button>
-          </div>
+          <RequestActions
+            onEdit={() => onEdit(request.id)}
+            onDelete={() => onDelete(request.id)}
+          />
         </div>
       </CardContent>
     </Card>
