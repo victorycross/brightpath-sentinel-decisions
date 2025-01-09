@@ -14,6 +14,7 @@ import { ApproverDashboard } from "@/pages/ApproverDashboard"
 import { ExceptionsDashboard } from "@/pages/ExceptionsDashboard"
 import { ExceptionRequestForm } from "@/components/ExceptionRequestForm"
 import { Metrics } from "@/pages/Metrics"
+import { AuthForm } from "@/components/auth/AuthForm"
 
 function App() {
   return (
@@ -29,7 +30,8 @@ function App() {
             <Route path="/risk-dashboard" element={<RiskDashboard />} />
             <Route path="/admin/roles" element={<AdminRoles />} />
             <Route path="/guidance" element={<Guidance />} />
-            <Route path="/auth" element={<ResetPassword />} />
+            <Route path="/auth" element={<AuthForm />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/approver-dashboard" element={<ApproverDashboard />} />
             <Route path="/exceptions" element={<ExceptionsDashboard />} />
             <Route path="/new-request" element={<ExceptionRequestForm />} />

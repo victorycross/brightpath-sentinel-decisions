@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom"
-import { Users, BarChart } from "lucide-react"
+import { Users } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -46,11 +46,11 @@ export function MainNav() {
   const handleSwitchUser = async () => {
     try {
       await supabase.auth.signOut()
+      navigate('/auth')  // Changed from '/dashboard' to '/auth'
       toast({
         title: "Signed out successfully",
         description: "You can now sign in as a different user",
       })
-      navigate('/auth')
     } catch (error) {
       toast({
         title: "Error signing out",
