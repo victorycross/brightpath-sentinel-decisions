@@ -107,10 +107,21 @@ export const UserEditPopup = ({
           <DialogTitle>Edit User Details</DialogTitle>
         </DialogHeader>
         <div className="space-y-6 pt-4">
+          <div className="space-y-4">
+            <div className="grid gap-2">
+              <Label>Current Name</Label>
+              <div className="p-2 bg-muted/50 rounded-md">
+                <span className="text-muted-foreground">
+                  {user?.first_name || 'No first name set'} {user?.last_name || 'No last name set'}
+                </span>
+              </div>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="firstName">First Name</Label>
+                <Label htmlFor="firstName">New First Name</Label>
                 <Input
                   id="firstName"
                   value={firstName}
@@ -120,7 +131,7 @@ export const UserEditPopup = ({
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="lastName">Last Name</Label>
+                <Label htmlFor="lastName">New Last Name</Label>
                 <Input
                   id="lastName"
                   value={lastName}
