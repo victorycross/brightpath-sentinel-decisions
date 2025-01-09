@@ -59,6 +59,17 @@ export const AdminRoles = () => {
   };
 
   const handleRoleChange = async (userId: string, role: ApproverRole) => {
+    // Check if user already has this role
+    const userWithRole = users.find(user => user.id === userId);
+    if (userWithRole?.roles.includes(role)) {
+      toast({
+        title: "Role already assigned",
+        description: "This user already has this role assigned.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const { error } = await supabase
       .from("user_approver_roles")
       .insert({ user_id: userId, role: role });
