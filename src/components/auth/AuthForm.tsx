@@ -1,12 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { Card, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
+import { AuthError, AuthApiError } from "@supabase/supabase-js";
 
 export const AuthForm = () => {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -22,6 +25,12 @@ export const AuthForm = () => {
       if (event === 'SIGNED_IN' && session) {
         navigate('/dashboard')
       }
+      if (event === 'USER_UPDATED') {
+        setErrorMessage("");
+      }
+      if (event === 'SIGNED_OUT') {
+        setErrorMessage("");
+      }
     })
 
     return () => {
@@ -29,9 +38,28 @@ export const AuthForm = () => {
     }
   }, [navigate])
 
+  const getErrorMessage = (error: AuthError) => {
+    if (error instanceof AuthApiError) {
+      switch (error.status) {
+        case 400:
+          return 'Invalid email or password. Please check your credentials and try again.';
+        case 422:
+          return 'Invalid email format. Please enter a valid email address.';
+        default:
+          return error.message;
+      }
+    }
+    return error.message;
+  };
+
   return (
     <div className="max-w-md mx-auto mt-8 p-6">
       <h1 className="text-2xl font-bold text-center mb-6">Welcome to Exception Hub</h1>
+      {errorMessage && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
       <Card>
         <CardContent className="pt-6">
           <Auth
