@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { UserRoleSelect } from "./UserRoleSelect";
 import { ApproverRole, UserRole } from "@/types/approver";
-import { Edit2, Shield } from "lucide-react";
+import { Edit2 } from "lucide-react";
 import { UserEditDialog } from "./UserEditDialog";
 import { useState } from "react";
 import { UserRoleBadge } from "./UserRoleBadge";
@@ -19,6 +19,7 @@ import { UserTableLoadingState } from "./UserTableLoadingState";
 
 interface UserRolesTableProps {
   users: UserRole[];
+  loading?: boolean;
   onRoleChange: (userId: string, role: ApproverRole) => void;
   onRoleRemove: (userId: string, role: ApproverRole) => void;
   onUserDisable: (userId: string, disabled: boolean) => void;
@@ -40,6 +41,7 @@ const roleLabels: Record<ApproverRole, string> = {
 
 export const UserRolesTable = ({ 
   users, 
+  loading = false,
   onRoleChange, 
   onRoleRemove,
   onUserDisable,
@@ -47,8 +49,16 @@ export const UserRolesTable = ({
 }: UserRolesTableProps) => {
   const [editingUser, setEditingUser] = useState<UserRole | null>(null);
 
-  if (!users || users.length === 0) {
+  if (loading) {
     return <UserTableLoadingState />;
+  }
+
+  if (!users || users.length === 0) {
+    return (
+      <div className="rounded-md border bg-white dark:bg-gray-900 p-8 text-center">
+        <p className="text-muted-foreground">No users found</p>
+      </div>
+    );
   }
 
   return (
