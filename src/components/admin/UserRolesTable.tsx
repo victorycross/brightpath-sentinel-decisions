@@ -50,26 +50,59 @@ export const UserRolesTable = ({
   onUserUpdate,
 }: UserRolesTableProps) => {
   const [editingUser, setEditingUser] = useState<UserRole | null>(null);
+  const [resetInProgress, setResetInProgress] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
 
   const handlePasswordReset = async (email: string) => {
+    // If a reset is already in progress for this email, prevent another attempt
+    if (resetInProgress[email]) {
+      toast({
+        title: "Please wait",
+        description: "A password reset was recently requested. Please wait before trying again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
+      setResetInProgress(prev => ({ ...prev, [email]: true }));
+      
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('rate_limit')) {
+          toast({
+            title: "Rate limit exceeded",
+            description: "Please wait a minute before requesting another password reset.",
+            variant: "destructive",
+          });
+        } else {
+          throw error;
+        }
+        return;
+      }
       
       toast({
         title: "Password reset email sent",
         description: `A password reset email has been sent to ${email}`,
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to send password reset email",
+        description: error.message || "Failed to send password reset email",
         variant: "destructive",
       });
+    } finally {
+      // Remove the rate limit after 60 seconds
+      setTimeout(() => {
+        setResetInProgress(prev => {
+          const newState = { ...prev };
+          delete newState[email];
+          return newState;
+        });
+      }, 60000);
     }
   };
 
@@ -145,6 +178,7 @@ export const UserRolesTable = ({
                     onClick={() => user.email && handlePasswordReset(user.email)}
                     className="hover:bg-primary/10"
                     title="Reset Password"
+                    disabled={user.email ? resetInProgress[user.email] : false}
                   >
                     <Key className="h-4 w-4 text-primary/70" />
                   </Button>
