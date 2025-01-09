@@ -83,7 +83,7 @@ export const AdminRoles = () => {
     try {
       const { error } = await supabase
         .from("user_approver_roles")
-        .insert({ user_id: userId, role: role });
+        .insert({ user_id: userId, role });
 
       if (error) throw error;
 
