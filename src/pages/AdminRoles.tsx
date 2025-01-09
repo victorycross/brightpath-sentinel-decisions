@@ -3,15 +3,41 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { UserRolesTable } from "@/components/admin/UserRolesTable";
 import { ApproverRole, UserRole } from "@/types/approver";
+import { useNavigate } from "react-router-dom";
 
 export const AdminRoles = () => {
   const [users, setUsers] = useState<UserRole[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    checkAdminAccess();
     fetchUsers();
   }, []);
+
+  const checkAdminAccess = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate('/login');
+      return;
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_admin, is_disabled')
+      .eq('id', session.user.id)
+      .single();
+
+    if (!profile?.is_admin || profile?.is_disabled) {
+      toast({
+        title: "Access Denied",
+        description: "You need admin privileges to access this page.",
+        variant: "destructive",
+      });
+      navigate('/');
+    }
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -42,10 +68,10 @@ export const AdminRoles = () => {
       })) || [];
 
       setUsers(userRoles);
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to fetch users",
+        description: error.message || "Failed to fetch users",
         variant: "destructive",
       });
     } finally {
@@ -54,105 +80,99 @@ export const AdminRoles = () => {
   };
 
   const handleRoleChange = async (userId: string, role: ApproverRole) => {
-    const userWithRole = users.find(user => user.id === userId);
-    if (userWithRole?.roles.includes(role)) {
+    try {
+      const { error } = await supabase
+        .from("user_approver_roles")
+        .insert({ user_id: userId, role: role });
+
+      if (error) throw error;
+
       toast({
-        title: "Role already assigned",
-        description: "This user already has this role assigned.",
-        variant: "destructive",
+        title: "Success",
+        description: "User role updated successfully",
       });
-      return;
-    }
 
-    const { error } = await supabase
-      .from("user_approver_roles")
-      .insert({ user_id: userId, role: role });
-
-    if (error) {
+      fetchUsers();
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to update user role",
+        description: error.message || "Failed to update user role",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Success",
-      description: "User role updated successfully",
-    });
-
-    fetchUsers();
   };
 
   const handleRoleRemove = async (userId: string, role: ApproverRole) => {
-    const { error } = await supabase
-      .from("user_approver_roles")
-      .delete()
-      .eq("user_id", userId)
-      .eq("role", role);
+    try {
+      const { error } = await supabase
+        .from("user_approver_roles")
+        .delete()
+        .eq("user_id", userId)
+        .eq("role", role);
 
-    if (error) {
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "User role removed successfully",
+      });
+
+      fetchUsers();
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to remove user role",
+        description: error.message || "Failed to remove user role",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Success",
-      description: "User role removed successfully",
-    });
-
-    fetchUsers();
   };
 
   const handleUserDisable = async (userId: string, disabled: boolean) => {
-    const { error } = await supabase
-      .from("profiles")
-      .update({ is_disabled: disabled })
-      .eq("id", userId);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ is_disabled: disabled })
+        .eq("id", userId);
 
-    if (error) {
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `User ${disabled ? "disabled" : "enabled"} successfully`,
+      });
+
+      fetchUsers();
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to update user status",
+        description: error.message || "Failed to update user status",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Success",
-      description: `User ${disabled ? "disabled" : "enabled"} successfully`,
-    });
-
-    fetchUsers();
   };
 
   const handleUserUpdate = async (userId: string, data: { first_name?: string; last_name?: string }) => {
-    const { error } = await supabase
-      .from("profiles")
-      .update(data)
-      .eq("id", userId);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update(data)
+        .eq("id", userId);
 
-    if (error) {
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "User details updated successfully",
+      });
+
+      fetchUsers();
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to update user details",
+        description: error.message || "Failed to update user details",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Success",
-      description: "User details updated successfully",
-    });
-
-    fetchUsers();
   };
 
   return (
