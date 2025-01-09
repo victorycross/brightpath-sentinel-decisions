@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom"
-import { Users } from "lucide-react"
+import { Users, BarChart } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -28,6 +28,10 @@ const items = [
   {
     title: "Approver Dashboard",
     href: "/approver-dashboard",
+  },
+  {
+    title: "Metrics",
+    href: "/metrics",
   },
   {
     title: "Admin",
