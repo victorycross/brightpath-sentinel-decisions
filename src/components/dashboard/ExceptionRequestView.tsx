@@ -69,6 +69,8 @@ export const ExceptionRequestView = ({
       if (error) throw error;
 
       await queryClient.invalidateQueries({ queryKey: ['pendingRequests'] });
+      await queryClient.invalidateQueries({ queryKey: ['exception-stats'] });
+      
       toast({
         title: "Request Approved",
         description: "The exception request has been approved successfully.",
@@ -94,6 +96,8 @@ export const ExceptionRequestView = ({
       if (error) throw error;
 
       await queryClient.invalidateQueries({ queryKey: ['pendingRequests'] });
+      await queryClient.invalidateQueries({ queryKey: ['exception-stats'] });
+      
       toast({
         title: "Request Rejected",
         description: "The exception request has been rejected.",
