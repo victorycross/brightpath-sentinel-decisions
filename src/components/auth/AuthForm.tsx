@@ -1,67 +1,33 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { supabase } from "@/integrations/supabase/client";
-import { AuthError, AuthApiError } from "@supabase/supabase-js";
+import { useEffect } from "react"
+import { Auth } from "@supabase/auth-ui-react"
+import { ThemeSupa } from "@supabase/auth-ui-shared"
+import { Card, CardContent } from "@/components/ui/card"
+import { supabase } from "@/integrations/supabase/client"
+import { AuthHeader } from "./AuthHeader"
+import { AuthErrorAlert } from "./AuthErrorAlert"
+import { useAuthRedirect } from "./useAuthRedirect"
+import { useAuthError } from "./useAuthError"
 
 export const AuthForm = () => {
-  const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const { errorMessage, clearError } = useAuthError()
+  useAuthRedirect()
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        navigate('/dashboard')
-      }
-    }
-
-    checkAuth()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        navigate('/dashboard')
-      }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'USER_UPDATED' || event === 'SIGNED_OUT' || event === 'PASSWORD_RECOVERY') {
-        setErrorMessage("");
+        clearError()
       }
     })
 
     return () => {
       subscription.unsubscribe()
     }
-  }, [navigate])
-
-  const getErrorMessage = (error: AuthError) => {
-    if (error instanceof AuthApiError) {
-      if (error.message.includes("invalid_credentials")) {
-        return 'Invalid email or password. Please check your credentials and try again.';
-      }
-      switch (error.status) {
-        case 400:
-          return 'Invalid login attempt. Please check your credentials and try again.';
-        case 422:
-          return 'Invalid email format. Please enter a valid email address.';
-        case 429:
-          return 'Too many login attempts. Please try again later.';
-        default:
-          return error.message;
-      }
-    }
-    return error.message;
-  };
+  }, [clearError])
 
   return (
     <div className="max-w-md mx-auto mt-8 p-6">
-      <h1 className="text-2xl font-bold text-center mb-6">Welcome to Exception Hub</h1>
-      {errorMessage && (
-        <Alert variant="destructive" className="mb-4">
-          <AlertDescription>{errorMessage}</AlertDescription>
-        </Alert>
-      )}
+      <AuthHeader title="Welcome to Exception Hub" />
+      <AuthErrorAlert message={errorMessage} />
       <Card>
         <CardContent className="pt-6">
           <Auth
@@ -100,5 +66,5 @@ export const AuthForm = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
