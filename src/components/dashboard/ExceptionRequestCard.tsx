@@ -9,7 +9,12 @@ import {
 import { ExceptionRequest } from "@/types/request";
 import { RequestActions } from "./request/RequestActions";
 import { CheckCircle, Circle, XCircle } from "lucide-react";
-import { Tooltip } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ExceptionRequestCardProps {
   request: ExceptionRequest;
@@ -38,7 +43,6 @@ const CROApprovalIndicator = ({ residualRisk, status }: { residualRisk?: string,
 
   let icon;
   let tooltipText;
-  let iconColor;
 
   switch (status) {
     case 'approved':
@@ -55,17 +59,19 @@ const CROApprovalIndicator = ({ residualRisk, status }: { residualRisk?: string,
   }
 
   return (
-    <Tooltip>
-      <Tooltip.Trigger>
-        <div className="flex items-center gap-1">
-          {icon}
-          <span className="text-xs text-muted-foreground">CRO</span>
-        </div>
-      </Tooltip.Trigger>
-      <Tooltip.Content>
-        <p>{tooltipText}</p>
-      </Tooltip.Content>
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex items-center gap-1">
+            {icon}
+            <span className="text-xs text-muted-foreground">CRO</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltipText}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
