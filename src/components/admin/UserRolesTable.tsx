@@ -6,15 +6,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { UserRoleSelect } from "./UserRoleSelect";
 import { ApproverRole, UserRole } from "@/types/approver";
-import { UserEditDialog } from "./UserEditDialog";
-import { useState } from "react";
-import { UserRoleBadge } from "./UserRoleBadge";
 import { UserNameDisplay } from "./UserNameDisplay";
 import { UserTableLoadingState } from "./UserTableLoadingState";
 import { UserStatus } from "./UserStatus";
-import { UserActions } from "./UserActions";
+import { UserEditPopup } from "./UserEditPopup";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Edit2 } from "lucide-react";
 
 interface UserRolesTableProps {
   users: UserRole[];
@@ -24,19 +23,6 @@ interface UserRolesTableProps {
   onUserDisable: (userId: string, disabled: boolean) => void;
   onUserUpdate: (userId: string, data: { first_name?: string; last_name?: string }) => void;
 }
-
-const roleLabels: Record<ApproverRole, string> = {
-  cyber_approver: "Cyber Security",
-  legal_approver: "Legal",
-  independence_approver: "Independence",
-  qmr_approver: "Quality & Risk Management",
-  clientAcceptance_approver: "Client Acceptance",
-  engagementRisk_approver: "Engagement Risk",
-  auditFinding_approver: "Audit Finding",
-  data_approver: "Data Protection",
-  ai_approver: "AI & Innovation",
-  cro_approver: "Chief Risk Officer",
-};
 
 export const UserRolesTable = ({ 
   users, 
@@ -67,30 +53,24 @@ export const UserRolesTable = ({
           <TableRow className="bg-primary/5 dark:bg-primary/10">
             <TableHead className="w-[250px] font-semibold text-primary/90">User Email</TableHead>
             <TableHead className="w-[200px] font-semibold text-primary/90">Name</TableHead>
-            <TableHead className="font-semibold text-primary/90">Current Roles</TableHead>
             <TableHead className="w-[100px] text-center font-semibold text-primary/90">Status</TableHead>
-            <TableHead className="w-[260px] font-semibold text-primary/90">Add Role</TableHead>
-            <TableHead className="w-[140px] text-center font-semibold text-primary/90">Actions</TableHead>
+            <TableHead className="w-[100px] text-center font-semibold text-primary/90">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.map((user) => (
             <TableRow key={user.id} className="group hover:bg-muted/50">
-              <TableCell className="font-medium">{user.email}</TableCell>
-              <TableCell>
-                <UserNameDisplay firstName={user.first_name} lastName={user.last_name} />
+              <TableCell className="font-medium">
+                <Button
+                  variant="link"
+                  className="p-0 h-auto font-medium"
+                  onClick={() => setEditingUser(user)}
+                >
+                  {user.email}
+                </Button>
               </TableCell>
               <TableCell>
-                <div className="flex flex-wrap gap-2">
-                  {user.roles.map((role) => (
-                    <UserRoleBadge
-                      key={role}
-                      role={role}
-                      label={roleLabels[role]}
-                      onRemove={() => onRoleRemove(user.id, role)}
-                    />
-                  ))}
-                </div>
+                <UserNameDisplay firstName={user.first_name} lastName={user.last_name} />
               </TableCell>
               <TableCell className="text-center">
                 <UserStatus
@@ -98,30 +78,39 @@ export const UserRolesTable = ({
                   onStatusChange={(checked) => onUserDisable(user.id, !checked)}
                 />
               </TableCell>
-              <TableCell>
-                <UserRoleSelect 
-                  onRoleChange={(role) => onRoleChange(user.id, role)} 
-                />
-              </TableCell>
-              <TableCell>
-                <UserActions
-                  email={user.email}
-                  onEdit={() => setEditingUser(user)}
-                />
+              <TableCell className="text-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setEditingUser(user)}
+                  className="hover:bg-primary/10"
+                >
+                  <Edit2 className="h-4 w-4 text-primary/70" />
+                </Button>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
-      <UserEditDialog
+      <UserEditPopup
         user={editingUser}
         open={!!editingUser}
         onClose={() => setEditingUser(null)}
-        onSubmit={(data) => {
+        onUpdate={(data) => {
           if (editingUser) {
             onUserUpdate(editingUser.id, data);
             setEditingUser(null);
+          }
+        }}
+        onRoleAdd={(role) => {
+          if (editingUser) {
+            onRoleChange(editingUser.id, role);
+          }
+        }}
+        onRoleRemove={(role) => {
+          if (editingUser) {
+            onRoleRemove(editingUser.id, role);
           }
         }}
       />
