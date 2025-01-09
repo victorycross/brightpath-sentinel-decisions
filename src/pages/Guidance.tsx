@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const Guidance = () => {
+export const Guidance = () => {
   const approversByType = {
     cyber: {
       type: "Cyber or Technology Issues",
@@ -88,5 +88,3 @@ const Guidance = () => {
     </div>
   );
 };
-
-export default Guidance;

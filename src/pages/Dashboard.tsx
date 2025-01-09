@@ -5,7 +5,7 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader"
 import { RequestManager } from "@/components/dashboard/RequestManager"
 import { DashboardActivityLog } from "@/components/dashboard/DashboardActivityLog"
 
-const Dashboard = () => {
+export const Dashboard = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -39,5 +39,3 @@ const Dashboard = () => {
     </div>
   )
 }
-
-export default Dashboard
