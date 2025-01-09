@@ -1,9 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RequestList } from "../RequestList";
-import { ExceptionRequest } from "@/types/request";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
+import { RequestType } from "@/types/request";
 
 type ApproverRole = Database["public"]["Enums"]["approver_role"];
 
@@ -11,13 +11,17 @@ interface ApproverTabsProps {
   approverRoles: ApproverRole[];
 }
 
+const convertApproverRoleToRequestType = (role: ApproverRole): RequestType => {
+  return role.replace('_approver', '') as RequestType;
+};
+
 export const ApproverTabs = ({ approverRoles }: ApproverTabsProps) => {
   const { data: pendingRequests = [], isLoading: pendingLoading } = useQuery({
     queryKey: ['pendingRequests', approverRoles],
     queryFn: async () => {
       if (!approverRoles.length) return [];
 
-      const types = approverRoles.map(role => role.replace('_approver', ''));
+      const types = approverRoles.map(convertApproverRoleToRequestType);
       
       const { data, error } = await supabase
         .from('exception_requests')
@@ -54,7 +58,7 @@ export const ApproverTabs = ({ approverRoles }: ApproverTabsProps) => {
     queryFn: async () => {
       if (!approverRoles.length) return [];
 
-      const types = approverRoles.map(role => role.replace('_approver', ''));
+      const types = approverRoles.map(convertApproverRoleToRequestType);
       
       const { data, error } = await supabase
         .from('exception_requests')
