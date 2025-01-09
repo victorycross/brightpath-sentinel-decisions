@@ -14,4 +14,7 @@ export type UserRole = {
   id: string;
   email: string | null;
   roles: ApproverRole[];
+  first_name: string | null;
+  last_name: string | null;
+  is_disabled: boolean;
 };

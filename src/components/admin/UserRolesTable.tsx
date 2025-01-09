@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { UserRoleSelect } from "./UserRoleSelect";
 import { ApproverRole, UserRole } from "@/types/approver";
-import { Trash2, Edit2 } from "lucide-react";
+import { Trash2, Edit2, Shield } from "lucide-react";
 import { UserEditDialog } from "./UserEditDialog";
 import { useState } from "react";
 
@@ -46,21 +46,21 @@ export const UserRolesTable = ({
   const [editingUser, setEditingUser] = useState<UserRole | null>(null);
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border bg-white dark:bg-gray-900">
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/50">
             <TableHead className="w-[200px]">User Email</TableHead>
             <TableHead className="w-[200px]">Name</TableHead>
             <TableHead>Current Roles</TableHead>
-            <TableHead className="w-[100px]">Status</TableHead>
+            <TableHead className="w-[100px] text-center">Status</TableHead>
             <TableHead className="w-[260px]">Add Role</TableHead>
-            <TableHead className="w-[100px]">Actions</TableHead>
+            <TableHead className="w-[80px] text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.map((user) => (
-            <TableRow key={user.id}>
+            <TableRow key={user.id} className="group">
               <TableCell className="font-medium">{user.email}</TableCell>
               <TableCell>
                 {user.first_name} {user.last_name}
@@ -71,26 +71,28 @@ export const UserRolesTable = ({
                     <div key={role} className="flex items-center gap-1">
                       <Badge 
                         variant="secondary"
-                        className="text-xs py-1"
+                        className="text-xs py-1.5 px-3 bg-secondary/20 text-secondary-foreground hover:bg-secondary/30 transition-colors group-hover:bg-secondary/25"
                       >
+                        <Shield className="w-3 h-3 mr-1 opacity-70" />
                         {roleLabels[role]}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => onRoleRemove(user.id, role)}
+                        >
+                          <Trash2 className="h-3 w-3 text-secondary hover:text-secondary-foreground" />
+                        </Button>
                       </Badge>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => onRoleRemove(user.id, role)}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
                     </div>
                   ))}
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="text-center">
                 <Switch
                   checked={!user.is_disabled}
                   onCheckedChange={(checked) => onUserDisable(user.id, !checked)}
+                  className="data-[state=checked]:bg-success data-[state=unchecked]:bg-destructive"
                 />
               </TableCell>
               <TableCell>
@@ -98,11 +100,12 @@ export const UserRolesTable = ({
                   onRoleChange={(role) => onRoleChange(user.id, role)} 
                 />
               </TableCell>
-              <TableCell>
+              <TableCell className="text-center">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setEditingUser(user)}
+                  className="hover:bg-muted"
                 >
                   <Edit2 className="h-4 w-4" />
                 </Button>
