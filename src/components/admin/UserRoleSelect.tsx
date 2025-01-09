@@ -39,9 +39,9 @@ const roleLabels: Record<ApproverRole, string> = {
 export const UserRoleSelect = ({ onRoleChange }: UserRoleSelectProps) => {
   return (
     <Select onValueChange={(value: ApproverRole) => onRoleChange(value)}>
-      <SelectTrigger className="w-full bg-white dark:bg-gray-800">
+      <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-primary/20 hover:bg-primary/5 transition-colors">
         <div className="flex items-center gap-2">
-          <Shield className="h-4 w-4 text-muted-foreground" />
+          <Shield className="h-4 w-4 text-primary/70" />
           <SelectValue placeholder="Select a role" />
         </div>
       </SelectTrigger>
@@ -50,10 +50,10 @@ export const UserRoleSelect = ({ onRoleChange }: UserRoleSelectProps) => {
           <SelectItem 
             key={value} 
             value={value}
-            className="cursor-pointer hover:bg-muted"
+            className="cursor-pointer hover:bg-primary/5 focus:bg-primary/10"
           >
             <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-muted-foreground" />
+              <Shield className="h-4 w-4 text-primary/70" />
               {label}
             </div>
           </SelectItem>

@@ -49,13 +49,13 @@ export const UserRolesTable = ({
     <div className="rounded-md border bg-white dark:bg-gray-900">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/50">
-            <TableHead className="w-[200px]">User Email</TableHead>
-            <TableHead className="w-[200px]">Name</TableHead>
-            <TableHead>Current Roles</TableHead>
-            <TableHead className="w-[100px] text-center">Status</TableHead>
-            <TableHead className="w-[260px]">Add Role</TableHead>
-            <TableHead className="w-[80px] text-center">Actions</TableHead>
+          <TableRow className="bg-primary/5 dark:bg-primary/10">
+            <TableHead className="w-[200px] font-semibold">User Email</TableHead>
+            <TableHead className="w-[200px] font-semibold">Name</TableHead>
+            <TableHead className="font-semibold">Current Roles</TableHead>
+            <TableHead className="w-[100px] text-center font-semibold">Status</TableHead>
+            <TableHead className="w-[260px] font-semibold">Add Role</TableHead>
+            <TableHead className="w-[80px] text-center font-semibold">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -71,7 +71,7 @@ export const UserRolesTable = ({
                     <div key={role} className="flex items-center gap-1">
                       <Badge 
                         variant="secondary"
-                        className="text-xs py-1.5 px-3 bg-secondary/20 text-secondary-foreground hover:bg-secondary/30 transition-colors group-hover:bg-secondary/25"
+                        className="text-xs py-1.5 px-3 bg-primary/10 text-primary hover:bg-primary/20 transition-colors group-hover:bg-primary/15"
                       >
                         <Shield className="w-3 h-3 mr-1 opacity-70" />
                         {roleLabels[role]}
@@ -81,7 +81,7 @@ export const UserRolesTable = ({
                           className="h-5 w-5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={() => onRoleRemove(user.id, role)}
                         >
-                          <Trash2 className="h-3 w-3 text-secondary hover:text-secondary-foreground" />
+                          <Trash2 className="h-3 w-3 text-primary hover:text-primary-foreground" />
                         </Button>
                       </Badge>
                     </div>
@@ -105,7 +105,7 @@ export const UserRolesTable = ({
                   variant="ghost"
                   size="icon"
                   onClick={() => setEditingUser(user)}
-                  className="hover:bg-muted"
+                  className="hover:bg-primary/10"
                 >
                   <Edit2 className="h-4 w-4" />
                 </Button>
