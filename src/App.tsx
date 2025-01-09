@@ -5,6 +5,7 @@ import RiskDashboard from "@/pages/RiskDashboard"
 import ApproverDashboard from "@/pages/ApproverDashboard"
 import { MainNav } from "@/components/navigation/MainNav"
 import { ExceptionRequestForm } from "@/components/ExceptionRequestForm"
+import { AuthForm } from "@/components/auth/AuthForm"
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/exceptions" element={<RiskDashboard />} />
             <Route path="/approver-dashboard" element={<ApproverDashboard />} />
+            <Route path="/auth" element={<AuthForm />} />
           </Routes>
         </main>
       </div>
