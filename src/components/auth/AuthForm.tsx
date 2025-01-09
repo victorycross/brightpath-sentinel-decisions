@@ -13,11 +13,8 @@ export const AuthForm = () => {
   useAuthRedirect()
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'USER_UPDATED' || event === 'SIGNED_OUT') {
-        clearError()
-      }
-      if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
         clearError()
       }
     })
@@ -48,7 +45,6 @@ export const AuthForm = () => {
             }}
             providers={[]}
             theme="light"
-            onError={(error) => setError(error)}
             localization={{
               variables: {
                 sign_in: {

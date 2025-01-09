@@ -28,7 +28,7 @@ export const useAuthError = () => {
 
   const clearError = () => setErrorMessage("")
   const setError = (error: AuthError) => {
-    console.error('Auth Error:', error) // Add logging for debugging
+    console.error('Auth Error:', error)
     setErrorMessage(getErrorMessage(error))
   }
 
