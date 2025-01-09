@@ -12,6 +12,7 @@ import { Guidance } from "@/pages/Guidance"
 import { ResetPassword } from "@/pages/ResetPassword"
 import { ApproverDashboard } from "@/pages/ApproverDashboard"
 import { ExceptionsDashboard } from "@/pages/ExceptionsDashboard"
+import { ExceptionRequestForm } from "@/components/ExceptionRequestForm"
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/auth" element={<ResetPassword />} />
             <Route path="/approver-dashboard" element={<ApproverDashboard />} />
             <Route path="/exceptions" element={<ExceptionsDashboard />} />
+            <Route path="/new-request" element={<ExceptionRequestForm />} />
           </Routes>
         </main>
         <Toaster />
