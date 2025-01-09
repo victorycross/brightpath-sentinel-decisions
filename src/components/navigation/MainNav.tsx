@@ -46,7 +46,7 @@ export function MainNav() {
   const handleSwitchUser = async () => {
     try {
       await supabase.auth.signOut()
-      navigate('/auth')  // Changed from '/dashboard' to '/auth'
+      navigate('/auth')
       toast({
         title: "Signed out successfully",
         description: "You can now sign in as a different user",
@@ -63,6 +63,16 @@ export function MainNav() {
   return (
     <div className="border-b">
       <div className="flex h-16 items-center px-4">
+        <div className="flex items-center mr-8">
+          <Link to="/">
+            <img 
+              src="/lovable-uploads/957716f0-24b5-445b-bb33-8d9671df5ad5.png" 
+              alt="Brightpath Sentinel Technologies" 
+              className="h-12 w-auto"
+            />
+          </Link>
+        </div>
+        
         <NavigationMenu>
           <NavigationMenuList>
             {items.map((item) => (
