@@ -9,12 +9,15 @@ import { useAuthRedirect } from "./useAuthRedirect"
 import { useAuthError } from "./useAuthError"
 
 export const AuthForm = () => {
-  const { errorMessage, clearError } = useAuthError()
+  const { errorMessage, clearError, setError } = useAuthError()
   useAuthRedirect()
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'USER_UPDATED' || event === 'SIGNED_OUT' || event === 'PASSWORD_RECOVERY') {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'USER_UPDATED' || event === 'SIGNED_OUT') {
+        clearError()
+      }
+      if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
         clearError()
       }
     })
@@ -45,16 +48,27 @@ export const AuthForm = () => {
             }}
             providers={[]}
             theme="light"
+            onError={(error) => setError(error)}
             localization={{
               variables: {
-                sign_up: {
-                  email_input_placeholder: "Your email address",
-                  password_input_placeholder: "Your password",
+                sign_in: {
                   email_label: "Email address",
                   password_label: "Password",
+                  email_input_placeholder: "Your email address",
+                  password_input_placeholder: "Your password",
+                  button_label: "Sign in",
+                  loading_button_label: "Signing in ...",
+                  social_provider_text: "Sign in with {{provider}}",
+                  link_text: "Already have an account? Sign in",
+                },
+                sign_up: {
+                  email_label: "Email address",
+                  password_label: "Create a Password",
+                  email_input_placeholder: "Your email address",
+                  password_input_placeholder: "Your password",
                   button_label: "Sign up",
                   loading_button_label: "Signing up ...",
-                  social_provider_text: "Sign in with {{provider}}",
+                  social_provider_text: "Sign up with {{provider}}",
                   link_text: "Don't have an account? Sign up",
                   confirmation_text: "Check your email for the confirmation link"
                 }
