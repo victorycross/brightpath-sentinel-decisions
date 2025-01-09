@@ -8,7 +8,8 @@ export type ApproverRole =
   | "auditFinding_approver"
   | "data_approver"
   | "ai_approver"
-  | "cro_approver";
+  | "cro_approver"
+  | "admin_approver";
 
 export type UserRole = {
   id: string;
