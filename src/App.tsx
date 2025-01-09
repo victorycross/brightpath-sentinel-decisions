@@ -11,6 +11,7 @@ import { AdminRoles } from "@/pages/AdminRoles"
 import { Guidance } from "@/pages/Guidance"
 import { ResetPassword } from "@/pages/ResetPassword"
 import { ApproverDashboard } from "@/pages/ApproverDashboard"
+import { ExceptionsDashboard } from "@/pages/ExceptionsDashboard"
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/guidance" element={<Guidance />} />
             <Route path="/auth" element={<ResetPassword />} />
             <Route path="/approver-dashboard" element={<ApproverDashboard />} />
+            <Route path="/exceptions" element={<ExceptionsDashboard />} />
           </Routes>
         </main>
         <Toaster />
