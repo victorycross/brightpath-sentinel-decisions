@@ -81,7 +81,12 @@ export const ExceptionRequestCard = ({ request, onEdit, onDelete, onView }: Exce
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-xl">{request.title}</CardTitle>
+            <CardTitle 
+              className="text-xl hover:text-primary cursor-pointer transition-colors"
+              onClick={() => onView(request.id)}
+            >
+              {request.title}
+            </CardTitle>
             <CardDescription>
               Submitted by {request.profiles?.email} on {new Date(request.submitted_at).toLocaleDateString()}
             </CardDescription>
