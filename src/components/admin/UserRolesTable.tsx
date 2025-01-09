@@ -31,37 +31,55 @@ interface UserRolesTableProps {
   onRoleChange: (userId: string, role: ApproverRole) => void;
 }
 
+const roleLabels: Record<ApproverRole, string> = {
+  cyber_approver: "Cyber Security",
+  legal_approver: "Legal",
+  independence_approver: "Independence",
+  qmr_approver: "Quality & Risk Management",
+  clientAcceptance_approver: "Client Acceptance",
+  engagementRisk_approver: "Engagement Risk",
+  auditFinding_approver: "Audit Finding",
+  data_approver: "Data Protection",
+  ai_approver: "AI & Innovation",
+};
+
 export const UserRolesTable = ({ users, onRoleChange }: UserRolesTableProps) => {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>User Email</TableHead>
-          <TableHead>Current Roles</TableHead>
-          <TableHead>Add Role</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell>{user.email}</TableCell>
-            <TableCell>
-              <div className="flex flex-wrap gap-2">
-                {user.roles.map((role, index) => (
-                  <Badge key={index} variant="secondary">
-                    {role.replace("_", " ")}
-                  </Badge>
-                ))}
-              </div>
-            </TableCell>
-            <TableCell>
-              <UserRoleSelect 
-                onRoleChange={(role) => onRoleChange(user.id, role)} 
-              />
-            </TableCell>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-muted/50">
+            <TableHead className="w-[300px]">User Email</TableHead>
+            <TableHead>Current Roles</TableHead>
+            <TableHead className="w-[260px]">Add Role</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {users.map((user) => (
+            <TableRow key={user.id}>
+              <TableCell className="font-medium">{user.email}</TableCell>
+              <TableCell>
+                <div className="flex flex-wrap gap-2">
+                  {user.roles.map((role) => (
+                    <Badge 
+                      key={role} 
+                      variant="secondary"
+                      className="text-xs py-1"
+                    >
+                      {roleLabels[role]}
+                    </Badge>
+                  ))}
+                </div>
+              </TableCell>
+              <TableCell>
+                <UserRoleSelect 
+                  onRoleChange={(role) => onRoleChange(user.id, role)} 
+                />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
