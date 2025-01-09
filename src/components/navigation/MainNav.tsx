@@ -23,7 +23,7 @@ const items = [
   },
   {
     title: "Approver Dashboard",
-    href: "/approver-dashboard",
+    href: "/approver-dashboard",  // This matches the route path in App.tsx
   },
 ]
 
