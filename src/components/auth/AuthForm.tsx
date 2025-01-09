@@ -21,7 +21,7 @@ export const AuthForm = () => {
 
     checkAuth()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
         navigate('/dashboard')
       }
@@ -29,6 +29,9 @@ export const AuthForm = () => {
         setErrorMessage("");
       }
       if (event === 'SIGNED_OUT') {
+        setErrorMessage("");
+      }
+      if (event === 'PASSWORD_RECOVERY') {
         setErrorMessage("");
       }
     })
@@ -42,9 +45,14 @@ export const AuthForm = () => {
     if (error instanceof AuthApiError) {
       switch (error.status) {
         case 400:
-          return 'Invalid email or password. Please check your credentials and try again.';
+          if (error.message.includes("invalid_credentials")) {
+            return 'Invalid email or password. Please check your credentials and try again.';
+          }
+          return error.message;
         case 422:
           return 'Invalid email format. Please enter a valid email address.';
+        case 429:
+          return 'Too many login attempts. Please try again later.';
         default:
           return error.message;
       }
