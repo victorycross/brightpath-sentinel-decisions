@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Users } from "lucide-react"
 import {
   NavigationMenu,
@@ -37,6 +37,7 @@ const items = [
 
 export function MainNav() {
   const { toast } = useToast()
+  const navigate = useNavigate()
 
   const handleSwitchUser = async () => {
     try {
@@ -45,6 +46,7 @@ export function MainNav() {
         title: "Signed out successfully",
         description: "You can now sign in as a different user",
       })
+      navigate('/auth')
     } catch (error) {
       toast({
         title: "Error signing out",
