@@ -56,7 +56,7 @@ export function MainNav() {
 
   return (
     <div className="border-b">
-      <div className="flex h-16 items-center px-4 justify-between">
+      <div className="flex h-16 items-center px-4">
         <NavigationMenu>
           <NavigationMenuList>
             {items.map((item) => (
