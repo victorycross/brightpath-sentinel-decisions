@@ -10,12 +10,14 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { UserRoleSelect } from "./UserRoleSelect";
 import { ApproverRole, UserRole } from "@/types/approver";
-import { Edit2 } from "lucide-react";
+import { Edit2, Key } from "lucide-react";
 import { UserEditDialog } from "./UserEditDialog";
 import { useState } from "react";
 import { UserRoleBadge } from "./UserRoleBadge";
 import { UserNameDisplay } from "./UserNameDisplay";
 import { UserTableLoadingState } from "./UserTableLoadingState";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface UserRolesTableProps {
   users: UserRole[];
@@ -48,6 +50,28 @@ export const UserRolesTable = ({
   onUserUpdate,
 }: UserRolesTableProps) => {
   const [editingUser, setEditingUser] = useState<UserRole | null>(null);
+  const { toast } = useToast();
+
+  const handlePasswordReset = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Password reset email sent",
+        description: `A password reset email has been sent to ${email}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send password reset email",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (loading) {
     return <UserTableLoadingState />;
@@ -71,7 +95,7 @@ export const UserRolesTable = ({
             <TableHead className="font-semibold text-primary/90">Current Roles</TableHead>
             <TableHead className="w-[100px] text-center font-semibold text-primary/90">Status</TableHead>
             <TableHead className="w-[260px] font-semibold text-primary/90">Add Role</TableHead>
-            <TableHead className="w-[80px] text-center font-semibold text-primary/90">Actions</TableHead>
+            <TableHead className="w-[140px] text-center font-semibold text-primary/90">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -105,15 +129,26 @@ export const UserRolesTable = ({
                   onRoleChange={(role) => onRoleChange(user.id, role)} 
                 />
               </TableCell>
-              <TableCell className="text-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setEditingUser(user)}
-                  className="hover:bg-primary/10"
-                >
-                  <Edit2 className="h-4 w-4 text-primary/70" />
-                </Button>
+              <TableCell>
+                <div className="flex items-center justify-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setEditingUser(user)}
+                    className="hover:bg-primary/10"
+                  >
+                    <Edit2 className="h-4 w-4 text-primary/70" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => user.email && handlePasswordReset(user.email)}
+                    className="hover:bg-primary/10"
+                    title="Reset Password"
+                  >
+                    <Key className="h-4 w-4 text-primary/70" />
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}
