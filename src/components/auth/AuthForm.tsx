@@ -25,13 +25,7 @@ export const AuthForm = () => {
       if (event === 'SIGNED_IN' && session) {
         navigate('/dashboard')
       }
-      if (event === 'USER_UPDATED') {
-        setErrorMessage("");
-      }
-      if (event === 'SIGNED_OUT') {
-        setErrorMessage("");
-      }
-      if (event === 'PASSWORD_RECOVERY') {
+      if (event === 'USER_UPDATED' || event === 'SIGNED_OUT' || event === 'PASSWORD_RECOVERY') {
         setErrorMessage("");
       }
     })
@@ -43,12 +37,12 @@ export const AuthForm = () => {
 
   const getErrorMessage = (error: AuthError) => {
     if (error instanceof AuthApiError) {
+      if (error.message.includes("invalid_credentials")) {
+        return 'Invalid email or password. Please check your credentials and try again.';
+      }
       switch (error.status) {
         case 400:
-          if (error.message.includes("invalid_credentials")) {
-            return 'Invalid email or password. Please check your credentials and try again.';
-          }
-          return error.message;
+          return 'Invalid login attempt. Please check your credentials and try again.';
         case 422:
           return 'Invalid email format. Please enter a valid email address.';
         case 429:
