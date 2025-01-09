@@ -48,6 +48,9 @@ export const AdminRoles = () => {
     const userRoles = profiles?.map((profile) => ({
       id: profile.id,
       email: profile.email,
+      first_name: profile.first_name,
+      last_name: profile.last_name,
+      is_disabled: profile.is_disabled,
       roles:
         roles
           ?.filter((role) => role.user_id === profile.id)
@@ -59,7 +62,6 @@ export const AdminRoles = () => {
   };
 
   const handleRoleChange = async (userId: string, role: ApproverRole) => {
-    // Check if user already has this role
     const userWithRole = users.find(user => user.id === userId);
     if (userWithRole?.roles.includes(role)) {
       toast({
@@ -91,6 +93,76 @@ export const AdminRoles = () => {
     fetchUsers();
   };
 
+  const handleRoleRemove = async (userId: string, role: ApproverRole) => {
+    const { error } = await supabase
+      .from("user_approver_roles")
+      .delete()
+      .eq("user_id", userId)
+      .eq("role", role);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to remove user role",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: "User role removed successfully",
+    });
+
+    fetchUsers();
+  };
+
+  const handleUserDisable = async (userId: string, disabled: boolean) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ is_disabled: disabled })
+      .eq("id", userId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update user status",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: `User ${disabled ? "disabled" : "enabled"} successfully`,
+    });
+
+    fetchUsers();
+  };
+
+  const handleUserUpdate = async (userId: string, data: { first_name?: string; last_name?: string }) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update(data)
+      .eq("id", userId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update user details",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: "User details updated successfully",
+    });
+
+    fetchUsers();
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -102,7 +174,13 @@ export const AdminRoles = () => {
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-8">User Role Management</h1>
-      <UserRolesTable users={users} onRoleChange={handleRoleChange} />
+      <UserRolesTable 
+        users={users} 
+        onRoleChange={handleRoleChange}
+        onRoleRemove={handleRoleRemove}
+        onUserDisable={handleUserDisable}
+        onUserUpdate={handleUserUpdate}
+      />
     </div>
   );
 };
