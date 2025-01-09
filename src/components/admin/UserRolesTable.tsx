@@ -8,23 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { UserRoleSelect } from "./UserRoleSelect";
-
-type ApproverRole = 
-  | "cyber_approver"
-  | "legal_approver"
-  | "independence_approver"
-  | "qmr_approver"
-  | "clientAcceptance_approver"
-  | "engagementRisk_approver"
-  | "auditFinding_approver"
-  | "data_approver"
-  | "ai_approver";
-
-type UserRole = {
-  id: string;
-  email: string | null;
-  roles: ApproverRole[];
-};
+import { ApproverRole, UserRole } from "@/types/approver";
 
 interface UserRolesTableProps {
   users: UserRole[];
@@ -41,6 +25,7 @@ const roleLabels: Record<ApproverRole, string> = {
   auditFinding_approver: "Audit Finding",
   data_approver: "Data Protection",
   ai_approver: "AI & Innovation",
+  cro_approver: "Chief Risk Officer",
 };
 
 export const UserRolesTable = ({ users, onRoleChange }: UserRolesTableProps) => {
