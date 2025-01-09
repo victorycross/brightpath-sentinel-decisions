@@ -5,6 +5,8 @@ import { Database } from "@/integrations/supabase/types";
 import { RequestViewActions } from "./RequestViewActions";
 import { RequestDetails } from "./request/RequestDetails";
 import { useRequestStatusActions } from "./request/RequestStatusActions";
+import { Button } from "../ui/button";
+import { Edit2 } from "lucide-react";
 
 type RequestType = Database["public"]["Enums"]["request_type"];
 type ApproverRole = Database["public"]["Enums"]["approver_role"];
@@ -59,6 +61,17 @@ export const ExceptionRequestView = ({
     <FormContainer
       title={data.title}
       onClose={onClose}
+      actions={
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onEdit}
+          className="gap-2"
+        >
+          <Edit2 className="h-4 w-4" />
+          Edit
+        </Button>
+      }
     >
       <RequestDetails data={data} />
       <RequestViewActions

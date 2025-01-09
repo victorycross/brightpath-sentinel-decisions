@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/card";
 import { ExceptionRequest } from "@/types/request";
 import { RequestActions } from "./RequestActions";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
 
 interface RequestCardProps {
   request: ExceptionRequest;
@@ -50,10 +52,21 @@ export const RequestCard = ({ request, onEdit, onDelete, onView }: RequestCardPr
           <Badge variant="outline" className="capitalize">
             {request.type}
           </Badge>
-          <RequestActions
-            onEdit={() => onEdit(request.id)}
-            onDelete={() => onDelete(request.id)}
-          />
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onView(request.id)}
+              className="gap-2"
+            >
+              <Eye className="h-4 w-4" />
+              View
+            </Button>
+            <RequestActions
+              onEdit={() => onEdit(request.id)}
+              onDelete={() => onDelete(request.id)}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>
