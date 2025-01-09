@@ -6,14 +6,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 import { UserRoleSelect } from "./UserRoleSelect";
 import { ApproverRole, UserRole } from "@/types/approver";
-import { Trash2, Edit2, Shield, Loader2 } from "lucide-react";
+import { Edit2, Shield } from "lucide-react";
 import { UserEditDialog } from "./UserEditDialog";
 import { useState } from "react";
+import { UserRoleBadge } from "./UserRoleBadge";
+import { UserNameDisplay } from "./UserNameDisplay";
+import { UserTableLoadingState } from "./UserTableLoadingState";
 
 interface UserRolesTableProps {
   users: UserRole[];
@@ -46,12 +48,7 @@ export const UserRolesTable = ({
   const [editingUser, setEditingUser] = useState<UserRole | null>(null);
 
   if (!users || users.length === 0) {
-    return (
-      <div className="rounded-md border bg-white dark:bg-gray-900 p-8 text-center">
-        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary/70" />
-        <p className="text-muted-foreground">Loading users...</p>
-      </div>
-    );
+    return <UserTableLoadingState />;
   }
 
   return (
@@ -72,32 +69,17 @@ export const UserRolesTable = ({
             <TableRow key={user.id} className="group hover:bg-muted/50">
               <TableCell className="font-medium">{user.email}</TableCell>
               <TableCell>
-                {user.first_name || user.last_name ? (
-                  `${user.first_name || ''} ${user.last_name || ''}`
-                ) : (
-                  <span className="text-muted-foreground italic">No name set</span>
-                )}
+                <UserNameDisplay firstName={user.first_name} lastName={user.last_name} />
               </TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-2">
                   {user.roles.map((role) => (
-                    <div key={role} className="flex items-center gap-1">
-                      <Badge 
-                        variant="secondary"
-                        className="text-xs py-1.5 px-3 bg-primary/10 text-primary hover:bg-primary/20 transition-colors group/badge"
-                      >
-                        <Shield className="w-3 h-3 mr-1 opacity-70" />
-                        {roleLabels[role]}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-5 w-5 ml-1 opacity-0 group-hover/badge:opacity-100 transition-opacity"
-                          onClick={() => onRoleRemove(user.id, role)}
-                        >
-                          <Trash2 className="h-3 w-3 text-primary hover:text-destructive transition-colors" />
-                        </Button>
-                      </Badge>
-                    </div>
+                    <UserRoleBadge
+                      key={role}
+                      role={role}
+                      label={roleLabels[role]}
+                      onRemove={() => onRoleRemove(user.id, role)}
+                    />
                   ))}
                 </div>
               </TableCell>
