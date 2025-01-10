@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ExceptionRequestCard } from "./ExceptionRequestCard";
 import { ExceptionRequestView } from "./ExceptionRequestView";
 import { ExceptionRequestAuditLog } from "./ExceptionRequestAuditLog";
 import { useRequestOperations } from "@/hooks/useRequestOperations";
-import { LoadingState } from "./LoadingState";
-import { EmptyState } from "./EmptyState";
 import { ExceptionRequestForm } from "../ExceptionRequestForm";
 import { useToast } from "@/hooks/use-toast";
+import { RequestListView } from "./request/RequestListView";
 
 interface RequestListProps {
   requests: any[];
@@ -60,24 +58,12 @@ export const RequestList = ({ requests, loading, showAuditLog = false }: Request
     }
   };
 
-  const handleCloseView = () => {
-    setViewingRequest(null);
-    setAuditLogs([]);
-  };
-
-  const handleCloseEdit = () => {
-    setEditingRequest(null);
-  };
-
-  if (loading) return <LoadingState />;
-  if (!requests.length) return <EmptyState />;
-
   if (editingRequest) {
     return (
       <ExceptionRequestForm
         initialData={editingRequest}
         isEditing={true}
-        onClose={handleCloseEdit}
+        onClose={() => setEditingRequest(null)}
       />
     );
   }
@@ -87,12 +73,15 @@ export const RequestList = ({ requests, loading, showAuditLog = false }: Request
       <div>
         <ExceptionRequestView
           data={viewingRequest}
-          onClose={handleCloseView}
+          onClose={() => {
+            setViewingRequest(null);
+            setAuditLogs([]);
+          }}
           onEdit={() => handleEdit(viewingRequest.id)}
           onDelete={async () => {
             const success = await handleDelete(viewingRequest.id);
             if (success) {
-              handleCloseView();
+              setViewingRequest(null);
               toast({
                 title: "Success",
                 description: "Request deleted successfully",
@@ -106,16 +95,12 @@ export const RequestList = ({ requests, loading, showAuditLog = false }: Request
   }
 
   return (
-    <div className="space-y-4">
-      {requests.map((request) => (
-        <ExceptionRequestCard
-          key={request.id}
-          request={request}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onView={handleView}
-        />
-      ))}
-    </div>
+    <RequestListView
+      requests={requests}
+      loading={loading}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      onView={handleView}
+    />
   );
 };
