@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { ExceptionRequest } from "@/types/request";
 import { RequestActions } from "./request/RequestActions";
-import { CheckCircle, Circle, XCircle } from "lucide-react";
+import { CheckCircle, Circle, XCircle, Clock } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -75,6 +75,35 @@ const CROApprovalIndicator = ({ residualRisk, status }: { residualRisk?: string,
   );
 };
 
+const ExpiryIndicator = ({ expiryDate, expired }: { expiryDate?: string, expired?: boolean }) => {
+  if (!expiryDate) return null;
+
+  const daysUntilExpiry = Math.ceil((new Date(expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+  const isNearExpiry = daysUntilExpiry <= 30 && !expired;
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex items-center gap-1">
+            <Clock className={`h-5 w-5 ${expired ? 'text-destructive' : isNearExpiry ? 'text-warning' : 'text-muted-foreground'}`} />
+            <span className="text-xs text-muted-foreground">
+              {expired ? 'Expired' : `${daysUntilExpiry} days`}
+            </span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>
+            {expired 
+              ? 'Exception has expired and needs renewal' 
+              : `Expires on ${new Date(expiryDate).toLocaleDateString()}`}
+          </p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
 export const ExceptionRequestCard = ({ request, onEdit, onDelete, onView }: ExceptionRequestCardProps) => {
   return (
     <Card key={request.id} className="hover:shadow-md transition-shadow">
@@ -92,12 +121,16 @@ export const ExceptionRequestCard = ({ request, onEdit, onDelete, onView }: Exce
             </CardDescription>
           </div>
           <div className="flex items-center gap-3">
+            <ExpiryIndicator 
+              expiryDate={request.expiry_date} 
+              expired={request.expired}
+            />
             <CROApprovalIndicator 
               residualRisk={request.residual_risk} 
               status={request.status} 
             />
-            <Badge className={getStatusColor(request.status)}>
-              {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+            <Badge className={`${getStatusColor(request.status)} ${request.expired ? 'opacity-50' : ''}`}>
+              {request.expired ? 'Expired' : request.status.charAt(0).toUpperCase() + request.status.slice(1)}
             </Badge>
           </div>
         </div>

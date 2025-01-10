@@ -16,6 +16,8 @@ interface RequestDetailsProps {
     mitigating_factors?: string;
     residual_risk?: string;
     submitted_at: string;
+    expiry_date?: string;
+    expired?: boolean;
     profiles: {
       email: string;
     } | null;
@@ -29,15 +31,26 @@ export const RequestDetails = ({ data }: RequestDetailsProps) => {
         <Badge variant="outline" className="capitalize">
           {data.type}
         </Badge>
-        <Badge className={
-          data.status === "approved" 
-            ? "bg-success text-success-foreground" 
-            : data.status === "rejected"
-            ? "bg-destructive text-destructive-foreground"
-            : "bg-warning text-warning-foreground"
-        }>
-          {data.status === "in_process" ? "In Process" : data.status.charAt(0).toUpperCase() + data.status.slice(1)}
-        </Badge>
+        <div className="flex items-center gap-4">
+          {data.expiry_date && (
+            <div className="text-sm">
+              <span className="font-medium">Expires: </span>
+              <span className={`${data.expired ? 'text-destructive' : ''}`}>
+                {new Date(data.expiry_date).toLocaleDateString()}
+                {data.expired && ' (Expired)'}
+              </span>
+            </div>
+          )}
+          <Badge className={
+            data.status === "approved" 
+              ? "bg-success text-success-foreground" 
+              : data.status === "rejected"
+              ? "bg-destructive text-destructive-foreground"
+              : "bg-warning text-warning-foreground"
+          }>
+            {data.status === "in_process" ? "In Process" : data.status.charAt(0).toUpperCase() + data.status.slice(1)}
+          </Badge>
+        </div>
       </div>
 
       <div className="text-sm text-gray-500">

@@ -53,6 +53,8 @@ export type Database = {
       }
       exception_requests: {
         Row: {
+          expired: boolean | null
+          expiry_date: string | null
           id: string
           impact: string
           mitigating_factors: string
@@ -67,6 +69,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          expired?: boolean | null
+          expiry_date?: string | null
           id?: string
           impact: string
           mitigating_factors: string
@@ -81,6 +85,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          expired?: boolean | null
+          expiry_date?: string | null
           id?: string
           impact?: string
           mitigating_factors?: string
@@ -171,12 +177,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_expiry_date: {
+        Args: {
+          risk_level: string
+        }
+        Returns: string
+      }
       check_approver_access: {
         Args: {
           request_type: string
           request_residual_risk: string
         }
         Returns: boolean
+      }
+      check_expired_requests: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       is_admin: {
         Args: {

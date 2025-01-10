@@ -18,5 +18,7 @@ export interface ExceptionRequest {
   mitigating_factors?: string;
   residual_risk?: string;
   submitted_at: string;
+  expiry_date?: string;
+  expired?: boolean;
   profiles: RequestProfile | null;
 }
