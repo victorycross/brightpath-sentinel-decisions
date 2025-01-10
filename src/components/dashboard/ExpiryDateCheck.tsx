@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -18,7 +19,7 @@ export const ExpiryDateCheck = () => {
           expiry_date,
           expired
         `)
-        .neq('status', 'rejected')  // Exclude rejected requests
+        .eq('status', 'approved')  // Only show approved requests
         .order('submitted_at', { ascending: false })
         .limit(10);
 
@@ -67,7 +68,14 @@ export const ExpiryDateCheck = () => {
 
               return (
                 <TableRow key={request.id}>
-                  <TableCell>{request.title}</TableCell>
+                  <TableCell>
+                    <Link 
+                      to={`/requests/${request.id}`} 
+                      className="text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      {request.title}
+                    </Link>
+                  </TableCell>
                   <TableCell>{request.residual_risk || 'N/A'}</TableCell>
                   <TableCell>{request.status}</TableCell>
                   <TableCell>{submittedDate.toLocaleDateString()}</TableCell>
