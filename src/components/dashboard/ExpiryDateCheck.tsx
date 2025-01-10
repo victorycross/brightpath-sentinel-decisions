@@ -18,6 +18,7 @@ export const ExpiryDateCheck = () => {
           expiry_date,
           expired
         `)
+        .neq('status', 'rejected')  // Exclude rejected requests
         .order('submitted_at', { ascending: false })
         .limit(10);
 
@@ -33,7 +34,7 @@ export const ExpiryDateCheck = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Expiry Date Verification (Last 10 Entries)</CardTitle>
+        <CardTitle>Expiry Date Verification (Last 10 Non-Rejected Entries)</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
