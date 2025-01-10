@@ -7,7 +7,7 @@ import { RequestViewActions } from "./RequestViewActions";
 import { RequestDetails } from "./request/RequestDetails";
 import { Button } from "../ui/button";
 import { Edit2 } from "lucide-react";
-import { useRequestStatusActions } from "@/hooks/useRequestStatusActions";
+import { useRequestStatusActions } from "../../hooks/useRequestStatusActions";
 
 type RequestType = Database["public"]["Enums"]["request_type"];
 type ApproverRole = Database["public"]["Enums"]["approver_role"];
