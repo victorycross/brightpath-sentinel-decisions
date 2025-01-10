@@ -34,7 +34,7 @@ export const ExpiryDateCheck = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Expiry Date Verification (Last 10 Non-Rejected Entries)</CardTitle>
+        <CardTitle>Expiry Date Verification (Last 10 Approved Entries)</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
