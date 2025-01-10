@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import { RequestType } from "@/types/request";
+import { ExpiryDateCheck } from "../ExpiryDateCheck";
 
 type ApproverRole = Database["public"]["Enums"]["approver_role"];
 
@@ -117,6 +118,9 @@ export const ApproverTabs = ({ approverRoles }: ApproverTabsProps) => {
         <TabsTrigger value="approved">
           Previously Approved ({approvedRequests.length})
         </TabsTrigger>
+        <TabsTrigger value="expiry">
+          Expiry Check
+        </TabsTrigger>
       </TabsList>
       
       <TabsContent value="pending">
@@ -133,6 +137,10 @@ export const ApproverTabs = ({ approverRoles }: ApproverTabsProps) => {
           loading={approvedLoading}
           showAuditLog={true}
         />
+      </TabsContent>
+
+      <TabsContent value="expiry">
+        <ExpiryDateCheck />
       </TabsContent>
     </Tabs>
   );
