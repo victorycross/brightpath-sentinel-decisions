@@ -1,6 +1,7 @@
-import { FormContainer } from "../form/FormContainer";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { FormContainer } from "../form/FormContainer";
 import { Database } from "@/integrations/supabase/types";
 import { RequestViewActions } from "./RequestViewActions";
 import { RequestDetails } from "./request/RequestDetails";
@@ -11,33 +12,29 @@ import { Edit2 } from "lucide-react";
 type RequestType = Database["public"]["Enums"]["request_type"];
 type ApproverRole = Database["public"]["Enums"]["approver_role"];
 
-interface ExceptionRequestViewProps {
-  data: {
-    id: string;
-    title: string;
-    type: RequestType;
-    status: string;
-    request?: string;
-    reason?: string;
-    impact?: string;
-    mitigating_factors?: string;
-    residual_risk?: string;
-    submitted_at: string;
-    profiles: {
-      email: string;
-    } | null;
-  };
-  onClose: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-}
+export const ExceptionRequestView = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-export const ExceptionRequestView = ({ 
-  data, 
-  onClose, 
-  onEdit, 
-  onDelete 
-}: ExceptionRequestViewProps) => {
+  const { data: request, isLoading } = useQuery({
+    queryKey: ['request', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('exception_requests')
+        .select(`
+          *,
+          profiles (
+            email
+          )
+        `)
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const { data: userRoles = [] } = useQuery({
     queryKey: ['userApproverRoles'],
     queryFn: async () => {
@@ -49,23 +46,38 @@ export const ExceptionRequestView = ({
     },
   });
 
-  const isApprover = userRoles.includes(`${data.type}_approver` as ApproverRole);
-  const canApprove = isApprover && ['pending', 'assigned'].includes(data.status);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!request) {
+    return <div>Request not found</div>;
+  }
+
+  const isApprover = userRoles.includes(`${request.type}_approver` as ApproverRole);
+  const canApprove = isApprover && ['pending', 'assigned'].includes(request.status);
 
   const { handleApprove, handleReject } = useRequestStatusActions({
-    requestId: data.id,
-    onClose,
+    requestId: request.id,
+    onClose: () => navigate(-1),
   });
+
+  const handleClose = () => navigate(-1);
+  const handleEdit = () => navigate(`/requests/${id}/edit`);
+  const handleDelete = () => {
+    // Implement delete functionality
+    navigate(-1);
+  };
 
   return (
     <FormContainer
-      title={data.title}
-      onClose={onClose}
+      title={request.title}
+      onClose={handleClose}
       actions={
         <Button
           variant="outline"
           size="sm"
-          onClick={onEdit}
+          onClick={handleEdit}
           className="gap-2"
         >
           <Edit2 className="h-4 w-4" />
@@ -73,12 +85,12 @@ export const ExceptionRequestView = ({
         </Button>
       }
     >
-      <RequestDetails data={data} />
+      <RequestDetails data={request} />
       <RequestViewActions
         canApprove={canApprove}
-        onClose={onClose}
-        onEdit={onEdit}
-        onDelete={onDelete}
+        onClose={handleClose}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
         onApprove={handleApprove}
         onReject={handleReject}
       />

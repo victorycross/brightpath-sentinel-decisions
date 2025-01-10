@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Routes, Route } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ApproverRoleCheck } from "./approver/ApproverRoleCheck";
 import { ApproverTabs } from "./approver/ApproverTabs";
 import { useApproverRoles } from "./approver/useApproverRoles";
+import { ExceptionRequestView } from "./ExceptionRequestView";
 
 export const ApproverDashboard = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -33,7 +34,10 @@ export const ApproverDashboard = () => {
         approverRoles={approverRoles}
         isLoading={rolesLoading}
       >
-        <ApproverTabs approverRoles={approverRoles} />
+        <Routes>
+          <Route path="/" element={<ApproverTabs approverRoles={approverRoles} />} />
+          <Route path="/requests/:id" element={<ExceptionRequestView />} />
+        </Routes>
       </ApproverRoleCheck>
     </div>
   );
