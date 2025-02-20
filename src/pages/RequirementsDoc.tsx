@@ -1,13 +1,13 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FileDown, File } from "lucide-react";
+import { FileDown, File, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { BusinessRequirements } from "@/components/requirements/BusinessRequirements";
 import { WorkflowRequirements } from "@/components/requirements/WorkflowRequirements";
 import { TechnicalRequirements } from "@/components/requirements/TechnicalRequirements";
 import { getRequirementsMarkdown } from "@/utils/requirementsExport";
 import jsPDF from "jspdf";
+import { Document, Packer, Paragraph, HeadingLevel } from "docx";
 
 export const RequirementsDoc = () => {
   const { toast } = useToast();
@@ -35,26 +35,21 @@ export const RequirementsDoc = () => {
     const doc = new jsPDF();
     const content = getRequirementsMarkdown();
     
-    // Configure PDF settings
     doc.setFont("helvetica");
     doc.setFontSize(12);
     
-    // Add title
     doc.setFontSize(16);
     doc.text("Exception Management System", 20, 20);
     doc.setFontSize(14);
     doc.text("Requirements Documentation", 20, 30);
     
-    // Reset font size for content
     doc.setFontSize(12);
     
-    // Split content into lines that fit the page width
     const lines = doc.splitTextToSize(content, 170);
     
-    // Add content starting from y=40
     let y = 40;
     lines.forEach(line => {
-      if (y > 280) { // Check if we need a new page
+      if (y > 280) {
         doc.addPage();
         y = 20;
       }
@@ -62,12 +57,51 @@ export const RequirementsDoc = () => {
       y += 7;
     });
     
-    // Save the PDF
     doc.save("exception_management_requirements.pdf");
 
     toast({
       title: "Documentation Exported",
       description: "Requirements documentation has been downloaded as a PDF file.",
+    });
+  };
+
+  const handleWordExport = async () => {
+    const content = getRequirementsMarkdown();
+    
+    const doc = new Document({
+      sections: [{
+        properties: {},
+        children: [
+          new Paragraph({
+            text: "Exception Management System",
+            heading: HeadingLevel.HEADING_1,
+          }),
+          new Paragraph({
+            text: "Requirements Documentation",
+            heading: HeadingLevel.HEADING_2,
+          }),
+          ...content.split('\n').map(line => 
+            new Paragraph({
+              text: line.trim(),
+            })
+          ),
+        ],
+      }],
+    });
+
+    const blob = await Packer.toBlob(doc);
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "exception_management_requirements.docx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "Documentation Exported",
+      description: "Requirements documentation has been downloaded as a Word document.",
     });
   };
 
@@ -91,6 +125,10 @@ export const RequirementsDoc = () => {
             <Button onClick={handlePdfExport} variant="secondary" className="gap-2 shadow-lg hover:shadow-xl transition-all">
               <File className="h-4 w-4" />
               Export to PDF
+            </Button>
+            <Button onClick={handleWordExport} variant="outline" className="gap-2 shadow-lg hover:shadow-xl transition-all">
+              <FileText className="h-4 w-4" />
+              Export to Word
             </Button>
           </div>
         </div>
