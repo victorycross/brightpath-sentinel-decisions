@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FileDown, FilePdf } from "lucide-react";
+import { FileDown, File } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { BusinessRequirements } from "@/components/requirements/BusinessRequirements";
 import { WorkflowRequirements } from "@/components/requirements/WorkflowRequirements";
@@ -89,7 +89,7 @@ export const RequirementsDoc = () => {
               Export to MD
             </Button>
             <Button onClick={handlePdfExport} variant="secondary" className="gap-2 shadow-lg hover:shadow-xl transition-all">
-              <FilePdf className="h-4 w-4" />
+              <File className="h-4 w-4" />
               Export to PDF
             </Button>
           </div>
