@@ -1,3 +1,4 @@
+
 import { BrowserRouter } from "react-router-dom"
 import { Routes, Route } from "react-router-dom"
 import { Toaster } from "@/components/ui/toaster"
@@ -15,6 +16,7 @@ import { ExceptionsDashboard } from "@/pages/ExceptionsDashboard"
 import { ExceptionRequestForm } from "@/components/ExceptionRequestForm"
 import { Metrics } from "@/pages/Metrics"
 import { AuthForm } from "@/components/auth/AuthForm"
+import { RequirementsDoc } from "@/pages/RequirementsDoc"
 
 function App() {
   return (
@@ -36,6 +38,7 @@ function App() {
             <Route path="/exceptions" element={<ExceptionsDashboard />} />
             <Route path="/new-request" element={<ExceptionRequestForm />} />
             <Route path="/metrics" element={<Metrics />} />
+            <Route path="/requirements" element={<RequirementsDoc />} />
           </Routes>
         </main>
         <Toaster />
