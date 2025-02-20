@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FileDown } from "lucide-react";
@@ -118,31 +117,63 @@ export const RequirementsDoc = () => {
 
 ## Technical Requirements
 
-### 1. System Architecture
+### Option A: Modern Web Application Stack
+
+#### 1. System Architecture
 - React-based frontend
 - Supabase backend
 - Real-time updates
 - Responsive design
 - Secure data storage
 
-### 2. Integration Requirements
+#### 2. Integration Requirements
 - Email notification system
 - Document management system
 - Audit logging
 - Analytics and reporting tools
 
-### 3. Security Requirements
+#### 3. Security Requirements
 - Role-based access control
 - Data encryption
 - Secure authentication
 - Audit trails
 - Session management
 
-### 4. Performance Requirements
+#### 4. Performance Requirements
 - Quick response times
 - Efficient data loading
 - Optimized database queries
 - Scalable architecture
+
+### Option B: Microsoft 365 Integration Stack
+
+#### 1. System Architecture
+- SharePoint Online lists and libraries
+- Power Automate workflows
+- Microsoft Copilot Studio for AI integration
+- SharePoint modern web parts
+- Microsoft Teams integration
+
+#### 2. Integration Requirements
+- Outlook email notifications
+- SharePoint document libraries
+- Microsoft 365 audit logging
+- Power BI analytics
+- Microsoft Graph API integration
+
+#### 3. Security Requirements
+- Azure AD authentication
+- Microsoft 365 security policies
+- SharePoint permission levels
+- Microsoft Information Protection
+- Conditional access policies
+
+#### 4. Performance Requirements
+- SharePoint list indexing
+- Content delivery optimization
+- Power Automate concurrent runs
+- Cached authentication tokens
+- Optimized data calls
 `;
 
     // Create blob and download
