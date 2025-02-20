@@ -1,5 +1,6 @@
+
 import { Link, useNavigate } from "react-router-dom"
-import { Users } from "lucide-react"
+import { Users, FileText } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -36,6 +37,11 @@ const items = [
   {
     title: "Admin",
     href: "/admin/roles",
+  },
+  {
+    title: "Requirements",
+    href: "/requirements",
+    icon: FileText,
   },
 ]
 
@@ -78,7 +84,8 @@ export function MainNav() {
             {items.map((item) => (
               <NavigationMenuItem key={item.title}>
                 <Link to={item.href}>
-                  <NavigationMenuLink className={cn(navigationMenuTriggerStyle())}>
+                  <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "flex items-center gap-2")}>
+                    {item.icon && <item.icon className="h-4 w-4" />}
                     {item.title}
                   </NavigationMenuLink>
                 </Link>
