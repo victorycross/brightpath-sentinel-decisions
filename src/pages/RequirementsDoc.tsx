@@ -1,17 +1,18 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FileDown } from "lucide-react";
+import { FileDown, FilePdf } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { BusinessRequirements } from "@/components/requirements/BusinessRequirements";
 import { WorkflowRequirements } from "@/components/requirements/WorkflowRequirements";
 import { TechnicalRequirements } from "@/components/requirements/TechnicalRequirements";
 import { getRequirementsMarkdown } from "@/utils/requirementsExport";
+import jsPDF from "jspdf";
 
 export const RequirementsDoc = () => {
   const { toast } = useToast();
 
-  const handleExport = () => {
+  const handleMarkdownExport = () => {
     const content = getRequirementsMarkdown();
     
     const blob = new Blob([content], { type: "text/markdown" });
@@ -30,6 +31,46 @@ export const RequirementsDoc = () => {
     });
   };
 
+  const handlePdfExport = () => {
+    const doc = new jsPDF();
+    const content = getRequirementsMarkdown();
+    
+    // Configure PDF settings
+    doc.setFont("helvetica");
+    doc.setFontSize(12);
+    
+    // Add title
+    doc.setFontSize(16);
+    doc.text("Exception Management System", 20, 20);
+    doc.setFontSize(14);
+    doc.text("Requirements Documentation", 20, 30);
+    
+    // Reset font size for content
+    doc.setFontSize(12);
+    
+    // Split content into lines that fit the page width
+    const lines = doc.splitTextToSize(content, 170);
+    
+    // Add content starting from y=40
+    let y = 40;
+    lines.forEach(line => {
+      if (y > 280) { // Check if we need a new page
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(line, 20, y);
+      y += 7;
+    });
+    
+    // Save the PDF
+    doc.save("exception_management_requirements.pdf");
+
+    toast({
+      title: "Documentation Exported",
+      description: "Requirements documentation has been downloaded as a PDF file.",
+    });
+  };
+
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <Card className="p-6 md:p-8 bg-gradient-to-br from-card to-secondary/10 backdrop-blur-sm">
@@ -42,10 +83,16 @@ export const RequirementsDoc = () => {
               Comprehensive Requirements Documentation
             </p>
           </div>
-          <Button onClick={handleExport} className="gap-2 shadow-lg hover:shadow-xl transition-all">
-            <FileDown className="h-4 w-4" />
-            Export to MD
-          </Button>
+          <div className="flex gap-3">
+            <Button onClick={handleMarkdownExport} className="gap-2 shadow-lg hover:shadow-xl transition-all">
+              <FileDown className="h-4 w-4" />
+              Export to MD
+            </Button>
+            <Button onClick={handlePdfExport} variant="secondary" className="gap-2 shadow-lg hover:shadow-xl transition-all">
+              <FilePdf className="h-4 w-4" />
+              Export to PDF
+            </Button>
+          </div>
         </div>
 
         <div className="prose prose-zinc dark:prose-invert max-w-none">
