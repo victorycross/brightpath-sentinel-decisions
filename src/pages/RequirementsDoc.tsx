@@ -36,28 +36,107 @@ export const RequirementsDoc = () => {
     const doc = new jsPDF();
     const content = getRequirementsMarkdown();
     
+    // Configure PDF document
     doc.setFont("helvetica");
     doc.setFontSize(12);
     
-    doc.setFontSize(16);
+    // Add header
+    doc.setFontSize(24);
+    doc.setTextColor(214, 90, 18); // Primary color close to #D04A02
     doc.text("Exception Management System", 20, 20);
-    doc.setFontSize(14);
+    doc.setFontSize(16);
+    doc.setTextColor(235, 140, 0); // Secondary color close to #EB8C00
     doc.text("Requirements Documentation", 20, 30);
     
-    doc.setFontSize(12);
+    // Add executive summary title
+    doc.setFontSize(18);
+    doc.setTextColor(214, 90, 18);
+    doc.text("Executive Summary", 20, 45);
     
-    const lines = doc.splitTextToSize(content, 170);
+    // Reset to standard text color
+    doc.setTextColor(0, 0, 0);
     
-    let y = 40;
-    lines.forEach(line => {
-      if (y > 280) {
+    // Purpose section
+    doc.setFontSize(14);
+    doc.setTextColor(235, 140, 0);
+    doc.text("Purpose", 20, 55);
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    
+    const purposeText = "The Exception Management System streamlines the handling of compliance exceptions, " +
+                      "policy deviations, and risk-related decisions across the organization. It creates " +
+                      "a centralized platform that ensures all exceptions are properly documented, " +
+                      "reviewed, approved, and monitored in accordance with regulatory requirements " +
+                      "and internal policies.";
+    
+    const purposeLines = doc.splitTextToSize(purposeText, 170);
+    let y = 60;
+    purposeLines.forEach(line => {
+      doc.text(line, 20, y);
+      y += 5;
+    });
+    
+    // Key Drivers section
+    doc.setFontSize(14);
+    doc.setTextColor(235, 140, 0);
+    doc.text("Key Drivers", 20, y + 5);
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    
+    y += 10;
+    doc.text("• Risk Mitigation: Ensure all exceptions are properly evaluated and their potential impact understood", 25, y);
+    y += 5;
+    doc.text("• Regulatory Compliance: Meet documentation and approval requirements for regulators", 25, y);
+    y += 5;
+    doc.text("• Audit Readiness: Maintain comprehensive records for internal and external audits", 25, y);
+    y += 5;
+    doc.text("• Operational Efficiency: Streamline approval workflows and reduce bottlenecks", 25, y);
+    
+    // Business Value section
+    doc.setFontSize(14);
+    doc.setTextColor(235, 140, 0);
+    doc.text("Business Value", 20, y + 10);
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    
+    y += 15;
+    doc.text("• 60% Reduction in exception processing time", 25, y);
+    y += 5;
+    doc.text("• 85% Improved audit compliance rates", 25, y);
+    y += 5;
+    doc.text("• 40% Decrease in risk incidents", 25, y);
+    y += 5;
+    doc.text("• 100% Exception traceability", 25, y);
+    
+    // Draw a separator line
+    y += 10;
+    doc.setDrawColor(214, 90, 18, 0.5);
+    doc.line(20, y, 190, y);
+    
+    // Requirements content
+    doc.setFontSize(18);
+    doc.setTextColor(214, 90, 18);
+    doc.text("Detailed Requirements", 20, y + 10);
+    
+    // Reset to standard text
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    
+    // Split content into lines that fit the page width
+    const requirementLines = doc.splitTextToSize(content, 170);
+    
+    // Add content starting from after our executive summary
+    y += 15;
+    requirementLines.forEach(line => {
+      if (y > 280) { // Check if we need a new page
         doc.addPage();
         y = 20;
       }
       doc.text(line, 20, y);
-      y += 7;
+      y += 5;
     });
     
+    // Save the PDF
     doc.save("exception_management_requirements.pdf");
 
     toast({
