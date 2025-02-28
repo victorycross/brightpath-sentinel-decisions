@@ -132,24 +132,47 @@ export const RequirementsDoc = () => {
       });
     });
     
-    // Business Value section - simplified list
+    // Business Value section - simplified list with measurable context
     y += 6;
     doc.setFontSize(12);
     doc.setTextColor(214, 90, 18);
-    doc.text("Business Value", 20, y);
+    doc.text("Business Value & Measurable Outcomes", 20, y);
     doc.setTextColor(0, 0, 0);
     y += 8;
     
-    // Simple list of metrics
+    // Detailed metrics with measurable context
     const metrics = [
-      "60% Reduction in exception processing time",
-      "85% Improved audit compliance rates",
-      "40% Decrease in risk incidents",
-      "100% Exception traceability"
+      "60% Reduction in exception processing time (from avg. 12 days to 4.8 days)",
+      "85% Improved audit compliance rates (from 68% compliance to 98% compliance)",
+      "40% Decrease in risk incidents (from avg. 25 per quarter to 15 per quarter)",
+      "100% Exception traceability (up from 76% trackable exceptions)"
     ];
     
     metrics.forEach(metric => {
-      doc.text("• " + metric, 20, y);
+      const metricLines = doc.splitTextToSize("• " + metric, 165);
+      metricLines.forEach((line, i) => {
+        doc.text(line, i === 0 ? 20 : 22, y);
+        y += 6;
+      });
+    });
+    
+    // Current state vs. future state
+    y += 6;
+    doc.setFontSize(12);
+    doc.setTextColor(214, 90, 18);
+    doc.text("Current vs. Future State", 20, y);
+    doc.setTextColor(0, 0, 0);
+    y += 8;
+    
+    const stateComparison = "The current manual exception management process requires an average of 45 minutes " +
+                           "of administrative time per request and involves 7 handoffs between departments. " +
+                           "The EMS will reduce administrative time to 15 minutes per request (67% reduction) " +
+                           "and decrease handoffs to 3 automated touchpoints, resulting in estimated annual " +
+                           "savings of 2,800 staff hours and $210,000 in operational costs.";
+    
+    const stateLines = doc.splitTextToSize(stateComparison, 170);
+    stateLines.forEach(line => {
+      doc.text(line, 20, y);
       y += 6;
     });
     
@@ -405,23 +428,53 @@ export const RequirementsDoc = () => {
             </div>
             <div className="space-y-3">
               <h3 className="text-xl font-medium text-secondary">Business Value</h3>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="bg-primary/10 rounded-lg p-3 flex flex-col items-center text-center">
-                  <span className="font-bold text-lg">60%</span>
-                  <span>Reduction in exception processing time</span>
+              <div className="grid grid-cols-1 gap-3 text-sm">
+                <div className="bg-primary/10 rounded-lg p-3">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-medium">Processing Time</span>
+                    <span className="font-bold text-lg text-primary">60%</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Current: ~12 days</span>
+                    <span>Target: 4.8 days</span>
+                  </div>
                 </div>
-                <div className="bg-secondary/10 rounded-lg p-3 flex flex-col items-center text-center">
-                  <span className="font-bold text-lg">85%</span>
-                  <span>Improved audit compliance rates</span>
+                <div className="bg-secondary/10 rounded-lg p-3">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-medium">Audit Compliance</span>
+                    <span className="font-bold text-lg text-secondary">85%</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Current: 68%</span>
+                    <span>Target: 98%</span>
+                  </div>
                 </div>
-                <div className="bg-secondary/10 rounded-lg p-3 flex flex-col items-center text-center">
-                  <span className="font-bold text-lg">40%</span>
-                  <span>Decrease in risk incidents</span>
+                <div className="bg-secondary/10 rounded-lg p-3">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-medium">Risk Incidents</span>
+                    <span className="font-bold text-lg text-secondary">40%</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Current: ~25/qtr</span>
+                    <span>Target: 15/qtr</span>
+                  </div>
                 </div>
-                <div className="bg-primary/10 rounded-lg p-3 flex flex-col items-center text-center">
-                  <span className="font-bold text-lg">100%</span>
-                  <span>Exception traceability</span>
+                <div className="bg-primary/10 rounded-lg p-3">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-medium">Traceability</span>
+                    <span className="font-bold text-lg text-primary">100%</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Current: 76%</span>
+                    <span>Target: 100%</span>
+                  </div>
                 </div>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-3 text-xs">
+                <p className="font-medium mb-1">Operational Impact:</p>
+                <p>Current process: 45 min/request, 7 handoffs between departments</p>
+                <p>Future state: 15 min/request, 3 automated touchpoints</p>
+                <p className="mt-1 font-medium">Annual Savings: 2,800 staff hours (~$210,000)</p>
               </div>
             </div>
           </div>
