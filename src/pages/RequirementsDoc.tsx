@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FileDown, File, FileText } from "lucide-react";
@@ -132,6 +133,53 @@ export const RequirementsDoc = () => {
             </Button>
           </div>
         </div>
+
+        {/* Executive Summary Section */}
+        <Card className="p-6 border-none shadow-md bg-gradient-to-r from-primary/5 to-secondary/5 mb-8">
+          <h2 className="text-2xl font-semibold text-primary mb-4">Executive Summary</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-3">
+              <h3 className="text-xl font-medium text-secondary">Purpose</h3>
+              <p className="text-sm leading-relaxed">
+                The Exception Management System streamlines the handling of compliance exceptions, 
+                policy deviations, and risk-related decisions across the organization. It creates 
+                a centralized platform that ensures all exceptions are properly documented, 
+                reviewed, approved, and monitored in accordance with regulatory requirements 
+                and internal policies.
+              </p>
+            </div>
+            <div className="space-y-3">
+              <h3 className="text-xl font-medium text-secondary">Key Drivers</h3>
+              <ul className="text-sm space-y-2 list-disc pl-5">
+                <li><span className="font-medium">Risk Mitigation</span>: Ensure all exceptions are properly evaluated and their potential impact understood</li>
+                <li><span className="font-medium">Regulatory Compliance</span>: Meet documentation and approval requirements for regulators</li>
+                <li><span className="font-medium">Audit Readiness</span>: Maintain comprehensive records for internal and external audits</li>
+                <li><span className="font-medium">Operational Efficiency</span>: Streamline approval workflows and reduce bottlenecks</li>
+              </ul>
+            </div>
+            <div className="space-y-3">
+              <h3 className="text-xl font-medium text-secondary">Business Value</h3>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="bg-primary/10 rounded-lg p-3 flex flex-col items-center text-center">
+                  <span className="font-bold text-lg">60%</span>
+                  <span>Reduction in exception processing time</span>
+                </div>
+                <div className="bg-secondary/10 rounded-lg p-3 flex flex-col items-center text-center">
+                  <span className="font-bold text-lg">85%</span>
+                  <span>Improved audit compliance rates</span>
+                </div>
+                <div className="bg-secondary/10 rounded-lg p-3 flex flex-col items-center text-center">
+                  <span className="font-bold text-lg">40%</span>
+                  <span>Decrease in risk incidents</span>
+                </div>
+                <div className="bg-primary/10 rounded-lg p-3 flex flex-col items-center text-center">
+                  <span className="font-bold text-lg">100%</span>
+                  <span>Exception traceability</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
 
         <div className="prose prose-zinc dark:prose-invert max-w-none">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
