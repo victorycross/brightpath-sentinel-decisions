@@ -132,6 +132,51 @@ export const RequirementsDoc = () => {
       });
     });
     
+    // Current Approval Method
+    y += 6;
+    doc.setFontSize(12);
+    doc.setTextColor(214, 90, 18);
+    doc.text("Current Approval Method", 20, y);
+    doc.setTextColor(0, 0, 0);
+    y += 8;
+    
+    // Time commitment
+    doc.text("• Time Commitment: At least 30 minutes per exception to draft the request", 20, y);
+    y += 6;
+    
+    // Process steps
+    doc.text("• Process Steps:", 20, y);
+    y += 6;
+    
+    const steps = [
+      "Draft the exception in Microsoft Word",
+      "Create a DocuSign envelope",
+      "Select approvers",
+      "Send the DocuSign envelope to approvers for signatures",
+      "Wait for approval",
+      "Notify the requestor of approval status",
+      "Save the approval record in a table"
+    ];
+    
+    steps.forEach(step => {
+      doc.text("  ◦ " + step, 25, y);
+      y += 6;
+    });
+    
+    // Challenges
+    doc.text("• Challenges:", 20, y);
+    y += 6;
+    
+    const challenges = [
+      "No reporting metrics available",
+      "Evidence of approval is limited to email correspondence and document files, making timely and complete tracking difficult"
+    ];
+    
+    challenges.forEach(challenge => {
+      doc.text("  ◦ " + challenge, 25, y);
+      y += 6;
+    });
+    
     // Business Value section - simplified list with measurable context
     y += 6;
     doc.setFontSize(12);
@@ -142,10 +187,10 @@ export const RequirementsDoc = () => {
     
     // Detailed metrics with measurable context
     const metrics = [
-      "60% Reduction in exception processing time (from avg. 12 days to 4.8 days)",
-      "85% Improved audit compliance rates (from 68% compliance to 98% compliance)",
-      "40% Decrease in risk incidents (from avg. 25 per quarter to 15 per quarter)",
-      "100% Exception traceability (up from 76% trackable exceptions)"
+      "Processing Time: Reduce from 30+ minutes per exception to 15 minutes per request",
+      "Audit Compliance: Improve to 89% target compliance rate",
+      "Risk Incidents: Reduce to target of 15 per quarter",
+      "Traceability: Improve from lack of comprehensive tracking to 100% visibility"
     ];
     
     metrics.forEach(metric => {
@@ -164,11 +209,11 @@ export const RequirementsDoc = () => {
     doc.setTextColor(0, 0, 0);
     y += 8;
     
-    const stateComparison = "The current manual exception management process requires an average of 45 minutes " +
-                           "of administrative time per request and involves 7 handoffs between departments. " +
-                           "The EMS will reduce administrative time to 15 minutes per request (67% reduction) " +
-                           "and decrease handoffs to 3 automated touchpoints, resulting in estimated annual " +
-                           "savings of 2,800 staff hours and $210,000 in operational costs.";
+    const stateComparison = "The current process requires a minimum of 30 minutes per exception, with multiple handoffs " +
+                           "between departments and reliance on email/documentation for status tracking. " +
+                           "The EMS will streamline the process to 15 minutes per request with automated touchpoints " +
+                           "and enhanced reporting features, resulting in significant annual savings in staff hours " +
+                           "and operational costs.";
     
     const stateLines = doc.splitTextToSize(stateComparison, 170);
     stateLines.forEach(line => {
@@ -427,55 +472,98 @@ export const RequirementsDoc = () => {
               </ul>
             </div>
             <div className="space-y-3">
-              <h3 className="text-xl font-medium text-secondary">Business Value</h3>
-              <div className="grid grid-cols-1 gap-3 text-sm">
-                <div className="bg-primary/10 rounded-lg p-3">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-medium">Processing Time</span>
-                    <span className="font-bold text-lg text-primary">60%</span>
-                  </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Current: ~12 days</span>
-                    <span>Target: 4.8 days</span>
-                  </div>
+              <h3 className="text-xl font-medium text-secondary">Current Approval Method</h3>
+              <div className="text-sm space-y-3">
+                <div className="bg-muted/40 rounded-lg p-3">
+                  <p className="font-medium mb-1">Time Commitment:</p>
+                  <p>At least 30 minutes per exception to draft the request</p>
                 </div>
-                <div className="bg-secondary/10 rounded-lg p-3">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-medium">Audit Compliance</span>
-                    <span className="font-bold text-lg text-secondary">85%</span>
-                  </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Current: 68%</span>
-                    <span>Target: 98%</span>
-                  </div>
+                <div className="bg-muted/40 rounded-lg p-3">
+                  <p className="font-medium mb-1">Process Steps:</p>
+                  <ol className="list-decimal pl-5 space-y-1">
+                    <li>Draft the exception in Microsoft Word</li>
+                    <li>Create a DocuSign envelope</li>
+                    <li>Select approvers</li>
+                    <li>Send the DocuSign envelope for signatures</li>
+                    <li>Wait for approval</li>
+                    <li>Notify the requestor of approval status</li>
+                    <li>Save the approval record in a table</li>
+                  </ol>
                 </div>
-                <div className="bg-secondary/10 rounded-lg p-3">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-medium">Risk Incidents</span>
-                    <span className="font-bold text-lg text-secondary">40%</span>
-                  </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Current: ~25/qtr</span>
-                    <span>Target: 15/qtr</span>
-                  </div>
-                </div>
-                <div className="bg-primary/10 rounded-lg p-3">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-medium">Traceability</span>
-                    <span className="font-bold text-lg text-primary">100%</span>
-                  </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Current: 76%</span>
-                    <span>Target: 100%</span>
-                  </div>
+                <div className="bg-muted/40 rounded-lg p-3">
+                  <p className="font-medium mb-1">Challenges:</p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>No reporting metrics available</li>
+                    <li>Evidence of approval is limited to email correspondence and document files</li>
+                    <li>Timely and complete tracking is difficult</li>
+                  </ul>
                 </div>
               </div>
-              <div className="bg-muted/50 rounded-lg p-3 text-xs">
-                <p className="font-medium mb-1">Operational Impact:</p>
-                <p>Current process: 45 min/request, 7 handoffs between departments</p>
-                <p>Future state: 15 min/request, 3 automated touchpoints</p>
-                <p className="mt-1 font-medium">Annual Savings: 2,800 staff hours (~$210,000)</p>
+            </div>
+          </div>
+
+          {/* Business Value Section */}
+          <div className="mt-6">
+            <h3 className="text-xl font-medium text-secondary mb-3">Business Value</h3>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="bg-primary/10 rounded-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-medium">Processing Time</span>
+                  <span className="font-bold text-lg text-primary">50%</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Current: 30+ min</span>
+                  <span>Target: 15 min</span>
+                </div>
               </div>
+              <div className="bg-secondary/10 rounded-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-medium">Audit Compliance</span>
+                  <span className="font-bold text-lg text-secondary">89%</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Current: [Metric]</span>
+                  <span>Target: 89%</span>
+                </div>
+              </div>
+              <div className="bg-secondary/10 rounded-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-medium">Risk Incidents</span>
+                  <span className="font-bold text-lg text-secondary">15/qtr</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Current: [Metric]</span>
+                  <span>Target: 15/qtr</span>
+                </div>
+              </div>
+              <div className="bg-primary/10 rounded-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-medium">Traceability</span>
+                  <span className="font-bold text-lg text-primary">100%</span>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Current: Limited</span>
+                  <span>Target: Full visibility</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Operational Impact */}
+          <div className="mt-4 bg-muted/20 rounded-lg p-4 text-sm">
+            <h4 className="font-semibold mb-2">Operational Impact:</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="font-medium">Current process:</p>
+                <p>Each exception takes a minimum of 30 minutes, with multiple handoffs between departments and reliance on email/documentation for status tracking.</p>
+              </div>
+              <div>
+                <p className="font-medium">Future state:</p>
+                <p>Streamlined process reduced to 15 min/request with automated touchpoints and enhanced reporting features.</p>
+              </div>
+            </div>
+            <div className="mt-2">
+              <p className="font-medium">Annual Savings: <span className="text-muted-foreground">[Insert hours] (~[Insert Dollar Amount]), due to reduced processing times and increased efficiency.</span></p>
             </div>
           </div>
         </Card>
