@@ -33,33 +33,96 @@ export const RequirementsDoc = () => {
   };
 
   const handlePdfExport = () => {
+    // Create a new PDF document
     const doc = new jsPDF();
-    const content = getRequirementsMarkdown();
     
     // Configure PDF document
     doc.setFont("helvetica");
     doc.setFontSize(12);
     
-    // Add header
-    doc.setFontSize(24);
-    doc.setTextColor(214, 90, 18); // Primary color close to #D04A02
-    doc.text("Exception Management System", 20, 20);
-    doc.setFontSize(16);
-    doc.setTextColor(235, 140, 0); // Secondary color close to #EB8C00
-    doc.text("Requirements Documentation", 20, 30);
+    // Add company logo/header
+    // We're creating a simple logo effect with text
+    doc.setFillColor(214, 90, 18); // Primary color
+    doc.rect(20, 10, 40, 10, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("EMS", 35, 17);
     
-    // Add executive summary title
+    // Add document title
+    doc.setTextColor(214, 90, 18);
+    doc.setFontSize(24);
+    doc.text("Exception Management System", 70, 20);
+    
+    // Add subtitle
+    doc.setTextColor(235, 140, 0); // Secondary color
+    doc.setFontSize(16);
+    doc.text("Requirements Documentation", 70, 30);
+    
+    // Document info
+    doc.setDrawColor(214, 90, 18);
+    doc.setLineWidth(0.5);
+    doc.rect(155, 10, 40, 25);
+    doc.setFontSize(8);
+    doc.setTextColor(0);
+    doc.text("Document ID: EMS-REQ-001", 157, 15);
+    doc.text("Version: 1.0", 157, 20);
+    doc.text("Date: " + new Date().toLocaleDateString(), 157, 25);
+    doc.text("Status: Final", 157, 30);
+    
+    // Table of contents header
+    let y = 45;
+    doc.setFontSize(14);
+    doc.setTextColor(214, 90, 18);
+    doc.text("Table of Contents", 20, y);
+    y += 8;
+    
+    // Table of contents items with page dots
+    doc.setFontSize(10);
+    doc.setTextColor(0);
+    
+    // Create table of contents with dots leading to page numbers
+    const tocItems = [
+      { name: "Executive Summary", page: 1 },
+      { name: "Business Requirements", page: 2 },
+      { name: "Workflow Requirements", page: 3 },
+      { name: "Technical Requirements", page: 4 }
+    ];
+    
+    tocItems.forEach(item => {
+      const dotLength = 90;
+      doc.text(item.name, 25, y);
+      
+      // Create dots
+      let dotPosition = 70;
+      const endPosition = 190;
+      while (dotPosition < endPosition) {
+        doc.text(".", dotPosition, y);
+        dotPosition += 3;
+      }
+      
+      // Page number
+      doc.text(item.page.toString(), 195, y);
+      y += 6;
+    });
+    
+    // Add a separator line
+    y += 5;
+    doc.line(20, y, 190, y);
+    y += 15;
+    
+    // Executive Summary Section
     doc.setFontSize(18);
     doc.setTextColor(214, 90, 18);
-    doc.text("Executive Summary", 20, 45);
-    
-    // Reset to standard text color
-    doc.setTextColor(0, 0, 0);
+    doc.text("Executive Summary", 20, y);
+    doc.setLineWidth(0.3);
+    doc.line(20, y + 2, 190, y + 2);
+    y += 10;
     
     // Purpose section
     doc.setFontSize(14);
     doc.setTextColor(235, 140, 0);
-    doc.text("Purpose", 20, 55);
+    doc.text("Purpose", 20, y);
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     
@@ -70,89 +133,190 @@ export const RequirementsDoc = () => {
                       "and internal policies.";
     
     const purposeLines = doc.splitTextToSize(purposeText, 170);
-    let y = 60;
+    y += 8;
     purposeLines.forEach(line => {
       doc.text(line, 20, y);
       y += 5;
     });
     
     // Key Drivers section
+    y += 3;
     doc.setFontSize(14);
     doc.setTextColor(235, 140, 0);
-    doc.text("Key Drivers", 20, y + 5);
+    doc.text("Key Drivers", 20, y);
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
     
-    y += 10;
-    doc.text("• Risk Mitigation: Ensure all exceptions are properly evaluated and their potential impact understood", 25, y);
-    y += 5;
-    doc.text("• Regulatory Compliance: Meet documentation and approval requirements for regulators", 25, y);
-    y += 5;
-    doc.text("• Audit Readiness: Maintain comprehensive records for internal and external audits", 25, y);
-    y += 5;
-    doc.text("• Operational Efficiency: Streamline approval workflows and reduce bottlenecks", 25, y);
+    // Create a simple table for key drivers
+    y += 8;
+    const driverTableY = y;
+    const columnWidth = 85;
+    
+    // Draw table header
+    doc.setFillColor(240, 240, 240);
+    doc.rect(20, y, columnWidth * 2, 7, "F");
+    doc.setFontSize(10);
+    doc.setTextColor(0);
+    doc.setFont("helvetica", "bold");
+    doc.text("Driver", 25, y + 5);
+    doc.text("Description", 25 + columnWidth, y + 5);
+    
+    // Draw table rows
+    doc.setFont("helvetica", "normal");
+    y += 7;
+    const drivers = [
+      { name: "Risk Mitigation", desc: "Ensure all exceptions are properly evaluated and their potential impact understood" },
+      { name: "Regulatory Compliance", desc: "Meet documentation and approval requirements for regulators" },
+      { name: "Audit Readiness", desc: "Maintain comprehensive records for internal and external audits" },
+      { name: "Operational Efficiency", desc: "Streamline approval workflows and reduce bottlenecks" }
+    ];
+    
+    drivers.forEach((driver, index) => {
+      const rowHeight = Math.max(
+        doc.splitTextToSize(driver.name, columnWidth - 10).length,
+        doc.splitTextToSize(driver.desc, columnWidth - 10).length
+      ) * 5 + 2;
+      
+      // Draw row background (alternating)
+      if (index % 2 === 1) {
+        doc.setFillColor(250, 250, 250);
+        doc.rect(20, y, columnWidth * 2, rowHeight, "F");
+      }
+      
+      // Draw cell content
+      doc.text(driver.name, 25, y + 5);
+      const descLines = doc.splitTextToSize(driver.desc, columnWidth - 10);
+      descLines.forEach((line, i) => {
+        doc.text(line, 25 + columnWidth, y + 5 + (i * 5));
+      });
+      
+      // Update y position for next row
+      y += rowHeight;
+    });
+    
+    // Draw table borders
+    doc.setDrawColor(180, 180, 180);
+    doc.rect(20, driverTableY, columnWidth * 2, y - driverTableY);
+    doc.line(20 + columnWidth, driverTableY, 20 + columnWidth, y);
     
     // Business Value section
+    y += 10;
     doc.setFontSize(14);
     doc.setTextColor(235, 140, 0);
-    doc.text("Business Value", 20, y + 10);
+    doc.text("Business Value", 20, y);
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
+    y += 8;
     
-    y += 15;
-    doc.text("• 60% Reduction in exception processing time", 25, y);
-    y += 5;
-    doc.text("• 85% Improved audit compliance rates", 25, y);
-    y += 5;
-    doc.text("• 40% Decrease in risk incidents", 25, y);
-    y += 5;
-    doc.text("• 100% Exception traceability", 25, y);
+    // Create a visual grid for business value metrics
+    const metricWidth = 85;
+    const metricHeight = 30;
+    const metrics = [
+      { value: "60%", desc: "Reduction in exception processing time" },
+      { value: "85%", desc: "Improved audit compliance rates" },
+      { value: "40%", desc: "Decrease in risk incidents" },
+      { value: "100%", desc: "Exception traceability" }
+    ];
     
-    // Draw a separator line
-    y += 10;
-    doc.setDrawColor(214, 90, 18, 0.5);
-    doc.line(20, y, 190, y);
+    // Draw metrics in a 2x2 grid
+    metrics.forEach((metric, index) => {
+      const col = index % 2;
+      const row = Math.floor(index / 2);
+      const xPos = 20 + (col * metricWidth);
+      const yPos = y + (row * metricHeight);
+      
+      // Draw metric box
+      doc.setFillColor(col === 0 ? 245 : 250, 245, 245);
+      doc.roundedRect(xPos, yPos, metricWidth - 5, metricHeight - 2, 3, 3, "F");
+      
+      // Draw metric value (large, bold)
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.setTextColor(214, 90, 18);
+      doc.text(metric.value, xPos + 5, yPos + 12);
+      
+      // Draw metric description
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(80, 80, 80);
+      doc.text(metric.desc, xPos + 5, yPos + 20);
+    });
     
-    // Get the requirements content
+    // Move to next page for detailed requirements
+    doc.addPage();
+    
+    // Parse the markdown content
+    const content = getRequirementsMarkdown();
     const lines = content.split('\n');
     let currentSection = "";
     
-    // Add content starting from after our executive summary
+    // Initialize y position on new page
+    y = 20;
+    
+    // Add section header for business requirements
+    doc.setFontSize(18);
+    doc.setTextColor(214, 90, 18);
+    doc.text("Business Requirements", 20, y);
+    doc.setLineWidth(0.3);
+    doc.line(20, y + 2, 190, y + 2);
     y += 15;
     
-    // Process the content line by line
+    // Process the requirements line by line
+    let inBusinessRequirements = false;
+    let inWorkflowRequirements = false;
+    let inTechnicalRequirements = false;
+    
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
       
-      // If we need a new page
-      if (y > 280) {
+      // Skip document title and empty lines
+      if (line === '' || line.startsWith('# Exception Management')) continue;
+      
+      // Check for section headers
+      if (line.startsWith('## Business Requirements')) {
+        inBusinessRequirements = true;
+        inWorkflowRequirements = false;
+        inTechnicalRequirements = false;
+        continue;
+      } else if (line.startsWith('## Workflow Requirements')) {
+        // Start a new page for workflow requirements
+        doc.addPage();
+        y = 20;
+        doc.setFontSize(18);
+        doc.setTextColor(214, 90, 18);
+        doc.text("Workflow Requirements", 20, y);
+        doc.setLineWidth(0.3);
+        doc.line(20, y + 2, 190, y + 2);
+        y += 15;
+        
+        inBusinessRequirements = false;
+        inWorkflowRequirements = true;
+        inTechnicalRequirements = false;
+        continue;
+      } else if (line.startsWith('## Technical Requirements')) {
+        // Start a new page for technical requirements
+        doc.addPage();
+        y = 20;
+        doc.setFontSize(18);
+        doc.setTextColor(214, 90, 18);
+        doc.text("Technical Requirements", 20, y);
+        doc.setLineWidth(0.3);
+        doc.line(20, y + 2, 190, y + 2);
+        y += 15;
+        
+        inBusinessRequirements = false;
+        inWorkflowRequirements = false;
+        inTechnicalRequirements = true;
+        continue;
+      }
+      
+      // Check if we need a new page
+      if (y > 270) {
         doc.addPage();
         y = 20;
       }
       
-      // Skip empty lines
-      if (line === '') continue;
-      
-      // Check if this is a main section header (starts with # )
-      if (line.startsWith('# ')) {
-        doc.setFontSize(18);
-        doc.setTextColor(214, 90, 18);
-        doc.text(line.substring(2), 20, y);
-        y += 10;
-        continue;
-      }
-      
-      // Check if this is a section header (starts with ## )
-      if (line.startsWith('## ')) {
-        currentSection = line.substring(3);
-        doc.setFontSize(16);
-        doc.setTextColor(214, 90, 18);
-        doc.text(currentSection, 20, y);
-        y += 8;
-        continue;
-      }
-      
-      // Check if this is a subsection header (starts with ### )
+      // Process subsection headers (### becomes bold text)
       if (line.startsWith('### ')) {
         doc.setFontSize(14);
         doc.setTextColor(235, 140, 0);
@@ -161,7 +325,7 @@ export const RequirementsDoc = () => {
         continue;
       }
       
-      // Handle list items
+      // Handle list items - convert markdown bullets to proper formatting
       if (line.startsWith('- ')) {
         doc.setFontSize(10);
         doc.setTextColor(0, 0, 0);
@@ -195,20 +359,31 @@ export const RequirementsDoc = () => {
         continue;
       }
       
-      // Handle numbered list items (1., 2., etc.)
-      if (/^\d+\./.test(line)) {
-        doc.setFontSize(10);
-        doc.setTextColor(0, 0, 0);
-        const wrappedLines = doc.splitTextToSize(line, 165);
-        wrappedLines.forEach((wrappedLine, index) => {
-          if (index === 0) {
-            doc.text(wrappedLine, 25, y);
-          } else {
-            doc.text(wrappedLine, 27, y); // Indent continuation lines
-          }
-          y += 5;
-        });
-        continue;
+      // Handle numbered workflow items in a better visual format
+      if (inWorkflowRequirements && /^\d+\./.test(line)) {
+        const numMatch = line.match(/^(\d+)\.\s*(.*)/);
+        if (numMatch && numMatch.length >= 3) {
+          const num = numMatch[1];
+          const text = numMatch[2];
+          
+          // Draw number in a circle
+          doc.setFillColor(235, 140, 0, 0.2);
+          doc.circle(22, y - 1, 5, 'F');
+          doc.setTextColor(0);
+          doc.setFontSize(9);
+          doc.text(num, 20.5, y);
+          
+          // Draw step text
+          doc.setFontSize(10);
+          const wrappedLines = doc.splitTextToSize(text, 160);
+          wrappedLines.forEach((wrappedLine, index) => {
+            doc.text(wrappedLine, 30, y + (index * 5));
+            if (index > 0) y += 5;
+          });
+          
+          y += 8;
+          continue;
+        }
       }
       
       // Handle regular text
@@ -219,6 +394,24 @@ export const RequirementsDoc = () => {
         doc.text(wrappedLine, 20, y);
         y += 5;
       });
+    }
+    
+    // Add footer to all pages
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      
+      // Footer line
+      doc.setDrawColor(214, 90, 18, 0.5);
+      doc.line(20, 285, 190, 285);
+      
+      // Company name or logo
+      doc.setFontSize(8);
+      doc.setTextColor(100, 100, 100);
+      doc.text("Exception Management System", 20, 290);
+      
+      // Page numbers
+      doc.text(`Page ${i} of ${pageCount}`, 180, 290);
     }
     
     // Save the PDF
