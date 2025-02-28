@@ -8,7 +8,7 @@ import { WorkflowRequirements } from "@/components/requirements/WorkflowRequirem
 import { TechnicalRequirements } from "@/components/requirements/TechnicalRequirements";
 import { getRequirementsMarkdown } from "@/utils/requirementsExport";
 import jsPDF from "jspdf";
-import { Document, Packer, Paragraph, HeadingLevel, TextRun, AlignmentType, ExternalHyperlink, NumberFormat, SectionType, PageOrientation, LineRuleType, TableCell, Table, TableRow, BorderStyle, WidthType } from "docx";
+import { Document, Packer, Paragraph, HeadingLevel, TextRun, AlignmentType, Header, Footer, NumberFormat, PageNumber } from "docx";
 
 export const RequirementsDoc = () => {
   const { toast } = useToast();
@@ -763,7 +763,6 @@ export const RequirementsDoc = () => {
     let inBusinessRequirements = false;
     let inWorkflowRequirements = false;
     let skipSection = false;
-    let currentHeadingLevel = 0;
     
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
@@ -863,7 +862,7 @@ export const RequirementsDoc = () => {
       if (inWorkflowRequirements && /^\d+\./.test(line)) {
         const numMatch = line.match(/^(\d+)\.\s*(.*)/);
         if (numMatch && numMatch.length >= 3) {
-          const num = numMatch[1];
+          const num = parseInt(numMatch[1]);
           const text = numMatch[2];
           
           children.push(
@@ -872,7 +871,6 @@ export const RequirementsDoc = () => {
               numbering: {
                 reference: "flowSteps",
                 level: 0,
-                instance: parseInt(num),
               },
               spacing: {
                 after: 80,
@@ -896,6 +894,29 @@ export const RequirementsDoc = () => {
       }
     }
     
+    // Create a header with just a text
+    const header = new Header({
+      children: [
+        new Paragraph({
+          text: "Exception Management System Requirements",
+          style: "Header",
+        }),
+      ],
+    });
+
+    // Create a footer with page numbers
+    const footer = new Footer({
+      children: [
+        new Paragraph({
+          alignment: AlignmentType.RIGHT,
+          children: [
+            new TextRun("Page "),
+            new PageNumber(),
+          ],
+        }),
+      ],
+    });
+    
     // Create and save the Word document
     const doc = new Document({
       sections: [
@@ -912,20 +933,10 @@ export const RequirementsDoc = () => {
           },
           children: children,
           headers: {
-            default: new Paragraph("Exception Management System Requirements"),
+            default: header,
           },
           footers: {
-            default: new Paragraph({
-              children: [
-                new TextRun("Page "),
-                new TextRun({
-                  children: [
-                    new NumberFormat("decimal"),
-                  ],
-                }),
-              ],
-              alignment: AlignmentType.RIGHT,
-            }),
+            default: footer,
           },
         },
       ],
