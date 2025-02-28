@@ -8,7 +8,7 @@ import { WorkflowRequirements } from "@/components/requirements/WorkflowRequirem
 import { TechnicalRequirements } from "@/components/requirements/TechnicalRequirements";
 import { getRequirementsMarkdown } from "@/utils/requirementsExport";
 import jsPDF from "jspdf";
-import { Document, Packer, Paragraph, HeadingLevel, TextRun, AlignmentType, Header, Footer, NumberFormat, PageNumber } from "docx";
+import { Document, Packer, Paragraph, HeadingLevel, TextRun, AlignmentType, Header, Footer } from "docx";
 
 export const RequirementsDoc = () => {
   const { toast } = useToast();
@@ -911,7 +911,7 @@ export const RequirementsDoc = () => {
           alignment: AlignmentType.RIGHT,
           children: [
             new TextRun("Page "),
-            new PageNumber(),
+            new TextRun("PAGE"),
           ],
         }),
       ],
