@@ -113,28 +113,113 @@ export const RequirementsDoc = () => {
     doc.setDrawColor(214, 90, 18, 0.5);
     doc.line(20, y, 190, y);
     
-    // Requirements content
-    doc.setFontSize(18);
-    doc.setTextColor(214, 90, 18);
-    doc.text("Detailed Requirements", 20, y + 10);
-    
-    // Reset to standard text
-    doc.setFontSize(10);
-    doc.setTextColor(0, 0, 0);
-    
-    // Split content into lines that fit the page width
-    const requirementLines = doc.splitTextToSize(content, 170);
+    // Get the requirements content
+    const lines = content.split('\n');
+    let currentSection = "";
     
     // Add content starting from after our executive summary
     y += 15;
-    requirementLines.forEach(line => {
-      if (y > 280) { // Check if we need a new page
+    
+    // Process the content line by line
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      
+      // If we need a new page
+      if (y > 280) {
         doc.addPage();
         y = 20;
       }
-      doc.text(line, 20, y);
-      y += 5;
-    });
+      
+      // Skip empty lines
+      if (line === '') continue;
+      
+      // Check if this is a main section header (starts with # )
+      if (line.startsWith('# ')) {
+        doc.setFontSize(18);
+        doc.setTextColor(214, 90, 18);
+        doc.text(line.substring(2), 20, y);
+        y += 10;
+        continue;
+      }
+      
+      // Check if this is a section header (starts with ## )
+      if (line.startsWith('## ')) {
+        currentSection = line.substring(3);
+        doc.setFontSize(16);
+        doc.setTextColor(214, 90, 18);
+        doc.text(currentSection, 20, y);
+        y += 8;
+        continue;
+      }
+      
+      // Check if this is a subsection header (starts with ### )
+      if (line.startsWith('### ')) {
+        doc.setFontSize(14);
+        doc.setTextColor(235, 140, 0);
+        doc.text(line.substring(4), 20, y);
+        y += 7;
+        continue;
+      }
+      
+      // Handle list items
+      if (line.startsWith('- ')) {
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0);
+        const bulletedLine = "• " + line.substring(2);
+        const wrappedLines = doc.splitTextToSize(bulletedLine, 165);
+        wrappedLines.forEach((wrappedLine, index) => {
+          if (index === 0) {
+            doc.text(wrappedLine, 25, y);
+          } else {
+            doc.text(wrappedLine, 27, y); // Indent continuation lines
+          }
+          y += 5;
+        });
+        continue;
+      }
+      
+      // Handle nested list items
+      if (line.startsWith('  - ')) {
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0);
+        const bulletedLine = "  ◦ " + line.substring(4);
+        const wrappedLines = doc.splitTextToSize(bulletedLine, 160);
+        wrappedLines.forEach((wrappedLine, index) => {
+          if (index === 0) {
+            doc.text(wrappedLine, 30, y);
+          } else {
+            doc.text(wrappedLine, 32, y); // Indent continuation lines
+          }
+          y += 5;
+        });
+        continue;
+      }
+      
+      // Handle numbered list items (1., 2., etc.)
+      if (/^\d+\./.test(line)) {
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0);
+        const wrappedLines = doc.splitTextToSize(line, 165);
+        wrappedLines.forEach((wrappedLine, index) => {
+          if (index === 0) {
+            doc.text(wrappedLine, 25, y);
+          } else {
+            doc.text(wrappedLine, 27, y); // Indent continuation lines
+          }
+          y += 5;
+        });
+        continue;
+      }
+      
+      // Handle regular text
+      doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
+      const wrappedLines = doc.splitTextToSize(line, 170);
+      wrappedLines.forEach(wrappedLine => {
+        doc.text(wrappedLine, 20, y);
+        y += 5;
+      });
+    }
     
     // Save the PDF
     doc.save("exception_management_requirements.pdf");
