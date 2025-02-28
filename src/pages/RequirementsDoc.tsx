@@ -8,7 +8,7 @@ import { WorkflowRequirements } from "@/components/requirements/WorkflowRequirem
 import { TechnicalRequirements } from "@/components/requirements/TechnicalRequirements";
 import { getRequirementsMarkdown } from "@/utils/requirementsExport";
 import jsPDF from "jspdf";
-import { Document, Packer, Paragraph, HeadingLevel } from "docx";
+import { Document, Packer, Paragraph, HeadingLevel, TextRun, AlignmentType, ExternalHyperlink, NumberFormat, SectionType, PageOrientation, LineRuleType, TableCell, Table, TableRow, BorderStyle, WidthType } from "docx";
 
 export const RequirementsDoc = () => {
   const { toast } = useToast();
@@ -384,27 +384,571 @@ export const RequirementsDoc = () => {
   };
 
   const handleWordExport = async () => {
-    const content = getRequirementsMarkdown();
+    // Create sections for the Word document
+    const children = [];
     
-    const doc = new Document({
-      sections: [{
-        properties: {},
+    // Title section
+    children.push(
+      new Paragraph({
+        text: "Exception Management System",
+        heading: HeadingLevel.HEADING_1,
+        spacing: {
+          after: 200,
+        },
+        alignment: AlignmentType.CENTER,
+      })
+    );
+    
+    children.push(
+      new Paragraph({
+        text: "Requirements Documentation",
+        heading: HeadingLevel.HEADING_2,
+        spacing: {
+          after: 400,
+        },
+        alignment: AlignmentType.CENTER,
+      })
+    );
+    
+    // Document info
+    children.push(
+      new Paragraph({
         children: [
-          new Paragraph({
-            text: "Exception Management System",
-            heading: HeadingLevel.HEADING_1,
+          new TextRun({
+            text: "Version: 1.0",
+            size: 20,
+            color: "666666",
           }),
-          new Paragraph({
-            text: "Requirements Documentation",
-            heading: HeadingLevel.HEADING_2,
-          }),
-          ...content.split('\n').map(line => 
-            new Paragraph({
-              text: line.trim(),
-            })
-          ),
         ],
-      }],
+        spacing: {
+          after: 100,
+        },
+      })
+    );
+    
+    children.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: `Date: ${new Date().toLocaleDateString()}`,
+            size: 20,
+            color: "666666",
+          }),
+        ],
+        spacing: {
+          after: 400,
+        },
+      })
+    );
+    
+    // Table of Contents header
+    children.push(
+      new Paragraph({
+        text: "Contents",
+        heading: HeadingLevel.HEADING_3,
+        spacing: {
+          after: 200,
+        },
+      })
+    );
+    
+    // Simple TOC
+    const tocItems = [
+      { name: "Executive Summary", page: 1 },
+      { name: "Business Requirements", page: 2 },
+      { name: "Workflow Requirements", page: 3 }
+    ];
+    
+    tocItems.forEach(item => {
+      children.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: item.name,
+              size: 22,
+              color: "666666",
+            }),
+            new TextRun({
+              text: `\t${item.page}`,
+              size: 22,
+              color: "666666",
+            }),
+          ],
+          spacing: {
+            after: 100,
+          },
+          tabStops: [
+            {
+              type: AlignmentType.RIGHT,
+              position: 9000,
+            },
+          ],
+        })
+      );
+    });
+    
+    // Page break after TOC
+    children.push(
+      new Paragraph({
+        text: "",
+        pageBreakBefore: true,
+      })
+    );
+    
+    // Executive Summary Section
+    children.push(
+      new Paragraph({
+        text: "Executive Summary",
+        heading: HeadingLevel.HEADING_2,
+        spacing: {
+          after: 200,
+        },
+      })
+    );
+    
+    // Purpose section
+    children.push(
+      new Paragraph({
+        text: "Purpose",
+        heading: HeadingLevel.HEADING_3,
+        spacing: {
+          after: 120,
+        },
+      })
+    );
+    
+    const purposeText = "The Exception Management System streamlines the handling of compliance exceptions, " +
+                      "policy deviations, and risk-related decisions across the organization. It creates " +
+                      "a centralized platform that ensures all exceptions are properly documented, " +
+                      "reviewed, approved, and monitored in accordance with regulatory requirements " +
+                      "and internal policies.";
+    
+    children.push(
+      new Paragraph({
+        text: purposeText,
+        spacing: {
+          after: 200,
+        },
+      })
+    );
+    
+    // Key Drivers section
+    children.push(
+      new Paragraph({
+        text: "Key Drivers",
+        heading: HeadingLevel.HEADING_3,
+        spacing: {
+          after: 120,
+        },
+      })
+    );
+    
+    // Simple bullet list for drivers
+    const drivers = [
+      "Risk Mitigation: Ensure all exceptions are properly evaluated and their potential impact understood",
+      "Regulatory Compliance: Meet documentation and approval requirements for regulators",
+      "Audit Readiness: Maintain comprehensive records for internal and external audits",
+      "Operational Efficiency: Streamline approval workflows and reduce bottlenecks"
+    ];
+    
+    drivers.forEach(driver => {
+      children.push(
+        new Paragraph({
+          text: driver,
+          bullet: {
+            level: 0,
+          },
+          spacing: {
+            after: 100,
+          },
+        })
+      );
+    });
+    
+    // Current Approval Method
+    children.push(
+      new Paragraph({
+        text: "Current Approval Method",
+        heading: HeadingLevel.HEADING_3,
+        spacing: {
+          after: 120,
+          before: 200,
+        },
+      })
+    );
+    
+    // Time commitment
+    children.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: "Time Commitment: ",
+            bold: true,
+          }),
+          new TextRun("At least 30 minutes per exception to draft the request"),
+        ],
+        spacing: {
+          after: 100,
+        },
+      })
+    );
+    
+    // Process steps
+    children.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: "Process Steps:",
+            bold: true,
+          }),
+        ],
+        spacing: {
+          after: 100,
+        },
+      })
+    );
+    
+    // Process steps list
+    const steps = [
+      "Draft the exception in Microsoft Word",
+      "Create a DocuSign envelope",
+      "Select approvers",
+      "Send the DocuSign envelope to approvers for signatures",
+      "Wait for approval",
+      "Notify the requestor of approval status",
+      "Save the approval record in a table"
+    ];
+    
+    steps.forEach(step => {
+      children.push(
+        new Paragraph({
+          text: step,
+          bullet: {
+            level: 1,
+          },
+          spacing: {
+            after: 80,
+          },
+          indent: {
+            left: 720,
+          },
+        })
+      );
+    });
+    
+    // Challenges
+    children.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: "Challenges:",
+            bold: true,
+          }),
+        ],
+        spacing: {
+          after: 100,
+          before: 120,
+        },
+      })
+    );
+    
+    // Challenges list
+    const challenges = [
+      "No reporting metrics available",
+      "Evidence of approval is limited to email correspondence and document files, making timely and complete tracking difficult"
+    ];
+    
+    challenges.forEach(challenge => {
+      children.push(
+        new Paragraph({
+          text: challenge,
+          bullet: {
+            level: 1,
+          },
+          spacing: {
+            after: 80,
+          },
+          indent: {
+            left: 720,
+          },
+        })
+      );
+    });
+    
+    // Business Value
+    children.push(
+      new Paragraph({
+        text: "Business Value & Measurable Outcomes",
+        heading: HeadingLevel.HEADING_3,
+        spacing: {
+          before: 200,
+          after: 120,
+        },
+      })
+    );
+    
+    // Metrics list
+    const metrics = [
+      "Processing Time: Reduce from 30+ minutes per exception to 15 minutes per request",
+      "Audit Compliance: Improve to 89% target compliance rate",
+      "Risk Incidents: Reduce to target of 15 per quarter",
+      "Traceability: Improve from lack of comprehensive tracking to 100% visibility"
+    ];
+    
+    metrics.forEach(metric => {
+      children.push(
+        new Paragraph({
+          text: metric,
+          bullet: {
+            level: 0,
+          },
+          spacing: {
+            after: 100,
+          },
+        })
+      );
+    });
+    
+    // Current vs. Future State
+    children.push(
+      new Paragraph({
+        text: "Current vs. Future State",
+        heading: HeadingLevel.HEADING_3,
+        spacing: {
+          after: 120,
+          before: 200,
+        },
+      })
+    );
+    
+    // State comparison text
+    const stateComparison = "The current process requires a minimum of 30 minutes per exception, with multiple handoffs " +
+                           "between departments and reliance on email/documentation for status tracking. " +
+                           "The EMS will streamline the process to 15 minutes per request with automated touchpoints " +
+                           "and enhanced reporting features, resulting in significant annual savings in staff hours " +
+                           "and operational costs.";
+    
+    children.push(
+      new Paragraph({
+        text: stateComparison,
+        spacing: {
+          after: 200,
+        },
+      })
+    );
+    
+    // Page break before requirements
+    children.push(
+      new Paragraph({
+        text: "",
+        pageBreakBefore: true,
+      })
+    );
+    
+    // Add Business Requirements section
+    children.push(
+      new Paragraph({
+        text: "Business Requirements",
+        heading: HeadingLevel.HEADING_2,
+        spacing: {
+          after: 200,
+        },
+      })
+    );
+    
+    // Parse markdown content for business requirements
+    const content = getRequirementsMarkdown();
+    const lines = content.split('\n');
+    
+    let inBusinessRequirements = false;
+    let inWorkflowRequirements = false;
+    let skipSection = false;
+    let currentHeadingLevel = 0;
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      
+      // Skip document title and empty lines
+      if (line === '' || line.startsWith('# Exception Management')) continue;
+      
+      // Check for section headers
+      if (line.startsWith('## Business Requirements')) {
+        inBusinessRequirements = true;
+        inWorkflowRequirements = false;
+        skipSection = false;
+        continue;
+      } else if (line.startsWith('## Workflow Requirements')) {
+        // Add page break before workflow requirements
+        children.push(
+          new Paragraph({
+            text: "",
+            pageBreakBefore: true,
+          })
+        );
+        
+        children.push(
+          new Paragraph({
+            text: "Workflow Requirements",
+            heading: HeadingLevel.HEADING_2,
+            spacing: {
+              after: 200,
+            },
+          })
+        );
+        
+        inBusinessRequirements = false;
+        inWorkflowRequirements = true;
+        skipSection = false;
+        continue;
+      } else if (line.startsWith('## Technical Requirements')) {
+        // Skip technical requirements section
+        skipSection = true;
+        continue;
+      }
+      
+      // Skip processing if we're in the technical requirements section
+      if (skipSection) continue;
+      
+      // Process subsection headers
+      if (line.startsWith('### ')) {
+        children.push(
+          new Paragraph({
+            text: line.substring(4),
+            heading: HeadingLevel.HEADING_3,
+            spacing: {
+              after: 120,
+              before: 160,
+            },
+          })
+        );
+        continue;
+      }
+      
+      // Handle list items
+      if (line.startsWith('- ')) {
+        children.push(
+          new Paragraph({
+            text: line.substring(2),
+            bullet: {
+              level: 0,
+            },
+            spacing: {
+              after: 80,
+            },
+          })
+        );
+        continue;
+      }
+      
+      // Handle nested list items
+      if (line.startsWith('  - ')) {
+        children.push(
+          new Paragraph({
+            text: line.substring(4),
+            bullet: {
+              level: 1,
+            },
+            spacing: {
+              after: 80,
+            },
+            indent: {
+              left: 720,
+            },
+          })
+        );
+        continue;
+      }
+      
+      // Handle numbered workflow items
+      if (inWorkflowRequirements && /^\d+\./.test(line)) {
+        const numMatch = line.match(/^(\d+)\.\s*(.*)/);
+        if (numMatch && numMatch.length >= 3) {
+          const num = numMatch[1];
+          const text = numMatch[2];
+          
+          children.push(
+            new Paragraph({
+              text: text,
+              numbering: {
+                reference: "flowSteps",
+                level: 0,
+                instance: parseInt(num),
+              },
+              spacing: {
+                after: 80,
+              },
+            })
+          );
+          continue;
+        }
+      }
+      
+      // Handle regular text
+      if (line.length > 0) {
+        children.push(
+          new Paragraph({
+            text: line,
+            spacing: {
+              after: 80,
+            },
+          })
+        );
+      }
+    }
+    
+    // Create and save the Word document
+    const doc = new Document({
+      sections: [
+        {
+          properties: {
+            page: {
+              margin: {
+                top: 1000,
+                right: 1000,
+                bottom: 1000,
+                left: 1000,
+              },
+            },
+          },
+          children: children,
+          headers: {
+            default: new Paragraph("Exception Management System Requirements"),
+          },
+          footers: {
+            default: new Paragraph({
+              children: [
+                new TextRun("Page "),
+                new TextRun({
+                  children: [
+                    new NumberFormat("decimal"),
+                  ],
+                }),
+              ],
+              alignment: AlignmentType.RIGHT,
+            }),
+          },
+        },
+      ],
+      numbering: {
+        config: [
+          {
+            reference: "flowSteps",
+            levels: [
+              {
+                level: 0,
+                format: "decimal",
+                text: "%1.",
+                alignment: AlignmentType.START,
+                style: {
+                  paragraph: {
+                    indent: { left: 720, hanging: 260 },
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
     });
 
     const blob = await Packer.toBlob(doc);
