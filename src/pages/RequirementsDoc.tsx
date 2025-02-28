@@ -68,15 +68,14 @@ export const RequirementsDoc = () => {
     doc.text("Contents", 20, y);
     y += 10;
     
-    // Simplified table of contents
+    // Simplified table of contents - note: removed Technical Requirements
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
     
     const tocItems = [
       { name: "Executive Summary", page: 1 },
       { name: "Business Requirements", page: 2 },
-      { name: "Workflow Requirements", page: 3 },
-      { name: "Technical Requirements", page: 4 }
+      { name: "Workflow Requirements", page: 3 }
     ];
     
     tocItems.forEach(item => {
@@ -173,7 +172,7 @@ export const RequirementsDoc = () => {
     // Process the requirements line by line with simple formatting
     let inBusinessRequirements = false;
     let inWorkflowRequirements = false;
-    let inTechnicalRequirements = false;
+    let skipSection = false;
     
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
@@ -185,7 +184,7 @@ export const RequirementsDoc = () => {
       if (line.startsWith('## Business Requirements')) {
         inBusinessRequirements = true;
         inWorkflowRequirements = false;
-        inTechnicalRequirements = false;
+        skipSection = false;
         continue;
       } else if (line.startsWith('## Workflow Requirements')) {
         // Start a new page for workflow requirements
@@ -198,22 +197,16 @@ export const RequirementsDoc = () => {
         
         inBusinessRequirements = false;
         inWorkflowRequirements = true;
-        inTechnicalRequirements = false;
+        skipSection = false;
         continue;
       } else if (line.startsWith('## Technical Requirements')) {
-        // Start a new page for technical requirements
-        doc.addPage();
-        y = 20;
-        doc.setFontSize(16);
-        doc.setTextColor(214, 90, 18);
-        doc.text("Technical Requirements", 20, y);
-        y += 10;
-        
-        inBusinessRequirements = false;
-        inWorkflowRequirements = false;
-        inTechnicalRequirements = true;
+        // Skip technical requirements section
+        skipSection = true;
         continue;
       }
+      
+      // Skip processing if we're in the technical requirements section
+      if (skipSection) continue;
       
       // Check if we need a new page
       if (y > 270) {
