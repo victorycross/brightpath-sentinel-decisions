@@ -144,10 +144,11 @@ export const RequirementsDoc = () => {
     doc.text("• Time Commitment: At least 30 minutes per exception to draft the request", 20, y);
     y += 6;
     
-    // Process steps
+    // Process steps section header
     doc.text("• Process Steps:", 20, y);
     y += 6;
     
+    // Fixed process steps with proper rendering
     const steps = [
       "Draft the exception in Microsoft Word",
       "Create a DocuSign envelope",
@@ -159,11 +160,12 @@ export const RequirementsDoc = () => {
     ];
     
     steps.forEach(step => {
-      doc.text("  ◦ " + step, 25, y);
+      // Fix spacing and use regular bullets instead of %æ
+      doc.text("   - " + step, 25, y);
       y += 6;
     });
     
-    // Challenges
+    // Challenges section header
     doc.text("• Challenges:", 20, y);
     y += 6;
     
@@ -173,7 +175,8 @@ export const RequirementsDoc = () => {
     ];
     
     challenges.forEach(challenge => {
-      doc.text("  ◦ " + challenge, 25, y);
+      // Fix spacing and use regular bullets instead of %æ
+      doc.text("   - " + challenge, 25, y);
       y += 6;
     });
     
@@ -312,7 +315,7 @@ export const RequirementsDoc = () => {
       if (line.startsWith('  - ')) {
         doc.setFontSize(10);
         doc.setTextColor(0, 0, 0);
-        const bulletedLine = "  ◦ " + line.substring(4);
+        const bulletedLine = "  - " + line.substring(4);
         const wrappedLines = doc.splitTextToSize(bulletedLine, 160);
         wrappedLines.forEach((wrappedLine, index) => {
           if (index === 0) {
