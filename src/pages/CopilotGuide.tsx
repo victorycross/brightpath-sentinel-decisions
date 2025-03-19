@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -915,3 +916,446 @@ Always maintain confidentiality of sensitive information and ensure compliance w
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
+            
+            <TabsContent value="topics" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Topics Configuration</CardTitle>
+                  <CardDescription>
+                    Define conversation topics to guide the agent's responses
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted p-4 rounded-md mb-4 max-h-96 overflow-y-auto">
+                    <pre className="whitespace-pre-wrap text-sm">{sampleTopics}</pre>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => copyToClipboard(sampleTopics, "Topics configuration")}
+                      className="gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy Topics
+                    </Button>
+                    <Button 
+                      onClick={() => downloadFile(sampleTopics, "exception-agent-topics.json")}
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download JSON
+                    </Button>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="topic-1">
+                        <AccordionTrigger className="text-lg font-medium">Topic Structure Explanation</AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-4 p-4 bg-muted/50 rounded-md">
+                            <div>
+                              <h4 className="font-medium">Topic Components:</h4>
+                              <ul className="list-disc pl-5 space-y-1 mt-2">
+                                <li><span className="font-medium">Name:</span> The main topic identifier</li>
+                                <li><span className="font-medium">Description:</span> Brief explanation of the topic's purpose</li>
+                                <li><span className="font-medium">Trigger Phrases:</span> User inputs that activate this topic</li>
+                                <li><span className="font-medium">Subtopics:</span> More specific areas within the main topic</li>
+                              </ul>
+                            </div>
+                            <div>
+                              <h4 className="font-medium">Implementation Tips:</h4>
+                              <ul className="list-disc pl-5 space-y-1 mt-2">
+                                <li>Add at least 7-10 trigger phrases per topic for better recognition</li>
+                                <li>Include variations of common user requests</li>
+                                <li>Create examples that showcase realistic conversations</li>
+                                <li>Consider user intent rather than just keywords</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="actions" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Actions Configuration</CardTitle>
+                  <CardDescription>
+                    Custom actions to interact with SharePoint lists and other systems
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted p-4 rounded-md mb-4 max-h-96 overflow-y-auto">
+                    <pre className="whitespace-pre-wrap text-sm">{apiSchema}</pre>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => copyToClipboard(apiSchema, "API schema")}
+                      className="gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy Schema
+                    </Button>
+                    <Button 
+                      onClick={() => downloadFile(apiSchema, "exception-api-schema.json")}
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download JSON
+                    </Button>
+                  </div>
+                  
+                  <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="bg-primary/5 p-4 rounded-md border border-primary/20">
+                      <h3 className="text-lg font-semibold mb-3">Required SharePoint Lists</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="font-medium">Exception Requests</h4>
+                          <p className="text-sm text-muted-foreground mb-2">Main list for storing exception requests</p>
+                          <div className="text-xs bg-muted p-2 rounded">
+                            Key columns: Title, Type, Status, Request, Reason, Impact, MitigatingFactors, ResidualRisk, SubmittedBy, SubmittedAt, ExpiryDate
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Exception Approvals</h4>
+                          <p className="text-sm text-muted-foreground mb-2">Tracks approval assignments and decisions</p>
+                          <div className="text-xs bg-muted p-2 rounded">
+                            Key columns: RequestID, ApproverEmail, Status, AssignedDate, DecisionDate, Comments
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Exception History</h4>
+                          <p className="text-sm text-muted-foreground mb-2">Audit log of all activities</p>
+                          <div className="text-xs bg-muted p-2 rounded">
+                            Key columns: RequestID, Action, PerformedBy, PerformedAt, Details
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-secondary/5 p-4 rounded-md border border-secondary/20">
+                      <h3 className="text-lg font-semibold mb-3">Power Automate Actions</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="font-medium">Create Exception Flow</h4>
+                          <p className="text-sm text-muted-foreground mb-2">Creates a new exception request and assigns approvers</p>
+                          <div className="text-xs bg-muted p-2 rounded">
+                            Trigger: HTTP request or Power Apps form submit
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Approval Notification Flow</h4>
+                          <p className="text-sm text-muted-foreground mb-2">Sends notifications to approvers</p>
+                          <div className="text-xs bg-muted p-2 rounded">
+                            Trigger: When an item is created in Exception Approvals list
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Status Update Flow</h4>
+                          <p className="text-sm text-muted-foreground mb-2">Updates request status based on approvals</p>
+                          <div className="text-xs bg-muted p-2 rounded">
+                            Trigger: When an item is modified in Exception Approvals list
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Exception Expiry Flow</h4>
+                          <p className="text-sm text-muted-foreground mb-2">Checks for and updates expired exceptions</p>
+                          <div className="text-xs bg-muted p-2 rounded">
+                            Trigger: Scheduled daily run or timer
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="triggers" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Event Triggers</CardTitle>
+                  <CardDescription>
+                    Configure your agent to activate when certain events happen
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted p-4 rounded-md mb-4 max-h-72 overflow-y-auto">
+                    <pre className="whitespace-pre-wrap text-sm">{sampleTriggers}</pre>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => copyToClipboard(sampleTriggers, "Trigger configuration")}
+                      className="gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy Triggers
+                    </Button>
+                    <Button 
+                      onClick={() => downloadFile(sampleTriggers, "exception-agent-triggers.json")}
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download JSON
+                    </Button>
+                  </div>
+                  
+                  <div className="mt-6 bg-gradient-to-r from-primary/5 to-secondary/5 p-6 rounded-lg border border-primary/10">
+                    <h3 className="text-xl font-semibold mb-4">Implementing Triggers in Microsoft 365</h3>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="font-medium flex items-center text-lg">
+                          <Info className="h-5 w-5 mr-2 text-primary" />
+                          Power Automate Integration
+                        </h4>
+                        <p className="mt-2 mb-3 text-muted-foreground">
+                          Copilot Studio can be triggered by Power Automate flows, enabling a variety of event-based activations.
+                        </p>
+                        <div className="bg-card p-4 rounded-md shadow-sm">
+                          <h5 className="font-medium mb-2">Implementation Steps:</h5>
+                          <ol className="list-decimal pl-5 space-y-1">
+                            <li>Create a Power Automate flow with the desired trigger (SharePoint item change, Teams message, etc.)</li>
+                            <li>Add the "Send a Microsoft Copilot Studio notification" action</li>
+                            <li>Configure the notification with user context and relevant information</li>
+                            <li>In Copilot Studio, create a corresponding topic that handles the notification</li>
+                          </ol>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-medium flex items-center text-lg">
+                          <Info className="h-5 w-5 mr-2 text-secondary" />
+                          Teams & SharePoint Integration
+                        </h4>
+                        <p className="mt-2 mb-3 text-muted-foreground">
+                          Embed trigger points in Teams and SharePoint interfaces to activate Copilot in context.
+                        </p>
+                        <div className="bg-card p-4 rounded-md shadow-sm">
+                          <h5 className="font-medium mb-2">Implementation Options:</h5>
+                          <ul className="list-disc pl-5 space-y-1">
+                            <li>Add custom action buttons in SharePoint list views</li>
+                            <li>Configure context-sensitive help buttons that open Copilot with specific queries</li>
+                            <li>Create adaptive cards in Teams with action buttons that trigger Copilot</li>
+                            <li>Use SharePoint Framework (SPFx) to add custom web parts with Copilot integration</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="knowledge" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Knowledge Base Configuration</CardTitle>
+                  <CardDescription>
+                    Add data sources to inform and improve your agent's responses
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="bg-primary/5 p-4 rounded-md border border-primary/20">
+                        <h3 className="font-semibold text-primary mb-3">Recommended Knowledge Sources</h3>
+                        <ul className="list-disc pl-5 space-y-2">
+                          <li className="mb-1">
+                            <span className="font-medium">Exception Management Policy</span>
+                            <p className="text-sm text-muted-foreground">Organization's official policy document for handling exceptions</p>
+                          </li>
+                          <li className="mb-1">
+                            <span className="font-medium">Exception Type Definitions</span>
+                            <p className="text-sm text-muted-foreground">Detailed descriptions of each exception category</p>
+                          </li>
+                          <li className="mb-1">
+                            <span className="font-medium">Approval Workflow Documentation</span>
+                            <p className="text-sm text-muted-foreground">Documentation of approval paths and requirements</p>
+                          </li>
+                          <li className="mb-1">
+                            <span className="font-medium">Mitigation Guidelines</span>
+                            <p className="text-sm text-muted-foreground">Best practices for risk mitigation by exception type</p>
+                          </li>
+                          <li className="mb-1">
+                            <span className="font-medium">FAQ Document</span>
+                            <p className="text-sm text-muted-foreground">Common questions and answers about the exception process</p>
+                          </li>
+                        </ul>
+                      </div>
+                      
+                      <div className="bg-secondary/5 p-4 rounded-md border border-secondary/20">
+                        <h3 className="font-semibold text-secondary mb-3">Implementation Methods</h3>
+                        <div className="space-y-3">
+                          <div>
+                            <h4 className="font-medium">SharePoint Document Library</h4>
+                            <p className="text-sm text-muted-foreground">Upload documents to a SharePoint library and connect as a knowledge source</p>
+                          </div>
+                          <div>
+                            <h4 className="font-medium">Website</h4>
+                            <p className="text-sm text-muted-foreground">Connect to internal websites containing relevant documentation</p>
+                          </div>
+                          <div>
+                            <h4 className="font-medium">Custom Q&A</h4>
+                            <p className="text-sm text-muted-foreground">Manually create question-answer pairs for common scenarios</p>
+                          </div>
+                          <div>
+                            <h4 className="font-medium">Power BI Reports</h4>
+                            <p className="text-sm text-muted-foreground">Connect to Power BI dashboards for metrics and reporting data</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-primary/5 to-secondary/5 p-6 rounded-lg">
+                      <h3 className="text-xl font-semibold mb-4">Knowledge Base Best Practices</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <h4 className="font-medium mb-2">Organization</h4>
+                          <ul className="list-disc pl-5 space-y-1 text-sm">
+                            <li>Structure documents with clear headings and sections</li>
+                            <li>Use consistent terminology throughout all sources</li>
+                            <li>Create separate sources for different knowledge domains</li>
+                            <li>Include version information and last updated dates</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2">Maintenance</h4>
+                          <ul className="list-disc pl-5 space-y-1 text-sm">
+                            <li>Establish a regular review and update schedule</li>
+                            <li>Monitor agent responses to identify knowledge gaps</li>
+                            <li>Implement a feedback mechanism for users to report issues</li>
+                            <li>Keep policy documents synchronized with organizational changes</li>
+                          </ul>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4 p-3 bg-background rounded-md border border-input">
+                        <h4 className="font-medium">Knowledge Base Setup Instructions:</h4>
+                        <ol className="list-decimal pl-5 space-y-1 mt-2 text-sm">
+                          <li>In Copilot Studio, navigate to the "Add knowledge" section</li>
+                          <li>Select the appropriate source type (SharePoint, website, etc.)</li>
+                          <li>Configure the connection with the required authentication</li>
+                          <li>Set up crawling frequency for dynamic sources</li>
+                          <li>Test the knowledge integration by asking relevant questions</li>
+                          <li>Refine the knowledge sources based on test results</li>
+                        </ol>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <Info className="h-5 w-5 mr-2 text-blue-500" />
+                        <span className="text-sm">
+                          Export the requirements document to use as a knowledge source:
+                        </span>
+                      </div>
+                      <Button 
+                        onClick={() => downloadFile(getRequirementsMarkdown(), "exception-requirements.md")}
+                        className="gap-2"
+                      >
+                        <FileDown className="h-4 w-4" />
+                        Download Requirements
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="prompts" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Starter Prompts</CardTitle>
+                  <CardDescription>
+                    Suggest ways of starting conversations with your agent
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted p-4 rounded-md mb-4 max-h-72 overflow-y-auto">
+                    <pre className="whitespace-pre-wrap text-sm">{starterPrompts}</pre>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => copyToClipboard(starterPrompts, "Starter prompts")}
+                      className="gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy Prompts
+                    </Button>
+                    <Button 
+                      onClick={() => downloadFile(starterPrompts, "exception-agent-prompts.json")}
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download JSON
+                    </Button>
+                  </div>
+                  
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-4">Implementation Guide</h3>
+                    <div className="space-y-4">
+                      <div className="bg-primary/5 p-4 rounded-md border border-primary/20">
+                        <h4 className="font-medium mb-2">Teams Integration</h4>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          When adding your agent to Teams, you can configure starter prompts that appear as suggested actions.
+                        </p>
+                        <div className="bg-card p-3 rounded-md">
+                          <h5 className="font-medium text-sm mb-1">Configuration Steps:</h5>
+                          <ol className="list-decimal pl-5 space-y-1 text-sm">
+                            <li>In Copilot Studio, go to "Channels" > "Microsoft Teams"</li>
+                            <li>Under "Greeting and suggested actions", enable suggested actions</li>
+                            <li>Add prompts from the list above, customizing as needed</li>
+                            <li>Set the greeting message that appears with the suggestions</li>
+                            <li>Save and publish the channel configuration</li>
+                          </ol>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-secondary/5 p-4 rounded-md border border-secondary/20">
+                        <h4 className="font-medium mb-2">SharePoint Integration</h4>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          For SharePoint, create quick action buttons that pre-populate queries to your agent.
+                        </p>
+                        <div className="bg-card p-3 rounded-md">
+                          <h5 className="font-medium text-sm mb-1">Implementation Options:</h5>
+                          <ul className="list-disc pl-5 space-y-1 text-sm">
+                            <li>Add quick action buttons to the Exception Management home page</li>
+                            <li>Create a "Getting Started" web part with common prompts</li>
+                            <li>Configure the Copilot web part with suggested conversation starters</li>
+                            <li>Add context-sensitive help buttons throughout the experience</li>
+                          </ul>
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-between items-center mt-6 p-4 bg-muted rounded-md">
+                        <div>
+                          <h4 className="font-medium">Ready to implement?</h4>
+                          <p className="text-sm text-muted-foreground">View the official Microsoft documentation</p>
+                        </div>
+                        <Button className="gap-2" variant="outline" asChild>
+                          <a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/" target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="h-4 w-4" />
+                            Documentation
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </Card>
+    </div>
+  );
+};
