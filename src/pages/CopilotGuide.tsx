@@ -241,6 +241,13 @@ Always maintain confidentiality of sensitive information and ensure compliance w
               Building an Exception Management System in Microsoft 365
             </p>
           </div>
+          <Button 
+            onClick={() => downloadFile("# Copilot Studio Implementation Guide\n\nBuilding an Exception Management System in Microsoft 365\n\nThis guide provides all the elements needed to build a Copilot Studio agent that replicates the functionality of the Exception Management System.", "copilot-guide-overview.txt")}
+            className="gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Download Guide Overview
+          </Button>
         </div>
 
         <div className="space-y-6">
@@ -283,6 +290,16 @@ Always maintain confidentiality of sensitive information and ensure compliance w
                     <li>Teams integration for notifications and approvals</li>
                   </ul>
                 </Card>
+              </div>
+              <div className="flex justify-end mt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => downloadFile("# Implementation Overview\n\n## Prerequisites\n- Microsoft 365 subscription with Copilot Studio license\n- SharePoint Online site for storing exception data\n- Power Automate for workflow automation\n- Power Apps for custom forms (optional)\n- Admin permissions to create and configure Copilot Studio agents\n\n## Implementation Approach\n- SharePoint lists for data storage instead of Supabase\n- Power Automate flows for business logic and approvals\n- Copilot Studio for the conversational interface\n- Power BI for metrics and reporting\n- Teams integration for notifications and approvals", "implementation-overview.txt")}
+                  className="gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Download Implementation Details
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -337,6 +354,15 @@ Always maintain confidentiality of sensitive information and ensure compliance w
                       </div>
                     </div>
                   </div>
+                  <div className="flex justify-end">
+                    <Button 
+                      onClick={() => downloadFile("# Agent Configuration\n\n## Basic Settings\nAgent Name: Exception Management Assistant\n\n## Deployment Options\nRecommended Channels:\n- Microsoft Teams\n- SharePoint site for Exception Management\n- Microsoft 365 Chat", "agent-configuration.txt")}
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download Configuration
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -374,7 +400,134 @@ Always maintain confidentiality of sensitive information and ensure compliance w
               </Card>
             </TabsContent>
 
-            {/* Add other tabs as needed */}
+            <TabsContent value="topics" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Copilot Topics</CardTitle>
+                  <CardDescription>
+                    Conversational topics for your Copilot Studio agent
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted p-4 rounded-md mb-4 max-h-96 overflow-y-auto">
+                    <pre className="whitespace-pre-wrap text-sm">{sampleTopics}</pre>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => copyToClipboard(sampleTopics, "Sample topics")}
+                      className="gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy Topics
+                    </Button>
+                    <Button 
+                      onClick={() => downloadFile(sampleTopics, "copilot-topics.json")}
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download Topics
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Triggers</CardTitle>
+                  <CardDescription>
+                    Events that trigger specific Copilot behaviors
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted p-4 rounded-md mb-4 max-h-96 overflow-y-auto">
+                    <pre className="whitespace-pre-wrap text-sm">{sampleTriggers}</pre>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => copyToClipboard(sampleTriggers, "Sample triggers")}
+                      className="gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy Triggers
+                    </Button>
+                    <Button 
+                      onClick={() => downloadFile(sampleTriggers, "copilot-triggers.json")}
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download Triggers
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="actions" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>API Schema</CardTitle>
+                  <CardDescription>
+                    OpenAPI schema for Copilot to interact with the Exception Management API
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted p-4 rounded-md mb-4 max-h-96 overflow-y-auto">
+                    <pre className="whitespace-pre-wrap text-sm">{apiSchema}</pre>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => copyToClipboard(apiSchema, "API schema")}
+                      className="gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy Schema
+                    </Button>
+                    <Button 
+                      onClick={() => downloadFile(apiSchema, "exception-api-schema.json")}
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download Schema
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="prompts" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Starter Prompts</CardTitle>
+                  <CardDescription>
+                    Suggested starter prompts for users to interact with your Copilot
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted p-4 rounded-md mb-4 max-h-96 overflow-y-auto">
+                    <pre className="whitespace-pre-wrap text-sm">{starterPrompts}</pre>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => copyToClipboard(starterPrompts, "Starter prompts")}
+                      className="gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy Prompts
+                    </Button>
+                    <Button 
+                      onClick={() => downloadFile(starterPrompts, "starter-prompts.json")}
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download Prompts
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
           </Tabs>
         </div>
       </Card>
