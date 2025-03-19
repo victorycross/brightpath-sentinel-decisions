@@ -1,6 +1,6 @@
 
 import { Link, useNavigate } from "react-router-dom"
-import { Users, FileText } from "lucide-react"
+import { Users, FileText, BookOpen } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -42,6 +42,11 @@ const items = [
     title: "Requirements",
     href: "/requirements",
     icon: FileText,
+  },
+  {
+    title: "Copilot Guide",
+    href: "/copilot-guide",
+    icon: BookOpen,
   },
 ]
 
