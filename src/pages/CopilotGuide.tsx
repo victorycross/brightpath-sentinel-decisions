@@ -1311,7 +1311,7 @@ Always maintain confidentiality of sensitive information and ensure compliance w
                         <div className="bg-card p-3 rounded-md">
                           <h5 className="font-medium text-sm mb-1">Configuration Steps:</h5>
                           <ol className="list-decimal pl-5 space-y-1 text-sm">
-                            <li>In Copilot Studio, go to "Channels" > "Microsoft Teams"</li>
+                            <li>In Copilot Studio, go to "Channels" {">"} "Microsoft Teams"</li>
                             <li>Under "Greeting and suggested actions", enable suggested actions</li>
                             <li>Add prompts from the list above, customizing as needed</li>
                             <li>Set the greeting message that appears with the suggestions</li>
