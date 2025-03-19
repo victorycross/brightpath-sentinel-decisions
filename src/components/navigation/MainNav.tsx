@@ -1,6 +1,6 @@
 
 import { Link, useNavigate } from "react-router-dom"
-import { Users, FileText, BookOpen, Settings } from "lucide-react"
+import { Users, FileText, BookOpen, Settings, Database } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -52,6 +52,11 @@ const items = [
     title: "Power App",
     href: "/power-app",
     icon: Settings,
+  },
+  {
+    title: "SharePoint Setup",
+    href: "/sharepoint-setup",
+    icon: Database,
   },
 ]
 

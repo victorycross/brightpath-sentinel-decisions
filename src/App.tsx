@@ -19,6 +19,7 @@ import { AuthForm } from "@/components/auth/AuthForm"
 import { RequirementsDoc } from "@/pages/RequirementsDoc"
 import { CopilotGuide } from "@/pages/CopilotGuide"
 import { PowerApp } from "@/pages/PowerApp"
+import { SharePointSetup } from "@/pages/SharePointSetup"
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             <Route path="/requirements" element={<RequirementsDoc />} />
             <Route path="/copilot-guide" element={<CopilotGuide />} />
             <Route path="/power-app" element={<PowerApp />} />
+            <Route path="/sharepoint-setup" element={<SharePointSetup />} />
           </Routes>
         </main>
         <Toaster />
