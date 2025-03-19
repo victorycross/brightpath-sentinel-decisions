@@ -147,3 +147,4 @@ export const getRequirementsMarkdown = () => {
 - Optimized data calls
 `;
 };
+
