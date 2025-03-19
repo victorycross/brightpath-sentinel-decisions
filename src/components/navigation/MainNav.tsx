@@ -1,6 +1,6 @@
 
 import { Link, useNavigate } from "react-router-dom"
-import { Users, FileText, BookOpen } from "lucide-react"
+import { Users, FileText, BookOpen, Settings } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -47,6 +47,11 @@ const items = [
     title: "Copilot Guide",
     href: "/copilot-guide",
     icon: BookOpen,
+  },
+  {
+    title: "Power App",
+    href: "/power-app",
+    icon: Settings,
   },
 ]
 

@@ -18,6 +18,7 @@ import { Metrics } from "@/pages/Metrics"
 import { AuthForm } from "@/components/auth/AuthForm"
 import { RequirementsDoc } from "@/pages/RequirementsDoc"
 import { CopilotGuide } from "@/pages/CopilotGuide"
+import { PowerApp } from "@/pages/PowerApp"
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
             <Route path="/metrics" element={<Metrics />} />
             <Route path="/requirements" element={<RequirementsDoc />} />
             <Route path="/copilot-guide" element={<CopilotGuide />} />
+            <Route path="/power-app" element={<PowerApp />} />
           </Routes>
         </main>
         <Toaster />
