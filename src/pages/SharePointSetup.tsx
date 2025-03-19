@@ -371,7 +371,7 @@ export function SharePointSetup() {
               Add column validation to enforce data quality:
             </p>
             <ul className="list-disc pl-6 mb-6 space-y-1">
-              <li>For ExpiryDate: <code>[ExpiryDate] > [SubmittedDate]</code></li>
+              <li>For ExpiryDate: <code>[ExpiryDate] &gt; [SubmittedDate]</code></li>
               <li>Ensure Title fields have minimum length requirements</li>
             </ul>
 
