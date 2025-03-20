@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function MainNav() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
 
   const routes = [
     {
