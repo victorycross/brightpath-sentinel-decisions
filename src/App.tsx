@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Dashboard } from "./pages/Dashboard";
@@ -32,7 +33,6 @@ function App() {
             <Route path="/powerapp" element={<PowerApp />} />
             <Route path="/copilot-guide" element={<CopilotGuide />} />
             <Route path="/power-bi" element={<PowerBIIntegration />} />
-            
           </Routes>
         </div>
         <Toaster />
