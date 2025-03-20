@@ -1,4 +1,3 @@
-
 export function downloadAllSharePointGuides() {
   // Generate all content for the guides
   const architectureContent = `# SharePoint List Architecture Overview
@@ -389,19 +388,17 @@ ${powerAutomateGuide}
 }
 
 export function downloadAllCopilotGuides() {
-  // This function would be implemented similarly to the others,
-  // but we need the actual Copilot guide content which isn't available in the provided code
-  // For now, we'll create a placeholder function that downloads a basic guide
-  
-  const copilotGuideContent = `# Copilot Studio Implementation Guide
+  // Generate all content for the Copilot guides
+  const copilotOverviewContent = `# Copilot Studio Implementation Guide
 
 ## Overview
-This guide provides instructions for setting up your Copilot Studio agent for the Exception Management System.
+This guide provides detailed instructions for setting up your Copilot Studio agent for the Exception Management System.
 
 ## Prerequisites
-- Microsoft 365 account with Copilot Studio access
+- Microsoft 365 account with Copilot Studio access (E3/E5 license or Copilot Studio add-on)
 - Understanding of your exception management process
 - SharePoint lists already set up (see SharePoint Setup Guide)
+- Power App created (see Power App Guide)
 
 ## Steps for Creating Your Copilot
 1. Access Copilot Studio
@@ -411,11 +408,266 @@ This guide provides instructions for setting up your Copilot Studio agent for th
 5. Test and publish your Copilot
 6. Integrate with Power Apps
 
-For detailed steps, please refer to the full Copilot Studio documentation.
+## What You'll Build
+A conversational AI agent that can:
+- Answer questions about exception policies
+- Help users create new exception requests
+- Check on status of existing exceptions
+- Guide approvers through the review process
+- Provide summaries of exceptions by type, status, and risk level
+`;
+
+  const copilotSetupGuide = `# Beginner's Guide: Setting Up Copilot Studio
+
+## Step 1: Access Copilot Studio
+1. Go to https://copilotstudio.microsoft.com/
+2. Sign in with your Microsoft 365 account
+3. If this is your first time, you'll be prompted to accept terms and conditions
+4. You'll land on the Copilot Studio home page
+
+## Step 2: Create a New Copilot
+1. Click "Create a Copilot" (or "New" button)
+2. Enter basic information:
+   - Name: "Exception Management Assistant"
+   - Description: "AI assistant for managing exception requests"
+   - Select your language(s)
+   - Choose a base template (Optional: select "Customer Service" if available)
+   - Click "Create"
+
+## Step 3: Configure Core Topics
+Copilots are organized around "Topics" - conversation paths that help users accomplish tasks.
+
+1. In your new Copilot, go to the "Topics" section
+2. Create the following essential topics:
+   
+   **Greeting Topic**
+   - Trigger phrases: "hello", "hi", "start", "begin"
+   - Response: "Welcome to the Exception Management Assistant. I can help you create new exception requests, check status, or answer policy questions. What would you like to do today?"
+   
+   **Create Exception Request Topic**
+   - Trigger phrases: "create request", "new exception", "submit exception", "start request"
+   - Add nodes to collect required information:
+     - Exception type
+     - Description
+     - Business justification
+     - Risk level
+     - Timeframe needed
+   - End with confirmation and next steps
+   
+   **Check Status Topic**
+   - Trigger phrases: "check status", "my requests", "request update"
+   - Add nodes to identify the user and fetch their requests
+   - Show status information
+   
+   **Policy Information Topic**
+   - Trigger phrases: "policy", "guidelines", "requirements", "help"
+   - Provide information about exception policies
+   - Link to formal documentation
+
+## Step 4: Create Advanced Topics
+Once you have the basic topics working, add more sophisticated capabilities:
+
+1. **Request Details Topic**
+   - Allow users to ask about specific requests by ID
+   - Show full details including approval status
+   
+2. **Approver View Topic**
+   - Help approvers find requests needing their review
+   - Provide context and recommendations
+   
+3. **Reporting Topic**
+   - Show summaries of exception data
+   - Allow filtering by type, status, date range
+
+## Step 5: Connect to Data Sources
+1. Go to "Data" section in Copilot Studio
+2. Add SharePoint connection:
+   - Click "Add data source"
+   - Select "SharePoint"
+   - Connect to your SharePoint site
+   - Select your Exception Requests list
+   - Map the fields to entities in your Copilot
+   
+3. Add Power Automate connection (for actions):
+   - Click "Add data source" 
+   - Select "Power Automate"
+   - Create or select Flows for:
+     - Creating a new request
+     - Updating request status
+     - Sending notifications
+
+## Step 6: Create Actions
+Actions allow your Copilot to do things for users.
+
+1. Go to "Actions" section
+2. Create "Create Exception Request" action:
+   - Connect to your Power Automate flow
+   - Define input parameters (request details)
+   - Set up confirmation messages
+   
+3. Create "Approve/Reject Request" action:
+   - Allow approvers to take action directly in the chat
+   - Add security checks to verify approver permissions
+   - Send confirmation emails
+
+## Step 7: Test Your Copilot
+1. Click "Test your Copilot" button
+2. Try various conversation paths:
+   - Creating a new request
+   - Checking status
+   - Asking policy questions
+   - Using actions
+3. Test for edge cases and errors
+4. Refine responses based on testing
+
+## Step 8: Deploy and Integrate
+1. When ready, click "Publish" to make your Copilot live
+2. Go to Settings to get your Copilot ID for Power Apps integration
+3. Follow the Power Apps guide to add your Copilot to your app
+`;
+
+  const copilotAdvancedGuide = `# Advanced Guide: Enhancing Your Copilot
+
+## Custom Variables and Context
+1. Create variables to track conversation context:
+   - Go to "Variables" section
+   - Add variables like "CurrentRequestID" or "UserRole"
+   - Use them to maintain state across topics
+
+2. Set up context handoffs:
+   - Pass variables between topics using "SetVariable" actions
+   - Allow multi-step processes to work seamlessly
+
+## Entity Recognition
+1. Create custom entities for your domain:
+   - "ExceptionType" with prebuilt values
+   - "RiskLevel" with associated thresholds
+   - "ApproverRole" with department mapping
+
+2. Train your Copilot to recognize entities:
+   - Add example utterances with entity values
+   - Test and refine recognition accuracy
+
+## Natural Language Understanding Improvements
+1. Add alternative phrasings:
+   - For each topic, add varied ways users might ask
+   - Include industry-specific terminology
+   - Account for spelling variations and shorthand
+
+2. Configure fallback mechanisms:
+   - Create a robust "None" topic to handle unrecognized queries
+   - Add clarifying questions to disambiguate
+   - Provide guidance when confused
+
+## Power Automate Integration
+1. Create advanced flows:
+   - Multi-stage approval processes
+   - Conditional notifications based on risk level
+   - Automatic document generation
+
+2. Expose flow outputs to Copilot:
+   - Return rich data to display in chat
+   - Format for readability
+   - Include next step guidance
+
+## SharePoint Integration Tips
+1. Use advanced query techniques:
+   - Filter by multiple criteria
+   - Use OData query parameters
+   - Implement sorting and pagination
+
+2. Optimize for performance:
+   - Cache frequently accessed data
+   - Limit result sets
+   - Use indexed columns
+
+## Security Best Practices
+1. Implement proper authentication:
+   - Verify user identity for sensitive operations
+   - Check permissions before showing data
+   - Log access attempts
+
+2. Handle sensitive information:
+   - Don't display full IDs or confidential data
+   - Mask sensitive fields in responses
+   - Follow data retention policies
+
+## Testing and Analytics
+1. Set up comprehensive testing:
+   - Create test cases for all user journeys
+   - Include edge cases and error conditions
+   - Test with different user roles
+
+2. Monitor Copilot performance:
+   - Review conversation analytics
+   - Identify common failure points
+   - Continuously improve based on user interactions
+`;
+
+  const copilotBestPracticesGuide = `# Tips and Best Practices for Copilot Studio
+
+## Conversation Design
+1. **Keep Responses Brief**: Users prefer concise answers. Aim for 1-3 sentences unless more detail is explicitly needed.
+
+2. **Use Progressive Disclosure**: Start with basic information, then offer to provide more details if the user wants them.
+
+3. **Provide Clear Options**: When offering choices, limit to 3-5 options and make them distinctive.
+
+4. **Maintain Personality**: Create a consistent voice and tone that reflects your brand.
+
+5. **Acknowledge Uncertainty**: When your Copilot isn't sure, it should admit that rather than guessing.
+
+## Error Handling
+1. **Graceful Failures**: Design helpful responses when things go wrong.
+
+2. **Suggest Alternatives**: If a user's request can't be fulfilled, suggest what they can do instead.
+
+3. **Provide Escape Hatches**: Always give users a way to talk to a human if needed.
+
+4. **Track Common Errors**: Review conversation logs to identify and fix frequent issues.
+
+## Performance Optimization
+1. **Limit External Calls**: Minimize the number of data source queries per conversation.
+
+2. **Cache Where Possible**: Store commonly accessed information to speed up responses.
+
+3. **Implement Timeouts**: Add proper error handling for slow external systems.
+
+4. **Test Under Load**: Verify your Copilot performs well with multiple simultaneous users.
+
+## Continuous Improvement
+1. **Review Conversation Logs**: Regularly examine real conversations to identify improvement areas.
+
+2. **Add New Trigger Phrases**: Continuously expand the ways users can invoke each topic.
+
+3. **Refine Entity Recognition**: Improve accuracy by adding misrecognized phrases as examples.
+
+4. **Solicit User Feedback**: Add a feedback mechanism at the end of conversations.
+
+## Integration Tips
+1. **Seamless Context Passing**: When integrating with Power Apps, pass relevant context to make conversations more natural.
+
+2. **Minimize Authentication Friction**: Design flows that require minimal re-authentication.
+
+3. **Consistent Experience**: Ensure visual style and tone match between your app and Copilot.
+
+4. **Cross-Channel Support**: Consider how your Copilot can be accessed from different entry points (Teams, web, mobile).
+`;
+
+  // Combine all content
+  const allContent = `# Complete Copilot Studio Implementation Guide
+
+${copilotOverviewContent}
+
+${copilotSetupGuide}
+
+${copilotAdvancedGuide}
+
+${copilotBestPracticesGuide}
 `;
 
   // Create and download the file
-  const blob = new Blob([copilotGuideContent], { type: "text/plain" });
+  const blob = new Blob([allContent], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;

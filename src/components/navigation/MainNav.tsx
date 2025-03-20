@@ -1,124 +1,124 @@
-
-import { Link, useNavigate } from "react-router-dom"
-import { Users, FileText, BookOpen, Settings, Database } from "lucide-react"
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/hooks/use-toast"
-
-const items = [
-  {
-    title: "Home",
-    href: "/",
-  },
-  {
-    title: "New Request",
-    href: "/new-request",
-  },
-  {
-    title: "Exceptions Dashboard",
-    href: "/exceptions",
-  },
-  {
-    title: "Approver Dashboard",
-    href: "/approver-dashboard",
-  },
-  {
-    title: "Metrics",
-    href: "/metrics",
-  },
-  {
-    title: "Admin",
-    href: "/admin/roles",
-  },
-  {
-    title: "Requirements",
-    href: "/requirements",
-    icon: FileText,
-  },
-  {
-    title: "Copilot Guide",
-    href: "/copilot-guide",
-    icon: BookOpen,
-  },
-  {
-    title: "Power App",
-    href: "/power-app",
-    icon: Settings,
-  },
-  {
-    title: "SharePoint Setup",
-    href: "/sharepoint-setup",
-    icon: Database,
-  },
-]
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import { useMobile } from "@/hooks/use-mobile";
 
 export function MainNav() {
-  const { toast } = useToast()
-  const navigate = useNavigate()
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const isMobile = useMobile();
 
-  const handleSwitchUser = async () => {
-    try {
-      await supabase.auth.signOut()
-      navigate('/auth')
-      toast({
-        title: "Signed out successfully",
-        description: "You can now sign in as a different user",
-      })
-    } catch (error) {
-      toast({
-        title: "Error signing out",
-        description: "Please try again",
-        variant: "destructive",
-      })
-    }
-  }
+  const routes = [
+    {
+      href: "/",
+      label: "Home",
+      active: location.pathname === "/",
+    },
+    {
+      href: "/dashboard",
+      label: "Dashboard",
+      active: location.pathname === "/dashboard",
+    },
+    {
+      href: "/risk-dashboard",
+      label: "Risk Dashboard",
+      active: location.pathname === "/risk-dashboard",
+    },
+    {
+      href: "/metrics",
+      label: "Metrics",
+      active: location.pathname === "/metrics",
+    },
+    {
+      href: "/sharepoint-setup",
+      label: "SharePoint Setup",
+      active: location.pathname === "/sharepoint-setup",
+    },
+    {
+      href: "/powerapp",
+      label: "Power App",
+      active: location.pathname === "/powerapp",
+    },
+    {
+      href: "/copilot-guide",
+      label: "Copilot Guide",
+      active: location.pathname === "/copilot-guide",
+    },
+    {
+      href: "/power-bi",
+      label: "Power BI",
+      active: location.pathname === "/power-bi",
+    },
+    {
+      href: "/requirements",
+      label: "Requirements",
+      active: location.pathname === "/requirements",
+    },
+    {
+      href: "/about",
+      label: "About",
+      active: location.pathname === "/about",
+    },
+    {
+      href: "/contact",
+      label: "Contact",
+      active: location.pathname === "/contact",
+    },
+  ];
 
   return (
     <div className="border-b">
       <div className="flex h-16 items-center px-4">
-        <div className="flex items-center mr-8">
-          <Link to="/">
-            <img 
-              src="/lovable-uploads/957716f0-24b5-445b-bb33-8d9671df5ad5.png" 
-              alt="Brightpath Sentinel Technologies" 
-              className="h-12 w-auto"
-            />
-          </Link>
-        </div>
-        
-        <NavigationMenu>
-          <NavigationMenuList>
-            {items.map((item) => (
-              <NavigationMenuItem key={item.title}>
-                <Link to={item.href}>
-                  <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "flex items-center gap-2")}>
-                    {item.icon && <item.icon className="h-4 w-4" />}
-                    {item.title}
-                  </NavigationMenuLink>
+        {isMobile ? (
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="pr-0">
+              <ScrollArea className="my-4">
+                <div className="flex flex-col space-y-2 px-7">
+                  {routes.map((route) => (
+                    <Link
+                      to={route.href}
+                      className={cn(
+                        "text-sm font-medium transition-colors hover:text-foreground/80",
+                        route.active ? "text-foreground" : "text-foreground/60"
+                      )}
+                      key={route.href}
+                      onClick={() => setOpen(false)}
+                    >
+                      {route.label}
+                    </Link>
+                  ))}
+                </div>
+              </ScrollArea>
+            </SheetContent>
+          </Sheet>
+        ) : (
+          <div className="ml-auto flex items-center space-x-6">
+            <nav className="flex items-center space-x-6 text-sm font-medium">
+              {routes.map((route) => (
+                <Link
+                  to={route.href}
+                  className={cn(
+                    "transition-colors hover:text-foreground/80",
+                    route.active ? "text-foreground" : "text-foreground/60"
+                  )}
+                  key={route.href}
+                >
+                  {route.label}
                 </Link>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
-        
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleSwitchUser}
-          className="ml-auto"
-        >
-          <Users className="mr-2 h-4 w-4" />
-          Switch User
-        </Button>
+              ))}
+            </nav>
+          </div>
+        )}
       </div>
     </div>
-  )
+  );
 }
