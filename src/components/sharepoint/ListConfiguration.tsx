@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ListFieldTable, type FieldDefinition } from "./ListFieldTable";
 import { ChoiceFieldOptions } from "./ChoiceFieldOptions";
-import { Info, Database, FileSpreadsheet, ListCheck } from "lucide-react";
+import { Info, Database, FileSpreadsheet, CheckSquare } from "lucide-react";
 
 interface ListConfigurationProps {
   title: string;
@@ -63,7 +63,7 @@ export function ListConfiguration({
         {choices && choices.length > 0 && (
           <div>
             <h3 className="text-lg font-semibold mt-6 mb-4 flex items-center">
-              <ListCheck className="mr-2 h-5 w-5 text-primary" />
+              <CheckSquare className="mr-2 h-5 w-5 text-primary" />
               Choice Field Values
             </h3>
             <ChoiceFieldOptions choices={choices} />
