@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ListFieldTable, type FieldDefinition } from "./ListFieldTable";
 import { ChoiceFieldOptions } from "./ChoiceFieldOptions";
-import { Info, Database, FileSpreadsheet } from "lucide-react";
+import { Info, Database, FileSpreadsheet, ListCheck } from "lucide-react";
 
 interface ListConfigurationProps {
   title: string;

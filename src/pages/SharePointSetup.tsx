@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/sharepoint/PageHeader";
 import { ArchitectureOverview } from "@/components/sharepoint/ArchitectureOverview";
 import { ListConfiguration } from "@/components/sharepoint/ListConfiguration";
 import { AdditionalConfigTips } from "@/components/sharepoint/AdditionalConfigTips";
+import { ExportTemplateGuide } from "@/components/sharepoint/ExportTemplateGuide";
 import { exceptionRequestFields, exceptionRequestChoices } from "@/components/sharepoint/data/exceptionRequestFields";
 import { approversFields, approverRoleChoices } from "@/components/sharepoint/data/approversFields";
 import { approvalHistoryFields } from "@/components/sharepoint/data/approvalHistoryFields";
@@ -41,6 +42,8 @@ export function SharePointSetup() {
         />
         
         <AdditionalConfigTips />
+        
+        <ExportTemplateGuide />
       </div>
     </div>
   );
