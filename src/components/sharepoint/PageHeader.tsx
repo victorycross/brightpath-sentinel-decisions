@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { FileDown, FileSpreadsheet } from "lucide-react";
+import { FileDown, FileSpreadsheet, Copy } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { useToast } from "@/components/ui/use-toast";
 import { 
@@ -50,7 +50,7 @@ export function PageHeader() {
     
     exceptionRequestFields.forEach(field => {
       if (field.required) {
-        doc.text(`• ${field.title} (${field.type})`, 30, yPos);
+        doc.text(`• ${field.name} (${field.type})`, 30, yPos);
         yPos += 7;
         
         // Prevent text from going off the page
@@ -73,7 +73,7 @@ export function PageHeader() {
     
     approversFields.forEach(field => {
       if (field.required) {
-        doc.text(`• ${field.title} (${field.type})`, 30, yPos);
+        doc.text(`• ${field.name} (${field.type})`, 30, yPos);
         yPos += 7;
         
         if (yPos > 270) {
@@ -95,7 +95,7 @@ export function PageHeader() {
     
     approvalHistoryFields.forEach(field => {
       if (field.required) {
-        doc.text(`• ${field.title} (${field.type})`, 30, yPos);
+        doc.text(`• ${field.name} (${field.type})`, 30, yPos);
         yPos += 7;
         
         if (yPos > 270) {
@@ -156,6 +156,53 @@ export function PageHeader() {
       duration: 3000,
     });
   };
+
+  const handleCopyContent = () => {
+    const content = `
+# SharePoint List Setup Guide
+Complete guide to configure SharePoint lists for the Exception Management System
+
+## 1. Lists Required
+• Exception Requests List: Stores all exception requests and their details
+• Exception Approvers List: Users who can approve exception requests
+• Exception Approval History List: Tracks the approval flow and history
+`;
+
+    navigator.clipboard.writeText(content);
+    toast({
+      title: "Content Copied",
+      description: "Overview information has been copied to clipboard.",
+      duration: 3000,
+    });
+  };
+
+  const handleDownloadText = () => {
+    const content = `
+# SharePoint List Setup Guide
+Complete guide to configure SharePoint lists for the Exception Management System
+
+## 1. Lists Required
+• Exception Requests List: Stores all exception requests and their details
+• Exception Approvers List: Users who can approve exception requests
+• Exception Approval History List: Tracks the approval flow and history
+`;
+
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "SharePoint_Overview.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Text File Downloaded",
+      description: "SharePoint overview has been downloaded as a text file.",
+      duration: 3000,
+    });
+  };
   
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-muted/30 p-6 rounded-lg border animate-fade-in">
@@ -168,10 +215,20 @@ export function PageHeader() {
           Complete guide to configure SharePoint lists for the Exception Management System
         </p>
       </div>
-      <Button className="mt-4 md:mt-0" variant="outline" onClick={handleDownload}>
-        <FileDown className="mr-2 h-4 w-4" />
-        Download Complete Guide
-      </Button>
+      <div className="flex flex-col sm:flex-row gap-2 mt-4 md:mt-0">
+        <Button variant="outline" size="sm" onClick={handleCopyContent}>
+          <Copy className="mr-2 h-4 w-4" />
+          Copy Overview
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleDownloadText}>
+          <FileDown className="mr-2 h-4 w-4" />
+          Download as Text
+        </Button>
+        <Button className="mt-0" variant="default" onClick={handleDownload}>
+          <FileDown className="mr-2 h-4 w-4" />
+          Download Complete Guide
+        </Button>
+      </div>
     </div>
   );
 }

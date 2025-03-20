@@ -4,8 +4,121 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Save, FileJson, FilePlus2, Download, Copy, FileSpreadsheet } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 export function ExportTemplateGuide() {
+  const { toast } = useToast();
+  
+  const generateExportContent = () => {
+    return `# Export & Reuse SharePoint Templates
+Save your SharePoint list configurations as templates for reuse across different projects
+
+## Exporting List Templates
+
+### Method 1: Using SharePoint UI (With Data)
+1. Navigate to your SharePoint list
+2. Click the Settings gear icon
+3. Select List settings
+4. Under Permissions and Management, click Save list as template
+5. Enter a filename, template name, and description
+6. Decide whether to include content (checking this will include all list items)
+7. Click OK
+8. The template will be saved to the List Template Gallery
+
+### Method 2: Using PowerShell (Structure Only)
+1. Open PowerShell with SharePoint Online Management Shell
+2. Connect to your SharePoint site:
+   Connect-PnPOnline -Url "https://yourtenant.sharepoint.com/sites/yoursite" -Interactive
+3. Export the list schema:
+   Get-PnPListSchema -List "Exception Requests" -OutputFile "C:\\ExceptionRequestsSchema.xml"
+4. This exports just the structure without any data
+`;
+  };
+  
+  const generateImportContent = () => {
+    return `# Import SharePoint Templates
+Instructions for importing SharePoint list templates
+
+## Importing List Templates
+
+### Method 1: Using SharePoint UI
+1. Navigate to your SharePoint site
+2. Go to Site contents
+3. Click New → List
+4. Select From existing list
+5. Choose your template from the gallery
+6. Enter a name for your new list
+7. Click Create
+
+### Method 2: Using PowerShell
+1. Open PowerShell with SharePoint Online Management Shell
+2. Connect to your SharePoint site:
+   Connect-PnPOnline -Url "https://yourtenant.sharepoint.com/sites/yoursite" -Interactive
+3. Import the list schema:
+   New-PnPList -Title "New Exception Requests" -Template GenericList -Url Lists/NewExceptionRequests -SchemaXml (Get-Content -Path "C:\\ExceptionRequestsSchema.xml" -Raw)
+
+Important Note: When importing templates with lookup fields, ensure that the referenced lists already exist in the target site. Lookup relationships will need to be updated if the source list IDs are different in the new environment.
+`;
+  };
+  
+  const handleCopyExport = () => {
+    const content = generateExportContent();
+    navigator.clipboard.writeText(content);
+    toast({
+      title: "Content Copied",
+      description: "Export template guide has been copied to clipboard.",
+      duration: 3000,
+    });
+  };
+  
+  const handleDownloadExport = () => {
+    const content = generateExportContent();
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "SharePoint_Export_Templates_Guide.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Text File Downloaded",
+      description: "Export template guide has been downloaded as a text file.",
+      duration: 3000,
+    });
+  };
+  
+  const handleCopyImport = () => {
+    const content = generateImportContent();
+    navigator.clipboard.writeText(content);
+    toast({
+      title: "Content Copied",
+      description: "Import template guide has been copied to clipboard.",
+      duration: 3000,
+    });
+  };
+  
+  const handleDownloadImport = () => {
+    const content = generateImportContent();
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "SharePoint_Import_Templates_Guide.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Text File Downloaded",
+      description: "Import template guide has been downloaded as a text file.",
+      duration: 3000,
+    });
+  };
+
   return (
     <Card className="border-2 border-border hover:border-primary/20 transition-colors">
       <CardHeader className="bg-muted/30">
@@ -41,6 +154,17 @@ export function ExportTemplateGuide() {
           </TabsList>
           
           <TabsContent value="export" className="space-y-4 mt-6">
+            <div className="flex justify-end gap-2 mb-4">
+              <Button variant="outline" size="sm" onClick={handleCopyExport}>
+                <Copy className="mr-2 h-4 w-4" />
+                Copy Guide
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleDownloadExport}>
+                <FileDown className="mr-2 h-4 w-4" />
+                Download Guide
+              </Button>
+            </div>
+            
             <h3 className="text-lg font-semibold">Exporting List Templates</h3>
             
             <div className="rounded-md border p-4 bg-muted/20">
@@ -94,6 +218,17 @@ export function ExportTemplateGuide() {
           </TabsContent>
           
           <TabsContent value="import" className="space-y-4 mt-6">
+            <div className="flex justify-end gap-2 mb-4">
+              <Button variant="outline" size="sm" onClick={handleCopyImport}>
+                <Copy className="mr-2 h-4 w-4" />
+                Copy Guide
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleDownloadImport}>
+                <FileDown className="mr-2 h-4 w-4" />
+                Download Guide
+              </Button>
+            </div>
+            
             <h3 className="text-lg font-semibold">Importing List Templates</h3>
 
             <div className="rounded-md border p-4 bg-muted/20">
