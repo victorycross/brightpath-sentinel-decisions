@@ -1,12 +1,15 @@
 
 import { Button } from "@/components/ui/button";
-import { FileDown } from "lucide-react";
+import { FileDown, FileSpreadsheet } from "lucide-react";
 
 export function PageHeader() {
   return (
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-muted/30 p-6 rounded-lg border animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold">SharePoint List Setup Guide</h1>
+        <h1 className="text-3xl font-bold flex items-center text-primary">
+          <FileSpreadsheet className="mr-3 h-8 w-8" />
+          SharePoint List Setup Guide
+        </h1>
         <p className="text-muted-foreground mt-2">
           Complete guide to configure SharePoint lists for the Exception Management System
         </p>
