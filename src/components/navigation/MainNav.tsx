@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,11 @@ export function MainNav() {
       href: "/powerapp",
       label: "Power App",
       active: location.pathname === "/powerapp",
+    },
+    {
+      href: "/power-automate",
+      label: "Power Automate",
+      active: location.pathname === "/power-automate",
     },
     {
       href: "/copilot-guide",

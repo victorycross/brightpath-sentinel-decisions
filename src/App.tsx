@@ -11,6 +11,7 @@ import { SharePointSetup } from "./pages/SharePointSetup";
 import { PowerApp } from "./pages/PowerApp";
 import { CopilotGuide } from "./pages/CopilotGuide";
 import { PowerBIIntegration } from "./pages/PowerBIIntegration";
+import { PowerAutomateGuide } from "./pages/PowerAutomateGuide";
 import { Toaster } from "./components/ui/toaster";
 import { MainNav } from "./components/navigation/MainNav";
 import './App.css';
@@ -33,6 +34,7 @@ function App() {
             <Route path="/powerapp" element={<PowerApp />} />
             <Route path="/copilot-guide" element={<CopilotGuide />} />
             <Route path="/power-bi" element={<PowerBIIntegration />} />
+            <Route path="/power-automate" element={<PowerAutomateGuide />} />
           </Routes>
         </div>
         <Toaster />
