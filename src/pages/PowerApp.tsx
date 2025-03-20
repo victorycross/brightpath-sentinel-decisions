@@ -6,6 +6,7 @@ import { Copy, Download, Info, ArrowRight, CheckCircle, Code, Settings, Puzzle, 
 import { useToast } from "@/hooks/use-toast";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { getRequirementsMarkdown } from "@/utils/requirementsExport";
+import { downloadAllPowerAppGuides } from "@/components/sharepoint/utils/downloadUtils";
 
 export const PowerApp = () => {
   const { toast } = useToast();
@@ -349,13 +350,23 @@ Power Automate Flows allow you to automate actions and processes between your ap
               Building an Exception Management System with Power Apps, Copilot, and SharePoint
             </p>
           </div>
-          <Button 
-            onClick={() => downloadFile("# Power Apps Implementation Guide\n\nBuilding an Exception Management System with Power Apps, Copilot, and SharePoint\n\nThis guide provides all the elements needed to build a Power App that integrates with Copilot Studio to create a complete Exception Management System.", "power-app-guide-overview.txt")}
-            className="gap-2"
-          >
-            <Download className="h-4 w-4" />
-            Download Guide Overview
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => downloadFile("# Power Apps Implementation Guide\n\nBuilding an Exception Management System with Power Apps, Copilot, and SharePoint\n\nThis guide provides all the elements needed to build a Power App that integrates with Copilot Studio to create a complete Exception Management System.", "power-app-guide-overview.txt")}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Download Overview
+            </Button>
+            <Button 
+              onClick={downloadAllPowerAppGuides}
+              className="gap-2"
+              variant="default"
+            >
+              <Download className="h-4 w-4" />
+              Download All Files
+            </Button>
+          </div>
         </div>
 
         <div className="space-y-6">

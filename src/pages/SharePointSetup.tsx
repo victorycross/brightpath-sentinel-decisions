@@ -7,10 +7,21 @@ import { ExportTemplateGuide } from "@/components/sharepoint/ExportTemplateGuide
 import { exceptionRequestFields, exceptionRequestChoices } from "@/components/sharepoint/data/exceptionRequestFields";
 import { approversFields, approverRoleChoices } from "@/components/sharepoint/data/approversFields";
 import { approvalHistoryFields } from "@/components/sharepoint/data/approvalHistoryFields";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
+import { downloadAllSharePointGuides } from "@/components/sharepoint/utils/downloadUtils";
 
 export function SharePointSetup() {
   return (
     <div className="container mx-auto py-8 px-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">SharePoint Setup Guide</h1>
+        <Button onClick={downloadAllSharePointGuides} className="gap-2">
+          <Download className="h-4 w-4" />
+          Download All Files
+        </Button>
+      </div>
+      
       <div className="space-y-8">
         <PageHeader />
         <ArchitectureOverview />
